@@ -1,14 +1,21 @@
 with "config/embedded_rina_bin_config.gpr";
-project Embedded_RINA_Bin is
+project Embedded_Rina_Bin is
 
-   for Source_Dirs use ("src/", "config/");
-   for Object_Dir use "obj/" & Embedded_RINA_Bin_Config.Build_Profile;
+   -- Specify we want to bind from Ada to C
+   for Languages use ("ada", "c");
+
+   for Source_Dirs use ("src/ada_src/", "config/", "src/c_src/");
+   for Object_Dir use "obj/" & Embedded_Rina_Bin_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
    for Main use ("embedded_rina_bin.adb");
 
+   package Linker is
+      for Default_Switches ("Ada") use ("-lrina-api");
+   end Linker;
+
    package Compiler is
-      for Default_Switches ("Ada") use Embedded_RINA_Bin_Config.Ada_Compiler_Switches;
+      for Default_Switches ("Ada") use Embedded_Rina_Bin_Config.Ada_Compiler_Switches;
    end Compiler;
 
    package Binder is
@@ -19,4 +26,4 @@ project Embedded_RINA_Bin is
       for Artifacts (".") use ("share");
    end Install;
 
-end Embedded_RINA_Bin;
+end Embedded_Rina_Bin;
