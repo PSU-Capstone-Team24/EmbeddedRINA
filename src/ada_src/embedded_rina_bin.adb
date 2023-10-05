@@ -2,18 +2,27 @@
 pragma Style_Checks (Off);
 
 with System;
+
+--  Ada
 with Ada.Text_IO;
+with Ada.Unchecked_Conversion;
+
+--  Interfaces
 with Interfaces.C;
 with Interfaces.C.Strings;
-with Ada.Strings.Unbounded;
-with Ada.Unchecked_Conversion;
+
+--  Rlite Bindings
+--  with Bindings.Rlite.Kernel_Msg;
 with Exceptions;
+
+--  GNAT
+with Gnat.OS_Lib;
 
 procedure Embedded_Rina_Bin is
    package Text_IO renames Ada.Text_IO;
    package C renames Interfaces.C;
-   package Unbounded renames Ada.Strings.Unbounded;
-
+   package OS renames Gnat.OS_Lib;
+   
    --  Flow specs for QoS
    --  version number to allow for extensions
    type rina_flow_spec is record
@@ -39,6 +48,12 @@ procedure Embedded_Rina_Bin is
    function RINA_Open return Integer;
    pragma Import (C, RINA_Open, "rina_open");
 
+   --  Ada implementation of the RINA_Open function, no longer need to bind to C
+   function RINA_Open_Impl return OS.File_Descriptor is
+   begin
+      return OS.Open_Read ("/dev/rlite", OS.Binary);
+   end RINA_Open_Impl;
+
    --  int rina_register(int fd,
    --                    const char *dif_name,
    --                    const char *local_appl
@@ -51,7 +66,6 @@ procedure Embedded_Rina_Bin is
       local_appl : C.Strings.chars_ptr;
       flags : Integer) return Integer;
    pragma Import (C, RINA_Register, "rina_register");
-
 
    --  TODO: Finish adding docs
    function RINA_Flow_Accept
@@ -82,7 +96,6 @@ procedure Embedded_Rina_Bin is
    --  Placeholders for file descriptor values, assume invalid (< 0)
    RINA_Dev_FD : Integer := -1;
    Incoming_FD : Integer := -1;
-   Flow_FD : Integer := -1;
    Flow_Response : Integer := -1;
    Register_Success : Integer := -1;
    
@@ -159,24 +172,6 @@ begin
 		end if;
 
       loop
-
-         --  TODO: DEBUG ONLY --
-         --  Text_IO.Put_Line ("with flowspec:");
-         --  Text_IO.Put ("max_sdu_gap (in SDUs): ");
-         --  Text_IO.Put_Line (Integer'Image(Default_Spec.max_sdu_gap));
-         --  Text_IO.Put ("avg_bandwidth (in bits/second): ");
-         --  Text_IO.Put_Line (Integer'Image(Default_Spec.avg_bandwidth));
-         --  Text_IO.Put ("max_delay (in microseconds): ");
-         --  Text_IO.Put_Line (Integer'Image(Default_Spec.max_delay));
-         --  Text_IO.Put ("max_loss (percentage): ");
-         --  Text_IO.Put_Line (Integer'Image(Default_Spec.max_loss / RINA_FLOW_SPEC_LOSS_MAX);
-         --  Text_IO.Put ("max_jitter (in microseconds): ");
-         --  Text_IO.Put_Line (Integer'Image(Default_Spec.max_jitter));
-         --  Text_IO.Put ("in_order_delivery (boolean): ");
-         --  Text_IO.Put_Line (Integer'Image(Default_Spec.in_order_delivery));
-         --  Text_IO.Put ("msg_boundaries (boolean, 0 = stream): ");
-         --  Text_IO.Put_Line (Integer'Image(Default_Spec.msg_boundaries));
-
          --  Accept the flow request
 		   Flow_Response := RINA_Flow_Respond(RINA_Dev_FD, Incoming_FD, 0);
          
@@ -187,11 +182,9 @@ begin
             Text_IO.Put_Line ("Accepted flow request.");
          end if;
          
-         loop
-            -- TODO: This needs to be moved entirely to Ada
-            -- Figure out the equivalent of read()/write() syscalls
-            Chat_DoFlow (Flow_Response);
-         end loop;
+         -- TODO: This needs to be moved entirely to Ada
+         -- Figure out the equivalent of read()/write() syscalls
+         Chat_DoFlow (Flow_Response);
       end loop;
    end loop;
 end Embedded_Rina_Bin;
