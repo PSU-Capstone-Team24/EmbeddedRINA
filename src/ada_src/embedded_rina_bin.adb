@@ -26,14 +26,14 @@ procedure Embedded_Rina_Bin is
    --  Flow specs for QoS
    --  version number to allow for extensions
    type rina_flow_spec is record
-      version : aliased Integer;
-      max_delay : aliased Integer;
-      max_sdu_gap : aliased Integer;
-      avg_bandwidth : aliased Integer;
-      max_loss : aliased Integer;
-      in_order_delivery : aliased Integer;
-      msg_boundaries : aliased Integer;
-      max_jitter : aliased Integer;
+      version : Integer;
+      max_delay : Integer;
+      max_sdu_gap : Integer;
+      avg_bandwidth : Integer;
+      max_loss : Integer;
+      in_order_delivery : Integer;
+      msg_boundaries : Integer;
+      max_jitter : Integer;
    end record
       with Convention => C_Pass_By_Copy;
 
@@ -121,16 +121,18 @@ procedure Embedded_Rina_Bin is
         Ptr : constant C_String_T := To_C_String_T (Addr);
         C   : Integer := 0;
     begin
+         --  Loop through each character in the string and stop once we've hit the null terminator
         for I in Ptr'Range loop
             C := I;
             exit when Ptr (I) = ASCII.NUL;
         end loop;
+        --  Give Ptr the range of the string in memory
         return Ptr (1 .. C-1);
     end;
 
    --  Hardcoded for testing purposes
    Application_Name : constant C.Strings.chars_ptr := C.Strings.New_String ("TestServer");
-   DIF_Name : constant C.Strings.chars_ptr := C.Strings.New_String ("cool.DIF");
+   DIF_Name : constant C.Strings.chars_ptr := C.Strings.New_String ("eth.DIF");
    Incoming_APN : System.Address;
 begin
    Text_IO.Put_Line ("Starting RINA server application....");
@@ -152,7 +154,6 @@ begin
       Text_IO.Put_Line ("Successfully registered application to cool.DIF");
    end if;
 
-   
    loop
       Incoming_FD := RINA_Flow_Accept (RINA_Dev_FD, Incoming_APN, Default_Spec, 2);
 
