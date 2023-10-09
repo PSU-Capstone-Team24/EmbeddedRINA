@@ -6,6 +6,9 @@ package Bindings.Rlite.Common is
    type Rl_Port_T    is new Unsigned_16;
    type Rl_Msg_T     is new Unsigned_16;
 
+   type Unsigned_64 is range 0 .. 2**64;
+   pragma Convention (C, Unsigned_64);
+
    --  Maximum sizes for data transfer constants, to be used in CDAP messages,
    --  user/kernel interfaces and the management layer in general
    --  TODO: No unsigned 64 bit type available in Ada. Reinvestigate if this will be an issue
