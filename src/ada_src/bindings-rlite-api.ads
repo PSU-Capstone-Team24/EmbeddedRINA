@@ -1,29 +1,23 @@
-with Interfaces;
+--  Temp disabling
+pragma Style_Checks (Off);
+
+--  GNAT
+with GNAT.OS_Lib;
 
 package Bindings.Rlite.API is
+   package OS renames GNAT.OS_Lib;
+   
+   RINA_F_NOWAIT : constant Integer := 1;
+   RINA_F_NORESP : constant Integer := 2;
 
---  Record to specify the flow QoS parameters asked by
---  the application issuing a flow allocation request.
-type RINA_Flow_Spec is record
-    --  Version = 2 for rLite
-    Version : Interfaces.Unsigned_32;
-    --  Max delay in microseconds
-    Max_Delay : Interfaces.Unsigned_32;
-    --  Max in SDUs (Service Data Units)
-    -- MT: TODO: This is originally a uint64_t, will this be an issue?
-    Max_SDU_Gap : Interfaces.Unsigned_32;
-    --  Average bandwith in bits per second
-    Avg_Bandwith : Interfaces.Unsigned_32;
-    --  Maximum packet loss from 0 (0%) to 10000 (100%)
-    Max_Loss : Interfaces.Unsigned_16;
-    --  In order delivery
-    --  MT: TODO: Make this into a boolean?
-    In_Order_Delivery : Interfaces.Unsigned_8;
-    --  Message boundaries
-    --  MT: TODO: Make this into a boolean?
-    Msg_Boundaries : Interfaces.Unsigned_8;
-    --  Max jitter in microseconds
-    Max_Jitter : Interfaces.Unsigned_32;
-end record;
+   --  Casual value used for assert (0x7a6b)
+   RINA_REG_EVENT_ID : constant Integer := 16#7a6b#; 
+
+   function RINA_Open return OS.File_Descriptor;
+
+   function RINA_Register (fd : OS.File_Descriptor;
+      dif_name : String;
+      local_appl : String;
+      flags : Integer) return OS.File_Descriptor;
 
 end Bindings.Rlite.API;

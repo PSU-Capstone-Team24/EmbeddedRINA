@@ -1,5 +1,7 @@
+--  Temp disabling
+pragma Style_Checks (Off);
+
 with Bindings.Rlite.Common;
-with Bindings.Rlite.API;
 with Interfaces.C.Strings;
 with Interfaces; use Interfaces;
 with System;
@@ -98,7 +100,7 @@ package Bindings.Rlite.Kernel_Msg is
       Remote_Port : Bindings.Rlite.Common.Rl_Port_T;
       Local_Addr  : Bindings.Rlite.Common.Rlm_Addr_T;
       Remote_Addr : Bindings.Rlite.Common.Rlm_Addr_T;
-      Spec        : Bindings.Rlite.API.RINA_Flow_Spec;
+      Spec        : Bindings.Rlite.Common.RINA_Flow_Spec;
    end record;
 
    subtype Rl_Kmsg_Reg_Fetch is Rl_Kmsg_Flow_Fetch;
@@ -178,9 +180,9 @@ package Bindings.Rlite.Kernel_Msg is
    end record;
 
   --  (Application --> Kernel) to initiate a flow allocation.  
-   type rl_kmsg_fa_req is record
+   type Rl_Kmsg_Fa_Req is record
       Hdr         : Bindings.Rlite.Common.Rl_Msg_Hdr;
-      Flowspec    : Bindings.Rlite.API.RINA_Flow_Spec;
+      Flowspec    : Bindings.Rlite.Common.RINA_Flow_Spec;
       Upper_Ipcp_Id : Rl_Ipcp_Id_T;
       Local_Port  : Bindings.Rlite.Common.Rl_Port_T;
       Local_Cep   : Bindings.Rlite.Common.Rlm_Cepid_T;
@@ -191,22 +193,13 @@ package Bindings.Rlite.Kernel_Msg is
       Dif_Name    : Interfaces.C.Strings.chars_ptr;
    end record;
 
-   type Pad1_Arr is array (0 .. 6) of Interfaces.Unsigned_8;
-   type Rl_Kmsg_Appl_Register is record
-      Hdr         : Rl_Msg_T;
-      Reg         : Unsigned_8;
-      Pad1        : Pad1_Arr;
-      Appl_Name   : System.Address;
-      Dif_Name    : System.Address;
-   end record;
-
-   type Rl_Kmsg_Appl_Register_Resp is record
-      Hdr         : Rl_Msg_T;
-      Ipcp_Id     : Rl_Ipcp_Id_T;
-      Reg         : Unsigned_8;
+   --  (Application <-- Kernel) to notify about an incoming flow response.
+   type Rl_Kmsg_Fa_Resp_Arrived_Pad1_Arr is array (0 .. 4) of Interfaces.Unsigned_8;
+   type Rl_Kmsg_Fa_Resp_Arrived is record
+      Hdr         : Bindings.Rlite.Common.Rl_Msg_Hdr;
+      Port_Id     : Bindings.Rlite.Common.Rl_Port_T;
       Response    : Unsigned_8;
-      Pad1        : Unsigned_32;
-      Appl_Name   : System.Address;
+      Pad1        : Rl_Kmsg_Fa_Resp_Arrived_Pad1_Arr;
    end record;
 
 end Bindings.Rlite.Kernel_Msg;
