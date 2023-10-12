@@ -3,6 +3,7 @@ pragma Style_Checks (Off);
 
 with Interfaces.C.Strings;
 with Bindings.Rlite.API;
+with Bindings.Rlite.Kernel_Msg;
 
 with Ada.Text_IO;
 

@@ -282,7 +282,7 @@ rl_fa_resp_fill(struct rl_kmsg_fa_resp *resp, uint32_t kevent_id,
  * POSIX-like API
  */
 
-#include "rina/api.h"
+#include "api.h"
 
 int
 rina_open(void)

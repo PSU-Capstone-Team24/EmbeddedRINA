@@ -8,8 +8,9 @@ package Bindings.Rlite.Common is
    type Rl_Port_T    is new Unsigned_16;
    type Rl_Msg_T     is new Unsigned_16;
 
-   type Unsigned_64 is range 0 .. 2**64;
-   pragma Convention (C, Unsigned_64);
+   --  MT: TODO: Temp disable
+   --  type Unsigned_64 is range 0 .. 2**64;
+   --  pragma Convention (C, Unsigned_64);
 
    --  Record to specify the flow QoS parameters asked by
    --  the application issuing a flow allocation request.

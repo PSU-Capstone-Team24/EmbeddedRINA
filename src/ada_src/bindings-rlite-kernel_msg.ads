@@ -4,8 +4,6 @@ pragma Style_Checks (Off);
 with Bindings.Rlite.Common;
 with Interfaces.C.Strings;
 with Interfaces; use Interfaces;
-with Ada.Strings;
-with System;
 
 package Bindings.Rlite.Kernel_Msg is
 

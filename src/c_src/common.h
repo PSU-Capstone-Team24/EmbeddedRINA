@@ -36,7 +36,7 @@
 #include <asm/ioctl.h>
 #endif
 
-#include "rina/api.h"
+#include "api.h"
 
 #ifdef __cplusplus
 extern "C" {

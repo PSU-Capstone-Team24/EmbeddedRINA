@@ -1,9 +1,6 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
-with Bindings.Rlite.Kernel_Msg;
-with Bindings.Rlite.Common;
-
 with Interfaces; use Interfaces;
 
 with GNAT.OS_Lib;
