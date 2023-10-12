@@ -4,6 +4,7 @@ pragma Style_Checks (Off);
 with Bindings.Rlite.Common;
 with Interfaces.C.Strings;
 with Interfaces; use Interfaces;
+with Ada.Strings;
 with System;
 
 package Bindings.Rlite.Kernel_Msg is
@@ -14,44 +15,44 @@ package Bindings.Rlite.Kernel_Msg is
    --  Message types, must be listed alternating requests with corresponding responses
    --  MT:  These were originally anonymous enums in C,
    --       converting these to const integers for now
-   RLITE_KER_IPCP_CREATE            : constant Integer := 1;
-   RLITE_KER_IPCP_CREATE_RESP       : constant Integer := 2;
-   RLITE_KER_IPCP_DESTROY           : constant Integer := 3;
-   RLITE_KER_APPL_REGISTER          : constant Integer := 4;
-   RLITE_KER_APPL_REGISTER_RESP     : constant Integer := 5;
-   RLITE_KER_FA_REQ                 : constant Integer := 6;
-   RLITE_KER_FA_RESP_ARRIVED        : constant Integer := 7;
-   RLITE_KER_FA_RESP                : constant Integer := 8;
-   RLITE_KER_FA_REQ_ARRIVED         : constant Integer := 9;
-   RLITE_KER_IPCP_CONFIG            : constant Integer := 10;
-   RLITE_KER_IPCP_PDUFT_SET         : constant Integer := 11;
-   RLITE_KER_IPCP_PDUFT_FLUSH       : constant Integer := 12;
-   RLITE_KER_IPCP_UIPCP_SET         : constant Integer := 13;
-   RLITE_KER_UIPCP_FA_REQ_ARRIVED   : constant Integer := 14;
-   RLITE_KER_UIPCP_FA_RESP_ARRIVED  : constant Integer := 15;
-   RLITE_KER_FLOW_DEALLOCATED       : constant Integer := 16;
-   RLITE_KER_FLOW_DEALLOC           : constant Integer := 17;
-   RLITE_KER_IPCP_UPDATE            : constant Integer := 18;
-   RLITE_KER_FLOW_FETCH             : constant Integer := 19;
-   RLITE_KER_FLOW_FETCH_RESP        : constant Integer := 20;
-   RLITE_KER_IPCP_UIPCP_WAIT        : constant Integer := 21;
-   RLITE_KER_FLOW_STATS_REQ         : constant Integer := 22;
-   RLITE_KER_FLOW_STATS_RESP        : constant Integer := 23;
-   RLITE_KER_FLOW_CFG_UPDATE        : constant Integer := 24;
-   RLITE_KER_IPCP_QOS_SUPPORTED     : constant Integer := 25;
-   RLITE_KER_APPL_MOVE              : constant Integer := 26;
-   RLITE_KER_IPCP_PDUFT_DEL         : constant Integer := 27;
-   RLITE_KER_MEMTRACK_DUMP          : constant Integer := 28;
-   RLITE_KER_REG_FETCH              : constant Integer := 29;
-   RLITE_KER_REG_FETCH_RESP         : constant Integer := 30;
-   RLITE_KER_FLOW_STATE             : constant Integer := 31;
-   RLITE_KER_IPCP_STATS_REQ         : constant Integer := 32;
-   RLITE_KER_IPCP_STATS_RESP        : constant Integer := 33;
-   RLITE_KER_IPCP_CONFIG_GET_REQ    : constant Integer := 34;
-   RLITE_KER_IPCP_CONFIG_GET_RESP   : constant Integer := 35;
-   RLITE_KER_IPCP_SCHED_WRR         : constant Integer := 36;
-   RLITE_KER_IPCP_SCHED_PFIFO       : constant Integer := 37;
-   RLITE_KER_MSG_MAX                : constant Integer := 38;
+   RLITE_KER_IPCP_CREATE            : constant Rl_Msg_T := 1;
+   RLITE_KER_IPCP_CREATE_RESP       : constant Rl_Msg_T := 2;
+   RLITE_KER_IPCP_DESTROY           : constant Rl_Msg_T := 3;
+   RLITE_KER_APPL_REGISTER          : constant Rl_Msg_T := 4;
+   RLITE_KER_APPL_REGISTER_RESP     : constant Rl_Msg_T := 5;
+   RLITE_KER_FA_REQ                 : constant Rl_Msg_T := 6;
+   RLITE_KER_FA_RESP_ARRIVED        : constant Rl_Msg_T := 7;
+   RLITE_KER_FA_RESP                : constant Rl_Msg_T := 8;
+   RLITE_KER_FA_REQ_ARRIVED         : constant Rl_Msg_T := 9;
+   RLITE_KER_IPCP_CONFIG            : constant Rl_Msg_T := 10;
+   RLITE_KER_IPCP_PDUFT_SET         : constant Rl_Msg_T := 11;
+   RLITE_KER_IPCP_PDUFT_FLUSH       : constant Rl_Msg_T := 12;
+   RLITE_KER_IPCP_UIPCP_SET         : constant Rl_Msg_T := 13;
+   RLITE_KER_UIPCP_FA_REQ_ARRIVED   : constant Rl_Msg_T := 14;
+   RLITE_KER_UIPCP_FA_RESP_ARRIVED  : constant Rl_Msg_T := 15;
+   RLITE_KER_FLOW_DEALLOCATED       : constant Rl_Msg_T := 16;
+   RLITE_KER_FLOW_DEALLOC           : constant Rl_Msg_T := 17;
+   RLITE_KER_IPCP_UPDATE            : constant Rl_Msg_T := 18;
+   RLITE_KER_FLOW_FETCH             : constant Rl_Msg_T := 19;
+   RLITE_KER_FLOW_FETCH_RESP        : constant Rl_Msg_T := 20;
+   RLITE_KER_IPCP_UIPCP_WAIT        : constant Rl_Msg_T := 21;
+   RLITE_KER_FLOW_STATS_REQ         : constant Rl_Msg_T := 22;
+   RLITE_KER_FLOW_STATS_RESP        : constant Rl_Msg_T := 23;
+   RLITE_KER_FLOW_CFG_UPDATE        : constant Rl_Msg_T := 24;
+   RLITE_KER_IPCP_QOS_SUPPORTED     : constant Rl_Msg_T := 25;
+   RLITE_KER_APPL_MOVE              : constant Rl_Msg_T := 26;
+   RLITE_KER_IPCP_PDUFT_DEL         : constant Rl_Msg_T := 27;
+   RLITE_KER_MEMTRACK_DUMP          : constant Rl_Msg_T := 28;
+   RLITE_KER_REG_FETCH              : constant Rl_Msg_T := 29;
+   RLITE_KER_REG_FETCH_RESP         : constant Rl_Msg_T := 30;
+   RLITE_KER_FLOW_STATE             : constant Rl_Msg_T := 31;
+   RLITE_KER_IPCP_STATS_REQ         : constant Rl_Msg_T := 32;
+   RLITE_KER_IPCP_STATS_RESP        : constant Rl_Msg_T := 33;
+   RLITE_KER_IPCP_CONFIG_GET_REQ    : constant Rl_Msg_T := 34;
+   RLITE_KER_IPCP_CONFIG_GET_RESP   : constant Rl_Msg_T := 35;
+   RLITE_KER_IPCP_SCHED_WRR         : constant Rl_Msg_T := 36;
+   RLITE_KER_IPCP_SCHED_PFIFO       : constant Rl_Msg_T := 37;
+   RLITE_KER_MSG_MAX                : constant Rl_Msg_T := 38;
 
    --  (Application --> Kernel) message to create a new IPC process.
    type Rl_Kmsg_IPCP_Create is record

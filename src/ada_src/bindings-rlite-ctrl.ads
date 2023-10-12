@@ -5,7 +5,6 @@ with Bindings.Rlite.Kernel_Msg;
 with Bindings.Rlite.Common;
 
 with Interfaces; use Interfaces;
-with Interfaces.C; use Interfaces.C;
 
 with GNAT.OS_Lib;
 
@@ -16,16 +15,12 @@ package Bindings.Rlite.Ctrl is
    dif_name : String;
    local_appl : String;
    flags : Integer;
-   reg : Integer) return OS.File_Descriptor;
+   reg : Unsigned_8) return OS.File_Descriptor;
 
-   function Rl_Register_Req_Fill (req : Bindings.Rlite.Kernel_Msg.Rl_Kmsg_Appl_Register;
-   event_id : Unsigned_32;
-   dif_name : String;
-   reg : Integer;
-   appl_name: String) return Integer;
-
-   function Rl_Write_Msg (rfd : Integer;
-   msg : Bindings.Rlite.Common.Rl_Msg_Base;
-   quiet : Integer) return Integer;
+   --  function Rl_Register_Req_Fill (req : in out Bindings.Rlite.Kernel_Msg.Rl_Kmsg_Appl_Register;
+   --  event_id : Unsigned_32;
+   --  dif_name : String;
+   --  reg : Unsigned_8;
+   --  appl_name: String) return Integer;
 
 end Bindings.Rlite.Ctrl;
