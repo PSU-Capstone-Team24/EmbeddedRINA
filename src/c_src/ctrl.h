@@ -26,8 +26,8 @@
 
 #include <stdlib.h>
 #include <stdint.h>
-#include "rlite/kernel-msg.h"
-#include "rlite/utils.h"
+#include "kernel-msg.h"
+#include "utils.h"
 
 #include "list.h"
 

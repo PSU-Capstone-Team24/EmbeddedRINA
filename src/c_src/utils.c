@@ -21,7 +21,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#include "rlite/utils.h"
+#include "utils.h"
 
 #ifdef __KERNEL__
 

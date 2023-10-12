@@ -24,8 +24,8 @@
 #ifndef __RLITE_KER_H__
 #define __RLITE_KER_H__
 
-#include "rlite/common.h"
-#include "rlite/utils.h"
+#include "common.h"
+#include "utils.h"
 
 /* Message types. They MUST be listed alternating requests with
  * the corresponding responses. */

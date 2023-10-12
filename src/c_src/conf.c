@@ -30,7 +30,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-#include "rlite/conf.h"
+#include "conf.h"
 
 static struct rl_msg_base *
 wait_for_next_msg(int fd, int timeout)

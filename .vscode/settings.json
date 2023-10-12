@@ -45,6 +45,7 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "common.h": "c"
     }
 }

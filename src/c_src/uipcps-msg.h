@@ -26,8 +26,8 @@
 
 #include <stdint.h>
 
-#include "rlite/common.h"
-#include "rlite/utils.h"
+#include "common.h"
+#include "utils.h"
 
 /* Message types. They **must** be listed alternating requests with
  * the corresponding responses. */

@@ -29,8 +29,8 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "rlite/utils.h"
-#include "rlite/uipcps-msg.h"
+#include "utils.h"
+#include "uipcps-msg.h"
 
 static inline int
 rl_msg_write_fd(int sfd, struct rl_msg_base *msg)

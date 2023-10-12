@@ -24,7 +24,7 @@
 #ifndef __RLITE_SERDES_H__
 #define __RLITE_SERDES_H__
 
-#include "rlite/common.h"
+#include "common.h"
 
 #ifdef __cplusplus
 extern "C" {
