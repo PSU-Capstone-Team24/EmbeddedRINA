@@ -48,9 +48,8 @@ package body Bindings.Rlite.Ctrl is
       req : Bindings.Rlite.Kernel_Msg.Rl_Kmsg_Appl_Register;
       ret : Integer;
       wfd : OS.File_Descriptor;
-      res : constant OS.File_Descriptor := OS.File_Descriptor (-1);
+      res : constant OS.File_Descriptor := OS.Invalid_FD;
       Bits_Other_Than_NoWait : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NOWAIT);
-      req_addr : System.Address;
    begin
       Ada.Text_IO.Put_Line("RINA_Register_Common Called");
 
@@ -74,19 +73,18 @@ package body Bindings.Rlite.Ctrl is
 
       ret := Rl_Register_Req_Fill (req, Bindings.Rlite.API.RINA_REG_EVENT_ID, Interfaces.C.Strings.New_String (dif_name), reg, Interfaces.C.Strings.New_String (local_appl));
 
-      Ada.Text_IO.Put_Line ("After Rl_Register_Req_Fill, req is now:");
-      Ada.Text_IO.Put_Line ("AppName: " & Interfaces.C.Strings.Value(req.Appl_Name));
-      Ada.Text_IO.Put_Line ("DifName: " & Interfaces.C.Strings.Value(req.Dif_Name) );
+      if ret > 0 then
+         --  Error here, close out FD
+         Bindings.Rlite.API.RINA_Close (wfd);
+         Ada.Text_IO.Put_Line ("Error filling registration request struct");
+      end if;
 
-      --  In this case, ret can only be zero, so ignore any checks here we would normally do in C
-      --  if (ret) {
-      --     errno = ENOMEM;
-      --     goto out;
-      --  }
+      ret := Rl_Write_Msg (Integer(wfd), req'Address, 1);
 
-      req_addr := req'Address;
-      ret := Rl_Write_Msg (Integer(wfd), req_addr, 1);
+      --  MT: TODO: Rl_Msg_Free implementation, check flags again and return rina_register_wait
+      --  instead of a file descriptor to the result
 
-      return res;
+      return OS.File_Descriptor (ret);
    end RINA_Register_Common;
+
 end Bindings.Rlite.Ctrl;

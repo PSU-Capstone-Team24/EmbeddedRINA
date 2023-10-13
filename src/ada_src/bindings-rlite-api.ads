@@ -17,6 +17,8 @@ package Bindings.Rlite.API is
    RINA_REG_EVENT_ID : constant Unsigned_32 := 16#7a6b#; 
 
    function RINA_Open return OS.File_Descriptor;
+   
+   procedure RINA_Close(fd : OS.File_Descriptor);
 
    function RINA_Register (fd : OS.File_Descriptor;
       dif_name : String;

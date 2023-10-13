@@ -88,8 +88,6 @@ rl_read_next_msg(int rfd, int quiet)
 int
 rl_write_msg(int rfd, const struct rl_msg_base *msg, int quiet)
 {
-    PD("%d %d %d\n", msg->hdr.event_id, msg->hdr.msg_type, msg->hdr.version);
-
     char serbuf[4096];
     unsigned int serlen;
     int ret;
@@ -104,7 +102,18 @@ rl_write_msg(int rfd, const struct rl_msg_base *msg, int quiet)
     serlen =
         serialize_rlite_msg(rl_ker_numtables, RLITE_KER_MSG_MAX, serbuf, msg);
 
-    ret = write(rfd, serbuf, serlen);
+    // MT: TODO: DEBUG ONLY!
+    char hexString[serlen * 2 + 1];
+    for(size_t i = 0; i < serlen; i++){
+        sprintf(hexString + 2 * i, "%02X", serbuf[i]);
+    }
+    hexString[serlen * 2] = '\0';
+    PD("\nWriting to fd: %d (len: %d): %s\n", rfd, serlen, hexString);
+    // MT: TODO: DEBUG ONLY END
+
+    // MT: TODO: Giving this our file descriptor integer from Ada is not working
+    // Figure out later what's going on with that... For now, grab a new one for this operation
+    ret = write(rina_open(), serbuf, serlen);
     if (ret < 0) {
         /* An uIPCP may try to deallocate an already deallocated
          * flow. Be quiet just in case. */
@@ -210,6 +219,21 @@ rl_register_req_fill(struct rl_kmsg_appl_register *req, uint32_t event_id,
         memset(req, 0, sizeof(*req));
         return -1; /* Out of memory. */
     }
+
+    PD("Called rl_register_req_fill with:  %s %s %d %d %d %d %d %d %d %d %d %d %d\n",
+        req->appl_name,
+        req->dif_name,
+        req->hdr.event_id,
+        req->hdr.msg_type,
+        req->hdr.version,
+        req->pad1[0],
+        req->pad1[1],
+        req->pad1[2],
+        req->pad1[3],
+        req->pad1[4],
+        req->pad1[5],
+        req->pad1[6],
+        req->reg);
 
     return 0;
 }
@@ -334,7 +358,7 @@ out:
     return ret;
 }
 
-static int
+int
 rina_register_common(int fd, const char *dif_name, const char *local_appl,
                      int flags, int reg)
 {
@@ -356,26 +380,26 @@ rina_register_common(int fd, const char *dif_name, const char *local_appl,
 
     ret = rl_register_req_fill(&req, RINA_REG_EVENT_ID, dif_name, reg,
                                local_appl);
-    if (ret) {
-        errno = ENOMEM;
-        goto out;
-    }
+    //if (ret) {
+    //    errno = ENOMEM;
+    //    goto out;
+    //}
 
     /* Issue the request ad wait for the response. */
     ret = rl_write_msg(wfd, RLITE_MB(&req), 1);
-    rl_msg_free(rl_ker_numtables, RLITE_KER_MSG_MAX, RLITE_MB(&req));
-    if (ret < 0) {
-        goto out;
-    }
+    //rl_msg_free(rl_ker_numtables, RLITE_KER_MSG_MAX, RLITE_MB(&req));
+    //if (ret < 0) {
+    //    goto out;
+    //}
 
-    if (flags & RINA_F_NOWAIT) {
-        return wfd; /* Return the file descriptor to wait on. */
-    }
+    //if (flags & RINA_F_NOWAIT) {
+    //    return wfd; /* Return the file descriptor to wait on. */
+    //}
 
-    /* Wait for the operation to complete right now. */
-    return rina_register_wait(fd, wfd);
-out:
-    close(wfd);
+    ///* Wait for the operation to complete right now. */
+    //return rina_register_wait(fd, wfd);
+//out:
+    //close(wfd);
 
     return ret;
 }

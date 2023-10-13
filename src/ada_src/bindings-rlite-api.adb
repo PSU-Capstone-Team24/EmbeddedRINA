@@ -20,6 +20,14 @@ package body Bindings.Rlite.API is
       return OS.Open_Read ("/dev/rlite", OS.Binary);
    end RINA_Open;
 
+   --  int rina_close (void)
+   --  Closes a RINA file descriptor
+   -- This exists just for sematic purposes, is redundant with OS.Close
+   procedure RINA_Close(fd : OS.File_Descriptor) is
+   begin
+      OS.Close (fd);
+   end RINA_Close;
+   
    --  int rina_register(int fd,
    --                    const char *dif_name,
    --                    const char *local_appl
