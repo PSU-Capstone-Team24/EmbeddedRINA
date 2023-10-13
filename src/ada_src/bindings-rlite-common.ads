@@ -12,6 +12,22 @@ package Bindings.Rlite.Common is
    --  type Unsigned_64 is range 0 .. 2**64;
    --  pragma Convention (C, Unsigned_64);
 
+   --  64-bit type defs
+   -- type Rlm_Addr_T is new Unsigned_64;
+
+   type Rlm_Addr_T is new Unsigned_32;
+   type Rlm_Qosid_T is new Unsigned_32;
+
+   --  Match values for PDUFT entries.
+   type Rl_PCI_Match is record
+      dst_addr    : Rlm_Addr_T;
+      src_addr    : Rlm_Addr_T;
+      dst_cepid   : Rlm_Qosid_T;
+      src_cepid   : Rlm_Qosid_T;
+      qos_id      : Rlm_Qosid_T;
+      pad2        : Rlm_Qosid_T;
+   end record;
+
    --  Record to specify the flow QoS parameters asked by
    --  the application issuing a flow allocation request.
    type RINA_Flow_Spec is record
@@ -45,6 +61,21 @@ package Bindings.Rlite.Common is
    type Rlm_Cepid_T  is new Unsigned_32;
    type Rlm_Qosid_T  is new Unsigned_32;
 
+   type Rl_Flow_Config_Pad1 is array(0 .. 5) of Unsigned_8;
+   type Rl_Flow_Config_Pad2 is array(0 .. 2) of Unsigned_16;
+   type Rl_Flow_Config is record
+      Msg_Boundaries    : Unsigned_8;
+      In_Order_Delivery : Unsigned_8;
+      Pad1              : Rl_Flow_Config_Pad1;
+      Max_Sdu_Gap       : Rlm_Seq_T;
+      
+      --  Currently used by shim-tcp4 and shim-udp4
+      Fd                : Integer_32;
+      Inet_Ip           : Unsigned_32;
+      Inet_Port         : Unsigned_16;
+      Pad2              : Rl_Flow_Config_Pad2;
+   end record;
+   
    type Pci_Sizes_Pad1 is array(1..3) of Unsigned_16;
    type Pci_Sizes is record
       Addr : Unsigned_16;
