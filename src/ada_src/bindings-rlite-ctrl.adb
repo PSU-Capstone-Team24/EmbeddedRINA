@@ -1,43 +1,11 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
-with Interfaces.C.Strings;
 with Bindings.Rlite.API;
-with Bindings.Rlite.Kernel_Msg;
 
 with Ada.Text_IO;
 
-with System;
-
 package body Bindings.Rlite.Ctrl is
-   --  function Rl_Register_Req_Fill (req : in out Bindings.Rlite.Kernel_Msg.Rl_Kmsg_Appl_Register;
-   --  event_id : Unsigned_32;
-   --  dif_name : String;
-   --  reg : Unsigned_8;
-   --  appl_name: String) return Integer is
-   --  begin
-   --     req.Hdr.Msg_Type  := Bindings.Rlite.Common.Rl_Msg_T(Bindings.Rlite.Kernel_Msg.RLITE_KER_APPL_REGISTER);
-   --     req.Hdr.Event_Id  := event_id;
-   --     req.Dif_Name      := Interfaces.C.Strings.New_String (dif_name);
-   --     req.Reg           := reg;
-   --     req.Appl_Name     := Interfaces.C.Strings.New_String (appl_name);
-   --
-   --     return 0;
-   --  end Rl_Register_Req_Fill;
-   --
-   function Rl_Register_Req_Fill
-     (req : Bindings.Rlite.Kernel_Msg.Rl_Kmsg_Appl_Register;
-      event_id : Unsigned_32;
-      dif_name : Interfaces.C.Strings.chars_ptr;
-      reg : Unsigned_8;
-      appl_name : Interfaces.C.Strings.chars_ptr) return Integer;
-   pragma Import (C, Rl_Register_Req_Fill, "rl_register_req_fill");
-
-   function Rl_Write_Msg
-     (rfd : Integer;
-      msg : System.Address;
-      quiet : Integer) return Integer;
-   pragma Import (C, Rl_Write_Msg, "rl_write_msg");
 
    function RINA_Register_Common (fd : OS.File_Descriptor;
       dif_name : String;
