@@ -15,8 +15,14 @@ package Bindings.Rlite.Common is
    --  64-bit type defs
    -- type Rlm_Addr_T is new Unsigned_64;
 
-   type Rlm_Addr_T is new Unsigned_32;
-   type Rlm_Qosid_T is new Unsigned_32;
+   --  Maximum sizes for data transfer constants, to be used in CDAP messages,
+   --  user/kernel interfaces and the management layer in general
+   --  TODO: No unsigned 64 bit type available in Ada. Reinvestigate if this will be an issue
+   type Rlm_Addr_T   is new Unsigned_32;
+   type Rlm_Seq_T    is new Unsigned_32;
+   type Rlm_Pdulen_T is new Unsigned_32;
+   type Rlm_Cepid_T  is new Unsigned_32;
+   type Rlm_Qosid_T  is new Unsigned_32;
 
    --  Match values for PDUFT entries.
    type Rl_PCI_Match is record
@@ -51,15 +57,6 @@ package Bindings.Rlite.Common is
       --  Max jitter in microseconds
       Max_Jitter : Unsigned_32;
    end record;
-
-   --  Maximum sizes for data transfer constants, to be used in CDAP messages,
-   --  user/kernel interfaces and the management layer in general
-   --  TODO: No unsigned 64 bit type available in Ada. Reinvestigate if this will be an issue
-   type Rlm_Addr_T   is new Unsigned_32;
-   type Rlm_Seq_T    is new Unsigned_32;
-   type Rlm_Pdulen_T is new Unsigned_32;
-   type Rlm_Cepid_T  is new Unsigned_32;
-   type Rlm_Qosid_T  is new Unsigned_32;
 
    type Rl_Flow_Config_Pad1 is array(0 .. 5) of Unsigned_8;
    type Rl_Flow_Config_Pad2 is array(0 .. 2) of Unsigned_16;
