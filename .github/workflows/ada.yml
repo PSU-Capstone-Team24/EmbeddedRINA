@@ -19,7 +19,7 @@ jobs:
       run: >
         sudo apt-get update &&
         sudo apt-get install gnat gprbuild &&
-        sudo apt-get install gcc g++ libprotobuf-dev protobuf-compiler cmake linux-headers-$(uname -r) python swig wpasupplicant hostapd &&
+        sudo apt-get install gcc g++ libprotobuf-dev protobuf-compiler cmake linux-headers-$(uname -r) python-is-python3 swig wpasupplicant hostapd &&
         git clone https://github.com/vmaffione/rlite.git &&
         cd rlite &&
         sudo make &&
