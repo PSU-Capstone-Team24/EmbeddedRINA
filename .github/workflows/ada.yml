@@ -22,6 +22,7 @@ jobs:
         sudo apt-get install gcc g++ libprotobuf-dev protobuf-compiler cmake linux-headers-$(uname -r) python-is-python3 swig wpasupplicant hostapd &&
         git clone https://github.com/vmaffione/rlite.git &&
         cd rlite &&
+        ./configure &&
         sudo make &&
         sudo make install depmod
 
