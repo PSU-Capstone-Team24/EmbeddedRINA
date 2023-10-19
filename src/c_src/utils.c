@@ -280,6 +280,10 @@ rl_msg_serlen(struct rl_msg_layout *numtables, size_t num_entries,
 
     ret = numtables[msg->hdr.msg_type].copylen;
 
+    // MT: TODO: DEBUG ONLY!! DELETE BELOW
+    PD("%d msg_type, %d size_t, %d eventid, %d copylen, %d strings\n", msg->hdr.msg_type, (int)num_entries, msg->hdr.event_id, ret, numtables[msg->hdr.msg_type].strings);
+    // MT: TODO: DEBUG ONLY!! DELETE ABOVE
+
     name = (struct rina_name *)(((void *)msg) + ret);
     for (i = 0; i < numtables[msg->hdr.msg_type].names; i++, name++) {
         ret += rina_name_serlen(name);

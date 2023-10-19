@@ -17,12 +17,19 @@ package Bindings.Rlite.Ctrl is
    flags : Integer;
    reg : Unsigned_8) return OS.File_Descriptor;
 
+   --  unsigned int rl_msg_serlen(struct rl_msg_layout *numtables, size_t num_entries,
+   --                          const struct rl_msg_base *msg);
+   function Rl_Msg_Serlen
+     (numtables : System.Address;
+      num_entries : Natural;
+      msg : System.Address) return Natural;
+   pragma Import (C, Rl_Msg_Serlen, "rl_msg_serlen");
+   
    --  int rl_write_msg(int rfd, const struct rl_msg_base *msg, int quiet);
    function Rl_Write_Msg
-     (rfd : Integer;
+     (rfd : OS.File_Descriptor;
       msg : System.Address;
-      quiet : Integer) return Integer;
-   pragma Import (C, Rl_Write_Msg, "rl_write_msg");
+      quiet : Integer) return OS.File_Descriptor;
 
    --  void rl_msg_free(struct rl_msg_layout *numtables, size_t num_entries,
    --                   struct rl_msg_base *msg);
@@ -37,7 +44,7 @@ package Bindings.Rlite.Ctrl is
       event_id : Unsigned_32;
       dif_name : Interfaces.C.Strings.chars_ptr;
       reg : Unsigned_8;
-      appl_name : Interfaces.C.Strings.chars_ptr) return Integer;
+      appl_name : Interfaces.C.Strings.chars_ptr) return OS.File_Descriptor;
    pragma Import (C, Rl_Register_Req_Fill, "rl_register_req_fill");
 
 end Bindings.Rlite.Ctrl;

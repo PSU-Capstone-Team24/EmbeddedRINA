@@ -15,6 +15,7 @@ package Bindings.Rlite.Kernel_Msg is
    --  Message types, must be listed alternating requests with corresponding responses
    --  MT:  These were originally anonymous enums in C,
    --       converting these to const integers for now
+   RLITE_DUMMY                      : constant Rl_Msg_T := 0;
    RLITE_KER_IPCP_CREATE            : constant Rl_Msg_T := 1;
    RLITE_KER_IPCP_CREATE_RESP       : constant Rl_Msg_T := 2;
    RLITE_KER_IPCP_DESTROY           : constant Rl_Msg_T := 3;
@@ -274,6 +275,17 @@ package Bindings.Rlite.Kernel_Msg is
    --  (Application --> Kernel) message to flush the PDUFT of an IPC Process.
    subtype Rl_Kmsg_Ipcp_Pduft_Flush is Rl_Kmsg_IPCP_Create_Resp;
 
+   --  uipcp (Application --> Kernel) to tell the kernel that this event
+   --  loop corresponds to an uipcp
+   type Rl_Kmsg_Ipcp_Uipcp_Set_Pad1 is array (0 .. 2) of Unsigned_16;
+   type Rl_Kmsg_Ipcp_Uipcp_Set is record
+      Hdr         : Common.Rl_Msg_Hdr;
+      Ipcp_Id     : Rl_Ipcp_Id_T;
+      Pad1        : Rl_Kmsg_Ipcp_Uipcp_Set_Pad1;
+   end record;
+
+   subtype Rl_Kmsg_Ipcp_Uipcp_Wait is Rl_Kmsg_Ipcp_Uipcp_Set;
+
    --  (Application --> Kernel) to tell the kernel that a flow allocation request has arrived.
    type RL_Kmsg_Uipcp_Fa_Req_Arrived is record
       Hdr         : Common.Rl_Msg_Hdr;
@@ -290,5 +302,112 @@ package Bindings.Rlite.Kernel_Msg is
       --  Requesting application
       Remote_Appl : Interfaces.C.Strings.chars_ptr;
    end record;
+
+   --  uipcp (Application --> Kernel) to tell the kernel that a flow
+   --  allocation response has arrived
+   type Rl_Kmsg_Uipcp_Fa_Resp_Arrived is record
+      Hdr         : Common.Rl_Msg_Hdr;
+      Ipcp_Id     : Common.Rl_IPCP_Id_T;
+      Local_Port  : Common.Rl_Port_T;
+      Remote_Port : Common.Rl_Port_T;
+      Response    : Unsigned_8;
+      Pad1        : Unsigned_8;
+      Remote_Cep  : Common.Rlm_Cepid_T;
+      Qos_Id      : Common.Rlm_Cepid_T;
+      Remote_Addr : Common.Rlm_Addr_T;
+      Flowcfg     : Common.Rl_Flow_Config;
+   end record;
+
+   --  uipcp (Application --> Kernel) to update the configuration
+   --  of a flow
+   type Rl_Kmsg_Flow_Cfg_Update is record
+      Hdr         : Common.Rl_Msg_Hdr;
+      Ipcp_Id     : Common.Rl_IPCP_Id_T;
+      Port_Id     : Common.Rl_Port_T;
+      Pad1        : Unsigned_32;
+      Flowcfg     : Common.Rl_Flow_Config;
+   end record;
+
+   --  uipcp (Application <-- Kernel) to inform an uipcp that
+   --  a flow has been deallocated locally
+   type Rl_Kmsg_Flow_Deallocated is record
+      Hdr            : Common.Rl_Msg_Hdr;
+      Ipcp_Id        : Common.Rl_IPCP_Id_T;
+      Local_Port_Id  : Common.Rl_Port_T;
+      Remote_Port_Id : Common.Rl_Port_T;
+      Pad1           : Unsigned_16;
+      Remote_Addr    : Common.Rlm_Addr_T;
+   end record;
+   
+   --  uipcp (Application --> Kernel) message to ask
+   --  for a flow to be deallocated
+   type Rl_Kmsg_Flow_Dealloc is record
+      Hdr         : Common.Rl_Msg_Hdr;
+      Ipcp_Id     : Common.Rl_IPCP_Id_T;
+      Port_Id     : Common.Rl_Port_T;
+
+      --  Unique id of the flow to deallocate, used to avoid
+      --  accidental removal of different flows reusing the
+      --  same port-id
+      Uid         : Unsigned_32;
+   end record;
+
+   --  (Application --> Kernel) message to ask for
+   --  statistics of a given flow
+   type Rl_Kmsg_Flow_Stats_Req_Pad1 is array (0 .. 2) of Unsigned_16;
+   type Rl_Kmsg_Flow_Stats_Req is record
+      Hdr         : Common.Rl_Msg_Hdr;
+      Port_Id     : Common.Rl_Port_T;
+      Pad1        : RL_Kmsg_Flow_Stats_Req_Pad1;
+   end record;
+
+   --  (Application <-- Kernel) message to report statistics
+   --  about a given flow.
+   type Rl_Kmsg_Flow_Stats_Resp is record
+      Hdr         : Common.Rl_Msg_Hdr;
+      Stats       : Common.Rl_Flow_Stats;
+      Dtp         : Common.Rl_Flow_Dtp;
+   end record;
+
+   --  (Application --> Kernel) message to ask an IPCP if a given
+   --  QoS can be supported
+   type Rl_Kmsg_Ipcp_Qos_Supported_Pad1 is array (0 .. 2) of Unsigned_16;
+   type Rl_Kmsg_Ipcp_Qos_Supported is record
+      Hdr         : Common.Rl_Msg_Hdr;
+      Ipcp_Id     : Common.Rl_IPCP_Id_T;
+      Pad1        : Rl_Kmsg_Ipcp_Config_Pad1;
+      Flowspec    : Common.RINA_Flow_Spec;
+   end record;
+
+   --  (Application --> Kernel) message to ask for
+   --  statistics of a given IPCP RMT.
+   type Rl_Kmsg_Ipcp_Stats_Req_Pad1 is array (0 .. 2) of Unsigned_16;
+   type Rl_Kmsg_Ipcp_Stats_Req is record
+      Hdr         : Common.Rl_Msg_Hdr;
+      Ipcp_Id     : Common.Rl_IPCP_Id_T;
+      Pad1        : Rl_Kmsg_Ipcp_Stats_Req_Pad1;
+   end record;
+
+   --  (Application <-- Kernel) message to report statistics
+   --  about a given IPCP RMT.
+   type Rl_Kmsg_Ipcp_Stats_Resp is record
+      Hdr         : Common.Rl_Msg_Hdr;
+      Stats       : Common.Rl_Ipcp_Stats;
+   end record;
+
+   --  MT: TODO: Re-enable this when Rl_Msg_Array_Field is implemented
+   --  (Application --> Kernel) message to configure a WRR PDU scheduler.
+   --  type Rl_Kmsg_Ipcp_Sched_WRR is record
+   --     Ipcp_Hdr    : Common.Rl_Msg_Ipcp;
+
+      --  Max queue size in bytes.
+   --     Max_Queue_Size : Unsigned_32;
+
+      --  Quantum size in bytes.
+   --     Quantum     : Unsigned_32;
+
+      --  WRR weights are dwords.
+   --     Weights     : Common.Rl_Msg_Array_Field;
+   --  end record;
 
 end Bindings.Rlite.Kernel_Msg;

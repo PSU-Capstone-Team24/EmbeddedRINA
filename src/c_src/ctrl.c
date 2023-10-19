@@ -94,6 +94,11 @@ rl_write_msg(int rfd, const struct rl_msg_base *msg, int quiet)
 
     /* Serialize the message. */
     serlen = rl_msg_serlen(rl_ker_numtables, RLITE_KER_MSG_MAX, msg);
+    
+    // MT: TODO: DELETE BELOW!!!
+    PD("Serlen: %d -- sizeof(buf): %d\n", serlen, sizeof(serbuf));
+    // MT: TODO: DELETE ABOVE!!!
+
     if (serlen > sizeof(serbuf)) {
         PE("Serialized message would be too long [%u]\n", serlen);
         errno = EINVAL;
