@@ -8,30 +8,47 @@ package Bindings.Rlite.Common is
    type Rl_Port_T    is new Unsigned_16;
    type Rl_Msg_T     is new Unsigned_16;
 
-   --  MT: TODO: Temp disable
-   --  type Unsigned_64 is range 0 .. 2**64;
-   --  pragma Convention (C, Unsigned_64);
+   --  MT: TODO: Temp set to 2**63 until I can get this to compile lol
+   type Unsigned_64 is range 0 .. 2**63 - 1;
+   pragma Convention (C, Unsigned_64);
 
    --  64-bit type defs
    -- type Rlm_Addr_T is new Unsigned_64;
 
    --  Maximum sizes for data transfer constants, to be used in CDAP messages,
    --  user/kernel interfaces and the management layer in general
-   --  TODO: No unsigned 64 bit type available in Ada. Reinvestigate if this will be an issue
-   type Rlm_Addr_T   is new Unsigned_32;
-   type Rlm_Seq_T    is new Unsigned_32;
-   type Rlm_Pdulen_T is new Unsigned_32;
-   type Rlm_Cepid_T  is new Unsigned_32;
-   type Rlm_Qosid_T  is new Unsigned_32;
+   type Rlm_Addr_T   is new Unsigned_64;
+   type Rlm_Seq_T    is new Unsigned_64;
+   type Rlm_Pdulen_T is new Unsigned_64;
+   type Rlm_Cepid_T  is new Unsigned_64;
+   type Rlm_Qosid_T  is new Unsigned_64;
+
+   -- Header for all rLite messages, all the possible messages begin with this
+   type Rl_Msg_Hdr is record
+      Version  : Unsigned_16;
+      Msg_Type : Rl_Msg_T;
+      Event_Id : Unsigned_32;
+   end record;
+
+   type Rl_Msg_Base is record
+      Hdr : Rl_Msg_Hdr;
+   end record;
 
    --  Match values for PDUFT entries.
    type Rl_PCI_Match is record
-      dst_addr    : Rlm_Addr_T;
-      src_addr    : Rlm_Addr_T;
-      dst_cepid   : Rlm_Qosid_T;
-      src_cepid   : Rlm_Qosid_T;
-      qos_id      : Rlm_Qosid_T;
-      pad2        : Rlm_Qosid_T;
+      Dst_Addr    : Rlm_Addr_T;
+      Src_Addr    : Rlm_Addr_T;
+      Dst_Cepid   : Rlm_Qosid_T;
+      Src_Cepid   : Rlm_Qosid_T;
+      Qos_Id      : Rlm_Qosid_T;
+      Pad2        : Rlm_Qosid_T;
+   end record;
+
+   --  Base message augmented with an ipcp_id
+   type Rl_Msg_Ipcp is record
+      Hdr      : Rl_Msg_Hdr;
+      Ipcp_Id  : Rl_IPCP_Id_T;
+      Pad1     : Unsigned_16;
    end record;
 
    --  Record to specify the flow QoS parameters asked by
@@ -58,6 +75,81 @@ package Bindings.Rlite.Common is
       Max_Jitter : Unsigned_32;
    end record;
 
+   --  Statistics for an rl_io device
+   type Rl_Flow_Stats is record
+      tx_pkt         : Unsigned_64;
+      tx_byte        : Unsigned_64;
+      rx_pkt         : Unsigned_64;
+      rx_byte        : Unsigned_64;
+      rx_overrun_pkt : Unsigned_64;
+      rx_overrun_byte : Unsigned_64;
+   end record;
+
+   --  RMT statistics. All counters must be 64 bits wide
+   type Rl_Rmt_Stats is record
+      Fwd_Pkt        : Unsigned_64;
+      Fwd_Byte       : Unsigned_64;
+      Queued_Pkt     : Unsigned_64;
+      Queue_Drop     : Unsigned_64;
+      Noroute_Drop   : Unsigned_64;
+      Csum_Drop      : Unsigned_64;
+      Ttl_Drop       : Unsigned_64;
+      Noflow_Drop    : Unsigned_64;
+      Other_Drop     : Unsigned_64;
+   end record;
+
+   --  IPCP statistics. All counters must be 64 bits wide. 
+   type RL_Ipcp_Stats is record
+      TX_Pkt  : Unsigned_64;
+      TX_Byte : Unsigned_64;
+      TX_Err  : Unsigned_64;
+      
+      RX_Pkt  : Unsigned_64;
+      RX_Byte : Unsigned_64;
+      RX_Err  : Unsigned_64;
+      
+      RTX_Pkt : Unsigned_64;
+      RTX_Byte: Unsigned_64;
+      
+      Rmt     : Common.Rl_Rmt_Stats;
+   end record;
+
+   --  DTP state exported to userspace
+   type Rl_Flow_DTP is record
+      -- Sender state
+      Snd_LWE              : RLM_Seq_T;
+      Snd_RWE              : RLM_Seq_T;
+      Next_Seq_Num_To_Use  : RLM_Seq_T;
+      Last_Seq_Num_Sent    : RLM_Seq_T;
+      Last_Ctrl_Seq_Num_Rcvd : RLM_Seq_T;
+      CWQ_Len              : Unsigned_32;
+      Max_CWQ_Len          : Unsigned_32;
+      RTXQ_Len             : Unsigned_32;
+      Max_RTXQ_Len         : Unsigned_32;
+
+      -- Estimated round trip time, in usecs
+      RTT                  : Unsigned_32;
+
+      -- Standard deviation in usecs
+      RTT_Stddev           : Unsigned_32;
+
+      -- Congestion window size, in PDUs
+      CGWin                : Unsigned_32;
+      Pad1                 : Unsigned_32;
+
+      -- Receiver state
+      Rcv_LWE              : RLM_Seq_T;
+      Rcv_Next_Seq_Num     : RLM_Seq_T;
+      Rcv_RWE              : RLM_Seq_T;
+      Max_Seq_Num_Rcvd     : RLM_Seq_T;
+      Last_LWE_Sent        : RLM_Seq_T;
+      Last_Seq_Num_Acked   : RLM_Seq_T;
+      Next_Snd_Ctl_Seq     : Unsigned_32;
+      Seqq_Len             : Unsigned_32;
+      Pad2                 : Unsigned_32;
+   end record;
+
+
    type Rl_Flow_Config_Pad1 is array(0 .. 5) of Unsigned_8;
    type Rl_Flow_Config_Pad2 is array(0 .. 2) of Unsigned_16;
    type Rl_Flow_Config is record
@@ -81,17 +173,6 @@ package Bindings.Rlite.Common is
       Cepid : Unsigned_16;
       Qosid : Unsigned_16;
       Pad1 : Pci_Sizes_Pad1;
-   end record;
-
-   -- Header for all rLite messages, all the possible messages begin with this
-   type Rl_Msg_Hdr is record
-      Version  : Unsigned_16;
-      Msg_Type : Rl_Msg_T;
-      Event_Id : Unsigned_32;
-   end record;
-
-   type Rl_Msg_Base is record
-      Hdr : Rl_Msg_Hdr;
    end record;
 
 end Bindings.Rlite.Common;
