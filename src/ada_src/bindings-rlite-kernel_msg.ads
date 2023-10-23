@@ -56,8 +56,7 @@ package Bindings.Rlite.Kernel_Msg is
    RLITE_KER_MSG_MAX                : constant Rl_Msg_T := 38;
 
    --  (Application --> Kernel) message to create a new IPC process.
-   type Rl_Kmsg_IPCP_Create is record
-      Hdr      : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_IPCP_Create is new Common.Rl_Msg_Base with record
       Name     : C.Strings.chars_ptr;
       DIF_Type : C.Strings.chars_ptr;
       DIF_Name : C.Strings.chars_ptr;
@@ -67,23 +66,20 @@ package Bindings.Rlite.Kernel_Msg is
    subtype rl_kmsg_pad1_array is C.char_array (0 .. 5);
 
    --  (Kernel --> Application) message to inform the application about the ID of a new IPC process.
-   type Rl_Kmsg_IPCP_Create_Resp is record
-      Hdr      : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_IPCP_Create_Resp is new Common.Rl_Msg_Base with record
       IPCP_Id  : Common.Rl_IPCP_Id_T;
       Pad1     : rl_kmsg_pad1_array;
    end record;
 
    --  This message struct is the same as the above ^
    --  (Application --> Kernel) message to destroy an IPC process.
-   type Rl_Kmsg_IPCP_Destroy is record
-      Hdr      : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_IPCP_Destroy is new Common.Rl_Msg_Base with record
       IPCP_Id  : Common.Rl_IPCP_Id_T;
       Pad1     : rl_kmsg_pad1_array;
    end record;
 
    --  (Application --> Kernel) message to ask for a list of flows.
-   type Rl_Kmsg_Flow_Fetch is record
-      Hdr      : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Flow_Fetch is new Common.Rl_Msg_Base with record
 
       --  If ipcp_id != ~0 filter flows by ipcp_id, otherwise fetch all of them.
       IPCP_Id  : Common.Rl_IPCP_Id_T;
@@ -91,8 +87,7 @@ package Bindings.Rlite.Kernel_Msg is
    end record;
 
    --  (Application <-- Kernel) message to fetch flow information.
-   type Rl_Kmsg_Flow_Fetch_Resp is record
-      Hdr : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Flow_Fetch_Resp is new Common.Rl_Msg_Base with record
 
        --  MT: We can't use the End keyword, so suffixing it with a 1 for now
       End1        : Unsigned_8;
@@ -108,8 +103,7 @@ package Bindings.Rlite.Kernel_Msg is
    subtype Rl_Kmsg_Reg_Fetch is Rl_Kmsg_Flow_Fetch;
 
    -- MT: TODO: Translate Pending into a boolean?
-   type Rl_Kmsg_Reg_Fetch_Resp is record
-      Hdr : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Reg_Fetch_Resp is new Common.Rl_Msg_Base with record
 
       End1     : Unsigned_8;  --  MT: We can't use the End keyword, so suffixing it with a 1 for now
       Pending  : Unsigned_8; -- Is registration pending?
@@ -124,8 +118,7 @@ package Bindings.Rlite.Kernel_Msg is
    Rl_IPCP_Update_Del      : constant Integer := 4;
 
    --  (Application <-- Kernel) message to report updated IPCP information.
-   type Rl_Kmsg_Ipcp_Update is record
-      Hdr : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Ipcp_Update is new Common.Rl_Msg_Base with record
 
       Update_Type : Unsigned_8;
       Pad1        : Unsigned_8;
@@ -146,8 +139,7 @@ package Bindings.Rlite.Kernel_Msg is
    Rl_Flow_State_Up     : constant Integer := 1;
 
    --  (Application <-- Kernel) message to report flow up/down state.
-   type Rl_Kmsg_Flow_State is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Flow_State is new Common.Rl_Msg_Base with record
       Ipcp_Id     : Rl_Ipcp_Id_T;
       Local_Port  : Common.Rl_Port_T;
       Flow_State  : Unsigned_16;
@@ -155,8 +147,7 @@ package Bindings.Rlite.Kernel_Msg is
    end record;
 
    -- (Application --> Kernel) to register a name.
-   type Rl_Kmsg_Appl_Register is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Appl_Register is new Common.Rl_Msg_Base with record
       Reg         : Unsigned_8;
       Pad1        : rl_kmsg_pad1_array;
       Appl_Name   : Interfaces.C.Strings.chars_ptr;
@@ -164,8 +155,7 @@ package Bindings.Rlite.Kernel_Msg is
    end record;
 
   --  (Application <-- Kernel) report the result of (un)registration.  
-   type Rl_Kmsg_Appl_Register_Resp is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Appl_Register_Resp is new Common.Rl_Msg_Base with record
       Ipcp_Id     : Rl_Ipcp_Id_T;
       Reg         : Unsigned_8;
       Response    : Unsigned_8;
@@ -174,16 +164,14 @@ package Bindings.Rlite.Kernel_Msg is
    end record;
 
   --  (Application --> Kernel) to finalize a registration operation.  
-   type Rl_Kmsg_Appl_Move is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Appl_Move is new Common.Rl_Msg_Base with record
       Ipcp_Id     : Rl_Ipcp_Id_T;
       Pad1        : Unsigned_16;
       Fd          : Integer_32;
    end record;
 
   --  (Application --> Kernel) to initiate a flow allocation.  
-   type Rl_Kmsg_Fa_Req is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Fa_Req is new Common.Rl_Msg_Base with record
       Flowspec    : Common.RINA_Flow_Spec;
       Upper_Ipcp_Id : Rl_Ipcp_Id_T;
       Local_Port  : Common.Rl_Port_T;
@@ -197,16 +185,14 @@ package Bindings.Rlite.Kernel_Msg is
 
    --  (Application <-- Kernel) to notify about an incoming flow response.
    type Rl_Kmsg_Fa_Resp_Arrived_Pad1_Arr is array (0 .. 4) of Unsigned_8;
-   type Rl_Kmsg_Fa_Resp_Arrived is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Fa_Resp_Arrived is new Common.Rl_Msg_Base with record
       Port_Id     : Common.Rl_Port_T;
       Response    : Unsigned_8;
       Pad1        : Rl_Kmsg_Fa_Resp_Arrived_Pad1_Arr;
    end record;
 
    --  (Application <-- Kernel) to notify an incoming flow request.
-   type Rl_Kmsg_Fa_Req_Arrived is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Fa_Req_Arrived is new Common.Rl_Msg_Base with record
       Kevent_Id   : Unsigned_32;
       Port_Id     : Common.Rl_Port_T;
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
@@ -217,8 +203,7 @@ package Bindings.Rlite.Kernel_Msg is
    end record;
 
    --  (Application --> Kernel) to respond to an incoming flow request.
-   type RL_Kmsg_Fa_Resp is record
-      Hdr            : Common.Rl_Msg_Hdr;
+   type RL_Kmsg_Fa_Resp is new Common.Rl_Msg_Base with record
       Kevent_Id      : Unsigned_32;
       --  The ipcp_id field is currently unused, since port-id are currently
       --  global, while the architecture says they should be unique only per
@@ -235,8 +220,7 @@ package Bindings.Rlite.Kernel_Msg is
 
    --  (Application --> Kernel) to configure an IPC process.
    type RL_Kmsg_Ipcp_Config_Pad1 is array(0 .. 2) of Unsigned_16;
-   type RL_Kmsg_Ipcp_Config is record
-      Hdr      : Common.Rl_Msg_Hdr;
+   type RL_Kmsg_Ipcp_Config is new Common.Rl_Msg_Base with record
       Ipcp_Id  : Common.Rl_IPCP_Id_T;
       Pad1     : RL_Kmsg_Ipcp_Config_Pad1;
       Name     : Interfaces.C.Strings.chars_ptr;
@@ -245,23 +229,20 @@ package Bindings.Rlite.Kernel_Msg is
 
    --  (Application --> Kernel) to ask for IPCP config value.
    type RL_Kmsg_Ipcp_Config_Get_Req_Pad1 is array(0 .. 2) of Unsigned_16;
-   type RL_Kmsg_Ipcp_Config_Get_Req is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type RL_Kmsg_Ipcp_Config_Get_Req is new Common.Rl_Msg_Base with record
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       Pad1        : RL_Kmsg_Ipcp_Config_Get_Req_Pad1;
       Param_Name  : Interfaces.C.Strings.chars_ptr;
    end record;
 
    --  (Application <-- Kernel) to return IPCP config value.
-   type RL_Kmsg_Ipcp_Config_Get_Resp is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type RL_Kmsg_Ipcp_Config_Get_Resp is new Common.Rl_Msg_Base with record
       Param_Value : Interfaces.C.Strings.chars_ptr;
    end record;
 
    -- (Application --> Kernel) to modify an IPCP PDUFT
    -- (PDU Forwarding Table) entry.
-   type RL_Kmsg_Ipcp_Pduft_Mod is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type RL_Kmsg_Ipcp_Pduft_Mod is new Common.Rl_Msg_Base with record
       --  The IPCP whose PDUFT is to be modified.
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       --  The local port where matching packets must be forwarded.
@@ -278,8 +259,7 @@ package Bindings.Rlite.Kernel_Msg is
    --  uipcp (Application --> Kernel) to tell the kernel that this event
    --  loop corresponds to an uipcp
    type Rl_Kmsg_Ipcp_Uipcp_Set_Pad1 is array (0 .. 2) of Unsigned_16;
-   type Rl_Kmsg_Ipcp_Uipcp_Set is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Ipcp_Uipcp_Set is new Common.Rl_Msg_Base with record
       Ipcp_Id     : Rl_Ipcp_Id_T;
       Pad1        : Rl_Kmsg_Ipcp_Uipcp_Set_Pad1;
    end record;
@@ -287,8 +267,7 @@ package Bindings.Rlite.Kernel_Msg is
    subtype Rl_Kmsg_Ipcp_Uipcp_Wait is Rl_Kmsg_Ipcp_Uipcp_Set;
 
    --  (Application --> Kernel) to tell the kernel that a flow allocation request has arrived.
-   type RL_Kmsg_Uipcp_Fa_Req_Arrived is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type RL_Kmsg_Uipcp_Fa_Req_Arrived is new Common.Rl_Msg_Base with record
       Kevent_Id   : Unsigned_32;
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       Remote_Port : Common.Rl_Port_T;
@@ -305,8 +284,7 @@ package Bindings.Rlite.Kernel_Msg is
 
    --  uipcp (Application --> Kernel) to tell the kernel that a flow
    --  allocation response has arrived
-   type Rl_Kmsg_Uipcp_Fa_Resp_Arrived is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Uipcp_Fa_Resp_Arrived is new Common.Rl_Msg_Base with record
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       Local_Port  : Common.Rl_Port_T;
       Remote_Port : Common.Rl_Port_T;
@@ -320,8 +298,7 @@ package Bindings.Rlite.Kernel_Msg is
 
    --  uipcp (Application --> Kernel) to update the configuration
    --  of a flow
-   type Rl_Kmsg_Flow_Cfg_Update is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Flow_Cfg_Update is new Common.Rl_Msg_Base with record
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       Port_Id     : Common.Rl_Port_T;
       Pad1        : Unsigned_32;
@@ -330,8 +307,7 @@ package Bindings.Rlite.Kernel_Msg is
 
    --  uipcp (Application <-- Kernel) to inform an uipcp that
    --  a flow has been deallocated locally
-   type Rl_Kmsg_Flow_Deallocated is record
-      Hdr            : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Flow_Deallocated is new Common.Rl_Msg_Base with record
       Ipcp_Id        : Common.Rl_IPCP_Id_T;
       Local_Port_Id  : Common.Rl_Port_T;
       Remote_Port_Id : Common.Rl_Port_T;
@@ -341,8 +317,7 @@ package Bindings.Rlite.Kernel_Msg is
    
    --  uipcp (Application --> Kernel) message to ask
    --  for a flow to be deallocated
-   type Rl_Kmsg_Flow_Dealloc is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Flow_Dealloc is new Common.Rl_Msg_Base with record
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       Port_Id     : Common.Rl_Port_T;
 
@@ -355,16 +330,14 @@ package Bindings.Rlite.Kernel_Msg is
    --  (Application --> Kernel) message to ask for
    --  statistics of a given flow
    type Rl_Kmsg_Flow_Stats_Req_Pad1 is array (0 .. 2) of Unsigned_16;
-   type Rl_Kmsg_Flow_Stats_Req is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Flow_Stats_Req is new Common.Rl_Msg_Base with record
       Port_Id     : Common.Rl_Port_T;
       Pad1        : RL_Kmsg_Flow_Stats_Req_Pad1;
    end record;
 
    --  (Application <-- Kernel) message to report statistics
    --  about a given flow.
-   type Rl_Kmsg_Flow_Stats_Resp is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Flow_Stats_Resp is new Common.Rl_Msg_Base with record
       Stats       : Common.Rl_Flow_Stats;
       Dtp         : Common.Rl_Flow_Dtp;
    end record;
@@ -372,8 +345,7 @@ package Bindings.Rlite.Kernel_Msg is
    --  (Application --> Kernel) message to ask an IPCP if a given
    --  QoS can be supported
    type Rl_Kmsg_Ipcp_Qos_Supported_Pad1 is array (0 .. 2) of Unsigned_16;
-   type Rl_Kmsg_Ipcp_Qos_Supported is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Ipcp_Qos_Supported is new Common.Rl_Msg_Base with record
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       Pad1        : Rl_Kmsg_Ipcp_Config_Pad1;
       Flowspec    : Common.RINA_Flow_Spec;
@@ -382,22 +354,20 @@ package Bindings.Rlite.Kernel_Msg is
    --  (Application --> Kernel) message to ask for
    --  statistics of a given IPCP RMT.
    type Rl_Kmsg_Ipcp_Stats_Req_Pad1 is array (0 .. 2) of Unsigned_16;
-   type Rl_Kmsg_Ipcp_Stats_Req is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Ipcp_Stats_Req is new Common.Rl_Msg_Base with record
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       Pad1        : Rl_Kmsg_Ipcp_Stats_Req_Pad1;
    end record;
 
    --  (Application <-- Kernel) message to report statistics
    --  about a given IPCP RMT.
-   type Rl_Kmsg_Ipcp_Stats_Resp is record
-      Hdr         : Common.Rl_Msg_Hdr;
+   type Rl_Kmsg_Ipcp_Stats_Resp is new Common.Rl_Msg_Base with record
       Stats       : Common.Rl_Ipcp_Stats;
    end record;
 
    --  MT: TODO: Re-enable this when Rl_Msg_Array_Field is implemented
    --  (Application --> Kernel) message to configure a WRR PDU scheduler.
-   --  type Rl_Kmsg_Ipcp_Sched_WRR is record
+   --  type Rl_Kmsg_Ipcp_Sched_WRR is new Common.Rl_Msg_Base with record
    --     Ipcp_Hdr    : Common.Rl_Msg_Ipcp;
 
       --  Max queue size in bytes.

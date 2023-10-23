@@ -18,6 +18,11 @@ package Bindings.Rlite.Utils is
         arrays    : Unsigned_32;
     end record;
 
+   type Rl_Msg_Buf_Field is record
+      Buf : System.Address;
+      Len : Unsigned_32;
+   end record;
+
    --  Kernel message type enums
    type RLITE_KER is (RLITE_DUMMY, RLITE_KER_IPCP_CREATE, RLITE_KER_IPCP_CREATE_RESP, RLITE_KER_IPCP_DESTROY,
                      RLITE_KER_APPL_REGISTER, RLITE_KER_APPL_REGISTER_RESP, RLITE_KER_FA_REQ,
@@ -34,7 +39,9 @@ package Bindings.Rlite.Utils is
                      RLITE_KER_IPCP_SCHED_PFIFO, RLITE_KER_MSG_MAX);
 
    --  Create our needed Ker_Numtables array
-   Rl_Ker_Numtables : array (RLITE_KER range <>) of Rl_Msg_Layout := (
+   type Rl_Ker_Numtables_Array is array (RLITE_KER range <>) of Rl_Msg_Layout;
+   
+   Rl_Ker_Numtables : Rl_Ker_Numtables_Array := (
       RLITE_DUMMY => (
          copylen => 0,
          names   => 0,

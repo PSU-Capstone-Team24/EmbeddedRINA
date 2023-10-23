@@ -2,8 +2,12 @@
 pragma Style_Checks (Off);
 
 with Interfaces; use Interfaces;
+with Interfaces.C;
+with Interfaces.C.Strings;
 
 package Bindings.Rlite.Common is
+   package C renames Interfaces.C;
+
    type Rl_IPCP_Id_T is new Unsigned_16;
    type Rl_Port_T    is new Unsigned_16;
    type Rl_Msg_T     is new Unsigned_16;
@@ -11,6 +15,18 @@ package Bindings.Rlite.Common is
    --  MT: TODO: Temp set to 2**63 until I can get this to compile lol
    type Unsigned_64 is range 0 .. 2**63 - 1;
    pragma Convention (C, Unsigned_64);
+
+   --  Application naming information:
+   --  Application Process Name
+   --  Application Process Instance
+   --  Application Entity Name
+   --  Application Entity Instance
+   type Rina_Name is record
+      Apn : C.Strings.chars_ptr;
+      Api : C.Strings.chars_ptr;
+      Aen : C.Strings.chars_ptr;
+      Aei : C.Strings.chars_ptr;
+   end record;
 
    --  64-bit type defs
    -- type Rlm_Addr_T is new Unsigned_64;
@@ -30,7 +46,7 @@ package Bindings.Rlite.Common is
       Event_Id : Unsigned_32;
    end record;
 
-   type Rl_Msg_Base is record
+   type Rl_Msg_Base is tagged record
       Hdr : Rl_Msg_Hdr;
    end record;
 

@@ -1,31 +1,52 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
-with Bindings.Rlite.API;
-with Bindings.Rlite.Utils;
-
+with Debug;
+with Interfaces.C;
 with Ada.Text_IO;
 
 package body Bindings.Rlite.Ctrl is
 
-   package Kernel_Msg renames Bindings.Rlite.Kernel_Msg;
-   package Utils renames Bindings.Rlite.Utils;
+   function Rl_Msg_Serlen
+     (Numtables : Utils.Rl_Ker_Numtables_Array;
+      Num_Entries : Natural;
+      Msg : Common.Rl_Msg_Base) return Natural is
+
+      Ret   : Natural;
+      Name  : Common.Rina_Name;
+      I     : Integer;
+   begin
+
+      if Natural(Msg.Hdr.Msg_Type) >= Num_Entries then
+         Debug.Print ("Invalid numtables access [msg_type=" & Common.Rl_Msg_T'Image(Msg.Hdr.Msg_Type) & "]");
+         return 0;
+      end if;
+
+      return 0;
+   end Rl_Msg_Serlen;
 
    function Rl_Write_Msg
-     (rfd : OS.File_Descriptor;
-      msg : System.Address;
-      quiet : Integer) return OS.File_Descriptor is
+     (Rfd : OS.File_Descriptor;
+      Msg : Common.Rl_Msg_Base;
+      Quiet : Integer) return OS.File_Descriptor is
 
-      type Ser_Buffer is array (0 .. 4096) of Character;
+      -- Serbuf contains 4096 chars
+      type Ser_Buffer is array (0 .. 4095) of Character;
       Ser_Len : Natural;
       Ret : Integer;
    begin
 
-      --  Serialize the message
-      Ser_Len := Rl_Msg_Serlen (Utils.Rl_Ker_Numtables'Address, Integer (Kernel_Msg.RLITE_KER_MSG_MAX), msg);
+      --  Get serialized message length for what we are trying to send
+      Ser_Len := Rl_Msg_Serlen (Utils.Rl_Ker_Numtables, Integer (Kernel_Msg.RLITE_KER_MSG_MAX), Msg);
 
-      --  MT: TODO: Finish this implementation, use Rl_Write_Msg_Binded for now
-      Ada.Text_IO.Put_Line ("Serlen: " & Natural'Image(Ser_Len));
+      --  Ada 'Size is in bits, account for this!
+      if Ser_Len * 8 > Ser_Buffer'Size then
+         Debug.Print ("Serialized message would be too long " & Integer'Image (Ser_Len * 8) & " > " & Integer'Image (Ser_Buffer'Size));
+         return OS.Invalid_FD;
+      end if;
+
+      --  Serialize the message
+      --  Ser_Len := Serialize_Rlite_Msg (Utils.Rl_Ker_Numtables'Address, Integer (Kernel_Msg.RLITE_KER_MSG_MAX), Ser_Buffer'Address, Msg);
       ret := 0;
 
       return OS.File_Descriptor (ret);
@@ -71,8 +92,7 @@ package body Bindings.Rlite.Ctrl is
          Ada.Text_IO.Put_Line ("Error filling registration request struct");
       end if;
 
-      --  MT: TODO: Fix this, these should be printing the same output
-      ret := Rl_Write_Msg (wfd, req'Address, 1);
+      ret := Rl_Write_Msg (wfd, req, 1);
 
       --  MT: TODO: Rl_Msg_Free implementation, check flags again and return rina_register_wait
       --  instead of a file descriptor to the result
