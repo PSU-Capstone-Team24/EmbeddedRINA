@@ -10,7 +10,6 @@ package Bindings.Rlite.Common is
 
    type Rl_IPCP_Id_T is new Unsigned_16;
    type Rl_Port_T    is new Unsigned_16;
-   type Rl_Msg_T     is new Unsigned_16;
 
    --  MT: TODO: Temp set to 2**63 until I can get this to compile lol
    type Unsigned_64 is range 0 .. 2**63 - 1;
@@ -39,17 +38,6 @@ package Bindings.Rlite.Common is
    type Rlm_Cepid_T  is new Unsigned_64;
    type Rlm_Qosid_T  is new Unsigned_64;
 
-   -- Header for all rLite messages, all the possible messages begin with this
-   type Rl_Msg_Hdr is record
-      Version  : Unsigned_16;
-      Msg_Type : Rl_Msg_T;
-      Event_Id : Unsigned_32;
-   end record;
-
-   type Rl_Msg_Base is tagged record
-      Hdr : Rl_Msg_Hdr;
-   end record;
-
    --  Match values for PDUFT entries.
    type Rl_PCI_Match is record
       Dst_Addr    : Rlm_Addr_T;
@@ -58,13 +46,6 @@ package Bindings.Rlite.Common is
       Src_Cepid   : Rlm_Qosid_T;
       Qos_Id      : Rlm_Qosid_T;
       Pad2        : Rlm_Qosid_T;
-   end record;
-
-   --  Base message augmented with an ipcp_id
-   type Rl_Msg_Ipcp is record
-      Hdr      : Rl_Msg_Hdr;
-      Ipcp_Id  : Rl_IPCP_Id_T;
-      Pad1     : Unsigned_16;
    end record;
 
    --  Record to specify the flow QoS parameters asked by
