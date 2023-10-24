@@ -7,11 +7,20 @@ with Bindings.Rlite.Kernel_Msg;
 with Bindings.Rlite.API;
 with Bindings.Rlite.Common;
 with Bindings.Rlite.Utils;
-
+with Bindings.Rlite.List;
 with System;
 with GNAT.OS_Lib;
 
 package Bindings.Rlite.Ctrl is
+   package List renames Bindings.Rlite.List;
+
+
+   type Sa_Pending_Item is record
+      handle : Integer;
+      req : Rlite.Kernel_Msg.Rl_Kmsg_Fa_Req_Arrived;
+      node : List.List_Head;
+   end record;
+
    --  OS Library Package
    package OS renames GNAT.OS_Lib;
 
@@ -45,4 +54,10 @@ package Bindings.Rlite.Ctrl is
        msg : System.Address);
    pragma Import (C, Rl_Msg_Free, "rl_msg_free");
 
+   function RINA_Flow_Accept(
+      fd          : OS.File_Descriptor;
+      remote_appl : String;
+      spec        : Bindings.Rlite.API.RINA_FLOW_SPEC;
+      flags       : Integer
+   ) return Os.File_Descriptor;
 end Bindings.Rlite.Ctrl;

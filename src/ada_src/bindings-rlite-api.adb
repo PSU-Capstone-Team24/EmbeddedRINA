@@ -43,4 +43,22 @@ package body Bindings.Rlite.API is
       return Ctrl.RINA_Register_Common (fd, dif_name, local_appl, flags, 1);
    end RINA_Register;
 
+   function RINA_Unregister (fd : OS.File_Descriptor;
+      dif_name : String;
+      local_appl : String;
+      flags : Integer
+   ) return OS.File_Descriptor is
+   begin
+      return Ctrl.RINA_Register_Common (fd, dif_name, local_appl, flags, 0);
+   end RINA_Unregister;
+
+   function RINA_Flow_Accept (
+      fd           : OS.File_Descriptor;
+      remote_appl : String;
+      spec         : RINA_FLOW_SPEC;
+      flags        : Integer
+   ) return Os.File_Descriptor is
+   begin
+      return Ctrl.RINA_Flow_Accept(fd, remote_appl, spec, flags);
+   end RINA_Flow_Accept;
 end Bindings.Rlite.API;
