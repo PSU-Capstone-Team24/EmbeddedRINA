@@ -34,10 +34,6 @@ package Bindings.Rlite.Kernel_Msg is
       Event_Id : Unsigned_32;
    end record;
 
-   type Rl_Msg_Base is abstract tagged record
-      Hdr : Rl_Msg_Hdr;
-   end record;
-
    --  Base message augmented with an ipcp_id
    type Rl_Msg_Ipcp is record
       Hdr      : Rl_Msg_Hdr;
@@ -45,6 +41,10 @@ package Bindings.Rlite.Kernel_Msg is
       Pad1     : Unsigned_16;
    end record;
 
+   type Rl_Msg_Base is abstract tagged record
+      Hdr : Rl_Msg_Hdr;
+   end record;
+   
    --  (Application --> Kernel) message to create a new IPC process.
    type Rl_Kmsg_IPCP_Create is new Rl_Msg_Base with record
       Name     : C.Strings.chars_ptr;

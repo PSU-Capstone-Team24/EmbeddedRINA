@@ -35,6 +35,8 @@ package body Bindings.Rlite.Ctrl is
    begin
 
       --  Get serialized message length for what we are trying to send
+      Debug.Print ("Rl_Write_Msg", "Msg_Type " & Kernel_Msg.Rl_Msg_T'Image(Msg.Hdr.Msg_Type), Debug.Warning);
+      Ser_Len := rl_msg_serlen_binded (Utils.Rl_Ker_Numtables'Address, Utils.Rl_Ker_Numtables'Length, Msg'Address);
       Ser_Len := Rl_Msg_Serlen (Msg);
 
       --  Ada 'Size is in bits, account for this!
@@ -73,7 +75,7 @@ package body Bindings.Rlite.Ctrl is
       wfd := Bindings.Rlite.API.RINA_Open;
 
       if Integer (wfd) < 0 then
-         Debug.Print ("RINA_Register_Common", "[RINA_Register_Common] RINA_Register_Common WFD < 0", Debug.Error);
+         Debug.Print ("RINA_Register_Common", "RINA_Register_Common WFD < 0", Debug.Error);
 
          --  Invalid control device file descriptor
          return wfd;

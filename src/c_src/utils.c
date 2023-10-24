@@ -271,7 +271,7 @@ rl_msg_serlen(struct rl_msg_layout *numtables, size_t num_entries,
     string_t *str;
     const struct rl_msg_buf_field *bf;
     int i;
-
+    
     if (msg->hdr.msg_type >= num_entries) {
         PE("Invalid numtables access [msg_type=%u]\n", msg->hdr.msg_type);
 
@@ -281,7 +281,7 @@ rl_msg_serlen(struct rl_msg_layout *numtables, size_t num_entries,
     ret = numtables[msg->hdr.msg_type].copylen;
 
     // MT: TODO: DEBUG ONLY!! DELETE BELOW
-    PD("%d msg_type, %d size_t, %d eventid, %d copylen, %d strings\n", msg->hdr.msg_type, (int)num_entries, msg->hdr.event_id, ret, numtables[msg->hdr.msg_type].strings);
+    PD("%d msg_type, %d size_t, %d eventid, %d copylen, %d strings %d ret\n", msg->hdr.msg_type, (int)num_entries, msg->hdr.event_id, ret, numtables[msg->hdr.msg_type].strings, ret);
     // MT: TODO: DEBUG ONLY!! DELETE ABOVE
 
     name = (struct rina_name *)(((void *)msg) + ret);

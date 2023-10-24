@@ -31,6 +31,11 @@ package Bindings.Rlite.Ctrl is
    --                          const struct rl_msg_base *msg);
    function Rl_Msg_Serlen (Msg : Kernel_Msg.Rl_Msg_Base) return Natural;
 
+   function rl_msg_serlen_binded (Numtables : System.Address;
+      Num_Entries : Natural;
+      Msg : System.Address) return Natural;
+   pragma Import (C, rl_msg_serlen_binded, "rl_msg_serlen");
+
    --  int rl_write_msg(int rfd, const struct rl_msg_base *msg, int quiet);
    function Rl_Write_Msg
      (Rfd : OS.File_Descriptor;
