@@ -96,4 +96,16 @@ package body Bindings.Rlite.Ctrl is
       return ret;
    end RINA_Register_Common;
 
+   function RINA_Flow_Accept(
+      fd          : OS.File_Descriptor;
+      remote_appl : String;
+      spec        : Bindings.Rlite.API.RINA_FLOW_SPEC;
+      flags       : Integer
+   ) return Os.File_Descriptor is
+      req : Kernel_Msg.Rl_Kmsg_Fa_Req_Arrived;
+      spi : Sa_Pending_Item;
+      resp : Kernel_Msg.rl_kmsg_fa_resp;
+   begin
+      return 1;
+   end RINA_Flow_Accept;
 end Bindings.Rlite.Ctrl;
