@@ -3,13 +3,18 @@ pragma Style_Checks (Off);
 
 with Bindings.Rlite.Common;
 
-with Interfaces.C.Strings;
+with System;
+
 with Interfaces; use Interfaces;
+with Interfaces.C.Strings;
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 
 package Bindings.Rlite.Kernel_Msg is
 
    package Common renames Bindings.Rlite.Common;
 
+   RLITE_API_VERSION : Unsigned_16 := 8;
+   
    type Rl_Ipcp_Id_T is new Unsigned_16;
 
    --  Message types, must be listed alternating requests with corresponding responses   
@@ -44,7 +49,11 @@ package Bindings.Rlite.Kernel_Msg is
    type Rl_Msg_Base is abstract tagged record
       Hdr : Rl_Msg_Hdr;
    end record;
-   
+
+   --  unsigned int rl_msg_serlen(size_t num_entries,
+   --                          const struct rl_msg_base *msg);
+   --  function Rl_Msg_Serlen (Message : Rl_Msg_Base) return Integer;
+
    --  (Application --> Kernel) message to create a new IPC process.
    type Rl_Kmsg_IPCP_Create is new Rl_Msg_Base with record
       Name     : C.Strings.chars_ptr;
@@ -137,20 +146,21 @@ package Bindings.Rlite.Kernel_Msg is
    end record;
 
    -- (Application --> Kernel) to register a name.
+   type rl_kmsg_register_pad1_array is array (0 .. 6) of Unsigned_8;
    type Rl_Kmsg_Appl_Register is new Rl_Msg_Base with record
       Reg         : Unsigned_8;
-      Pad1        : rl_kmsg_pad1_array;
-      Appl_Name   : Interfaces.C.Strings.chars_ptr;
-      Dif_Name    : Interfaces.C.Strings.chars_ptr;
+      Pad1        : rl_kmsg_register_pad1_array;
+      Appl_Name   : Unbounded_String;
+      Dif_Name    : Unbounded_String;
    end record;
-
+   
   --  (Application <-- Kernel) report the result of (un)registration.  
    type Rl_Kmsg_Appl_Register_Resp is new Rl_Msg_Base with record
       Ipcp_Id     : Rl_Ipcp_Id_T;
       Reg         : Unsigned_8;
       Response    : Unsigned_8;
       Pad1        : Unsigned_32;
-      Appl_Name   : Interfaces.C.Strings.chars_ptr;
+      Appl_Name   : Unbounded_String;
    end record;
 
   --  (Application --> Kernel) to finalize a registration operation.  
@@ -369,5 +379,376 @@ package Bindings.Rlite.Kernel_Msg is
       --  WRR weights are dwords.
    --     Weights     : Common.Rl_Msg_Array_Field;
    --  end record;
+
+   type Rl_Msg_Layout is record
+      copylen   : Unsigned_32;
+      names     : Unsigned_32;
+      strings   : Unsigned_32;
+      buffers   : Unsigned_32;
+      arrays    : Unsigned_32;
+   end record;
+
+   type Rl_Msg_Buf_Field is record
+      Buf : System.Address;
+      Len : Unsigned_32;
+   end record;
+
+   Rl_Ker_Numtables : array (Rl_Msg_T range <>) of Rl_Msg_Layout := (
+      RLITE_DUMMY => (
+         copylen => 0,
+         names   => 0,
+         strings => 0,
+         buffers => 0,
+         arrays  => 0
+      ),
+      
+      RLITE_KER_IPCP_CREATE =>
+      ( 
+         copylen => Rl_Kmsg_IPCP_Create'Size / 8 - 3 * System.Address'Size / 8,
+         names => 0,
+         strings => 3,
+         buffers => 0,
+         arrays => 0
+      ),
+
+      RLITE_KER_IPCP_CREATE_RESP =>
+      (
+         copylen => Rl_Kmsg_Ipcp_Create_Resp'Size / 8,
+         names => 0,
+         strings => 0,
+         buffers => 0,
+         arrays => 0
+      ),
+
+      RLITE_KER_IPCP_DESTROY =>
+      (
+         copylen => Rl_Kmsg_Ipcp_Destroy'Size / 8,
+         names   => 0,
+         strings => 0,
+         buffers => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_FLOW_FETCH =>
+      (
+         copylen => Rl_Kmsg_Flow_Fetch'Size / 8,
+         names   => 0,
+         strings => 0,
+         buffers => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_FLOW_FETCH_RESP =>
+      (
+         copylen => Rl_Kmsg_Flow_Fetch_Resp'Size / 8,
+         names   => 0,
+         strings => 0,
+         buffers => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_UPDATE =>
+      (
+         copylen => Rl_Kmsg_Ipcp_Update'Size / 8 - 3 * System.Address'Size / 8,
+         names   => 0,
+         strings => 3,
+         buffers => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_APPL_REGISTER =>
+      (
+         copylen => Rl_Kmsg_Appl_Register'Size / 8 - 2 * System.Address'Size / 8,
+         names   => 0,
+         strings => 2,
+         buffers => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_APPL_REGISTER_RESP =>
+      (
+         copylen => Rl_Kmsg_Appl_Register_Resp'Size / 8 - System.Address'Size / 8,
+         names   => 0,
+         strings => 1,
+         buffers => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_FA_REQ =>
+      (
+         copylen => Rl_Kmsg_Fa_Req'Size / 8 - 3 * System.Address'Size / 8,
+         names   => 0,
+         strings => 3,
+         buffers => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_FA_RESP_ARRIVED =>
+      (
+         copylen => Rl_Kmsg_Fa_Resp_Arrived'Size / 8,
+         names   => 0,
+         strings => 0,
+         buffers => 0,
+         arrays  => 0
+      ),
+      
+      RLITE_KER_FA_RESP =>
+      (
+         copylen => RL_Kmsg_Fa_Resp'Size / 8,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_FA_REQ_ARRIVED =>
+      (
+         copylen => Rl_Kmsg_Fa_Req_Arrived'Size / 8 - 3 * System.Address'Size / 8,
+         names => 0,
+         buffers => 0,
+         strings => 3,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_CONFIG =>
+      (
+         copylen => RL_Kmsg_Ipcp_Config'Size / 8 - 2 * System.Address'Size / 8,
+         names => 0,
+         buffers => 0,
+         strings => 2,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_PDUFT_SET =>
+      (
+         copylen => Rl_Kmsg_Ipcp_Pduft_Mod'Size / 8,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_PDUFT_DEL =>
+      (
+         copylen => Rl_Kmsg_Ipcp_Pduft_Mod'Size / 8,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_PDUFT_FLUSH =>
+      (
+         copylen => Rl_Kmsg_Ipcp_Pduft_Flush'Size / 8,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      --  MT: TODO: Add rest of Kernel_Msg records so we can continue adding here
+
+      RLITE_KER_IPCP_UIPCP_SET =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_UIPCP_FA_REQ_ARRIVED =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_UIPCP_FA_RESP_ARRIVED =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_FLOW_DEALLOCATED =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_FLOW_DEALLOC =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_UIPCP_WAIT =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_FLOW_STATS_REQ =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_FLOW_STATS_RESP =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_FLOW_CFG_UPDATE =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_QOS_SUPPORTED =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_APPL_MOVE =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_MEMTRACK_DUMP =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_REG_FETCH =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_REG_FETCH_RESP =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_FLOW_STATE =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_STATS_REQ =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_STATS_RESP =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_CONFIG_GET_REQ =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_CONFIG_GET_RESP =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_SCHED_WRR =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_IPCP_SCHED_PFIFO =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      ),
+
+      RLITE_KER_MSG_MAX =>
+      (
+         copylen => 0,
+         names => 0,
+         buffers => 0,
+         strings => 0,
+         arrays  => 0
+      )
+   );
+
+    generic
+      type T is private;
+   procedure Display_Bytes (V : T);
 
 end Bindings.Rlite.Kernel_Msg;

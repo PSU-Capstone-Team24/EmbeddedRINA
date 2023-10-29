@@ -20,7 +20,7 @@ package Bindings.Rlite.Common is
    --  Application Process Instance
    --  Application Entity Name
    --  Application Entity Instance
-   type Rina_Name is record
+   type RINA_Name is record
       Apn : C.Strings.chars_ptr;
       Api : C.Strings.chars_ptr;
       Aen : C.Strings.chars_ptr;

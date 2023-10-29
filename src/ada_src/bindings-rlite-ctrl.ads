@@ -12,15 +12,6 @@ with System;
 with GNAT.OS_Lib;
 
 package Bindings.Rlite.Ctrl is
-   package List renames Bindings.Rlite.List;
-
-
-   type Sa_Pending_Item is record
-      handle : Integer;
-      req : Rlite.Kernel_Msg.Rl_Kmsg_Fa_Req_Arrived;
-      node : List.List_Head;
-   end record;
-
    --  OS Library Package
    package OS renames GNAT.OS_Lib;
 
@@ -29,21 +20,20 @@ package Bindings.Rlite.Ctrl is
    package API renames Bindings.Rlite.API;
    package Common renames Bindings.Rlite.Common;
    package Utils renames Bindings.Rlite.Utils;
-   
+   package List renames Bindings.Rlite.List;
+
+   type Sa_Pending_Item is record
+      handle : Integer;
+      req : Kernel_Msg.Rl_Kmsg_Fa_Req_Arrived;
+      node : List.List_Head;
+   end record;
+
    function RINA_Register_Common (fd : OS.File_Descriptor;
    dif_name : String;
    local_appl : String;
    flags : Integer;
    reg : Unsigned_8) return OS.File_Descriptor;
 
-   --  unsigned int rl_msg_serlen(size_t num_entries,
-   --                          const struct rl_msg_base *msg);
-   function Rl_Msg_Serlen (Msg : Kernel_Msg.Rl_Msg_Base) return Natural;
-
-   function rl_msg_serlen_binded (Numtables : System.Address;
-      Num_Entries : Natural;
-      Msg : System.Address) return Natural;
-   pragma Import (C, rl_msg_serlen_binded, "rl_msg_serlen");
 
    --  int rl_write_msg(int rfd, const struct rl_msg_base *msg, int quiet);
    function Rl_Write_Msg

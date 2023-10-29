@@ -283,21 +283,31 @@ rl_msg_serlen(struct rl_msg_layout *numtables, size_t num_entries,
     // MT: TODO: DEBUG ONLY!! DELETE BELOW
     PD("%d msg_type, %d size_t, %d eventid, %d copylen, %d strings %d ret\n", msg->hdr.msg_type, (int)num_entries, msg->hdr.event_id, ret, numtables[msg->hdr.msg_type].strings, ret);
     // MT: TODO: DEBUG ONLY!! DELETE ABOVE
+    
+    PD("Before rina_name: %d\n", ret);
 
     name = (struct rina_name *)(((void *)msg) + ret);
     for (i = 0; i < numtables[msg->hdr.msg_type].names; i++, name++) {
+        PD("S: %s\n", name);
         ret += rina_name_serlen(name);
     }
 
+    PD("after rina_name: %d\n", ret);
+
     str = (string_t *)name;
     for (i = 0; i < numtables[msg->hdr.msg_type].strings; i++, str++) {
+        PD("S: %s\n", str);
         ret += sizeof(uint16_t) + string_prlen(*str);
     }
+
+    PD("after name: %d\n", ret);
 
     bf = (const struct rl_msg_buf_field *)str;
     for (i = 0; i < numtables[msg->hdr.msg_type].buffers; i++, bf++) {
         ret += sizeof(bf->len) + bf->len;
     }
+
+    PD("after bf: %d\n", ret);
 
     return ret;
 }
