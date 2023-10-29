@@ -17,7 +17,7 @@ package body Bindings.Rlite.API is
    --  On error -1 is returned.
    function RINA_Open return OS.File_Descriptor is
    begin
-      return OS.Open_Read ("/dev/rlite", OS.Binary);
+      return OS.Open_Read_Write ("/dev/rlite", OS.Binary);
    end RINA_Open;
 
    --  int rina_close (void)
