@@ -1,14 +1,21 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
+--  System
 with System;
 
 --  Ada
 with Ada.Text_IO;
 with Ada.Unchecked_Conversion;
 
+with Ada.Strings.Unbounded;
+   use Ada.Strings.Unbounded;
+
+with Ada.Strings.Unbounded.Text_IO;
+   
 --  Rlite Bindings
-with Bindings.Rlite.API; use Bindings.Rlite.API;
+with Bindings.Rlite.API;
+   use Bindings.Rlite.API;
 with Exceptions;
 
 procedure Embedded_Rina_Bin is
@@ -36,10 +43,8 @@ procedure Embedded_Rina_Bin is
     end;
 
    --  Hardcoded for testing purposes
-   Application_Name : String (1 .. 20);
-   DIF_Name : String (1 .. 20);
-   Application_Name_Length : Integer;
-   DIF_Name_Length : Integer;
+   Application_Name : Unbounded_String;
+   DIF_Name : Unbounded_String;
 begin
    Text_IO.Put_Line ("Starting RINA server application....");
    RINA_Dev_FD := RINA_Open;
@@ -53,24 +58,24 @@ begin
 
 
    Ada.Text_IO.Put ("Enter name of server application to register: ");
-   Ada.Text_IO.Get_Line (Application_Name, Application_Name_Length);
+   Ada.Strings.Unbounded.Text_IO.Get_Line (Item => Application_Name);
 
    Ada.Text_IO.Put ("You typed in the string: ");
-   Ada.Text_IO.Put_Line (Application_Name(1..Application_Name_Length));
+   Ada.Text_IO.Put_Line (To_String (Application_Name));
 
-   Ada.Text_IO.Put ("Enter name of DIF to register '" & Application_Name(1..Application_Name_Length) & "' to: ");
-   Ada.Text_IO.Get_Line (DIF_Name, DIF_Name_Length);
-   
+   Ada.Text_IO.Put ("Enter name of DIF to register '" & To_String(Application_Name) & "' to: ");
+   Ada.Strings.Unbounded.Text_IO.Get_Line (Item => DIF_Name);
+
    Ada.Text_IO.Put ("You typed in the string: ");
-   Ada.Text_IO.Put_Line (DIF_Name(1..DIF_Name_Length));
+   Ada.Text_IO.Put_Line (To_String (DIF_Name));
 
-   Register_Success := RINA_Register (RINA_Dev_FD, DIF_Name(1..DIF_Name_Length), Application_Name(1..Application_Name_Length), 0);
+   Register_Success := RINA_Register (RINA_Dev_FD, DIF_Name, Application_Name, 0);
 
    if Integer(Register_Success) < 0 then
-      Text_IO.Put_Line ("Error registering application to " & DIF_Name);
+      Text_IO.Put_Line ("Error registering application to " & To_String(DIF_Name));
       raise Exceptions.DIF_Registration_Failure;
    else
-      Text_IO.Put_Line ("Successfully registered application to " & DIF_Name);
+      Text_IO.Put_Line ("Successfully registered application to " & To_String(DIF_Name));
    end if;
 
 end Embedded_Rina_Bin;

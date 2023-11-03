@@ -8,14 +8,19 @@ with System;
 with Interfaces; use Interfaces;
 with Interfaces.C.Strings;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Ada.Strings.Bounded; use Ada.Strings.Bounded;
 
 package Bindings.Rlite.Kernel_Msg is
 
    package Common renames Bindings.Rlite.Common;
-
-   RLITE_API_VERSION : Unsigned_16 := 8;
    
    type Rl_Ipcp_Id_T is new Unsigned_16;
+   
+   --  Max name length to be used for DIF_Name, Appl_Name, etc
+   Max_Name_Length : constant Natural := 128;
+
+   --  RLite version, hardcoded to 8
+   RLITE_API_VERSION : constant Unsigned_16 := 8;
 
    --  Message types, must be listed alternating requests with corresponding responses   
    type Rl_Msg_T is (RLITE_DUMMY, RLITE_KER_IPCP_CREATE, RLITE_KER_IPCP_CREATE_RESP, RLITE_KER_IPCP_DESTROY,
@@ -31,7 +36,7 @@ package Bindings.Rlite.Kernel_Msg is
                      RLITE_KER_FLOW_STATE, RLITE_KER_IPCP_STATS_REQ, RLITE_KER_IPCP_STATS_RESP,
                      RLITE_KER_IPCP_CONFIG_GET_REQ, RLITE_KER_IPCP_CONFIG_GET_RESP, RLITE_KER_IPCP_SCHED_WRR,
                      RLITE_KER_IPCP_SCHED_PFIFO, RLITE_KER_MSG_MAX);
-
+   
    -- Header for all rLite messages, all the possible messages begin with this
    type Rl_Msg_Hdr is record
       Version  : Unsigned_16;
@@ -56,9 +61,9 @@ package Bindings.Rlite.Kernel_Msg is
 
    --  (Application --> Kernel) message to create a new IPC process.
    type Rl_Kmsg_IPCP_Create is new Rl_Msg_Base with record
-      Name     : C.Strings.chars_ptr;
-      DIF_Type : C.Strings.chars_ptr;
-      DIF_Name : C.Strings.chars_ptr;
+      Name     : String(1 .. Max_Name_Length);
+      DIF_Type : String(1 .. Max_Name_Length);
+      DIF_Name : String(1 .. Max_Name_Length);
    end record;
 
    --  MT: 6 element char array for padding (kernel <--> application) messages
@@ -108,7 +113,7 @@ package Bindings.Rlite.Kernel_Msg is
       Pending  : Unsigned_8; -- Is registration pending?
       Ipcp_Id  : Rl_Ipcp_Id_T;
       Pad1     : Unsigned_32;
-      Appl_Name: C.Strings.chars_ptr;
+      Appl_Name: String(1 .. Max_Name_Length);
    end record;
 
    Rl_IPCP_Update_Add      : constant Integer := 1;
@@ -129,9 +134,9 @@ package Bindings.Rlite.Kernel_Msg is
       tailroom    : Unsigned_16;
       Pad2        : Unsigned_16;
       pcisizes    : Common.Pci_Sizes;
-      Ipcp_Name   : C.Strings.chars_ptr;
-      Dif_Name    : C.Strings.chars_ptr;
-      Dif_Type    : C.Strings.chars_ptr;
+      Ipcp_Name   : String(1 .. Max_Name_Length);
+      Dif_Name    : String(1 .. Max_Name_Length);
+      Dif_Type    : String(1 .. Max_Name_Length);
    end record;
 
    Rl_Flow_State_Down   : constant Integer := 0;
@@ -153,7 +158,7 @@ package Bindings.Rlite.Kernel_Msg is
       Appl_Name   : Unbounded_String;
       Dif_Name    : Unbounded_String;
    end record;
-   
+
   --  (Application <-- Kernel) report the result of (un)registration.  
    type Rl_Kmsg_Appl_Register_Resp is new Rl_Msg_Base with record
       Ipcp_Id     : Rl_Ipcp_Id_T;
@@ -178,9 +183,9 @@ package Bindings.Rlite.Kernel_Msg is
       Local_Cep   : Common.Rlm_Cepid_T;
       Uid         : Unsigned_32;
       Cookie      : Unsigned_32;
-      Local_Appl  : Interfaces.C.Strings.chars_ptr;
-      Remote_Appl : Interfaces.C.Strings.chars_ptr;
-      Dif_Name    : Interfaces.C.Strings.chars_ptr;
+      Local_Appl  : String(1 .. Max_Name_Length);
+      Remote_Appl : String(1 .. Max_Name_Length);
+      Dif_Name    : String(1 .. Max_Name_Length);
    end record;
 
    --  (Application <-- Kernel) to notify about an incoming flow response.
@@ -197,9 +202,9 @@ package Bindings.Rlite.Kernel_Msg is
       Port_Id     : Common.Rl_Port_T;
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       Flowspec    : Common.RINA_Flow_Spec;
-      Local_Appl  : Interfaces.C.Strings.chars_ptr;
-      Remote_Appl : Interfaces.C.Strings.chars_ptr;
-      Dif_Name    : Interfaces.C.Strings.chars_ptr;
+      Local_Appl  : String(1 .. Max_Name_Length);
+      Remote_Appl : String(1 .. Max_Name_Length);
+      Dif_Name    : String(1 .. Max_Name_Length);
    end record;
 
    --  (Application --> Kernel) to respond to an incoming flow request.
@@ -223,7 +228,7 @@ package Bindings.Rlite.Kernel_Msg is
    type RL_Kmsg_Ipcp_Config is new Rl_Msg_Base with record
       Ipcp_Id  : Common.Rl_IPCP_Id_T;
       Pad1     : RL_Kmsg_Ipcp_Config_Pad1;
-      Name     : Interfaces.C.Strings.chars_ptr;
+      Name     : String(1 .. Max_Name_Length);
       Value    : Interfaces.C.Strings.chars_ptr;
    end record;
 
@@ -232,7 +237,7 @@ package Bindings.Rlite.Kernel_Msg is
    type RL_Kmsg_Ipcp_Config_Get_Req is new Rl_Msg_Base with record
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       Pad1        : RL_Kmsg_Ipcp_Config_Get_Req_Pad1;
-      Param_Name  : Interfaces.C.Strings.chars_ptr;
+      Param_Name  : String(1 .. Max_Name_Length);
    end record;
 
    --  (Application <-- Kernel) to return IPCP config value.
@@ -277,9 +282,9 @@ package Bindings.Rlite.Kernel_Msg is
       Flowcfg     : Common.Rl_Flow_Config;
       Flowspec    : Common.RINA_Flow_Spec;
       --  Request application
-      Local_Appl  : Interfaces.C.Strings.chars_ptr;
+      Local_Appl  : String(1 .. Max_Name_Length);
       --  Requesting application
-      Remote_Appl : Interfaces.C.Strings.chars_ptr;
+      Remote_Appl : String(1 .. Max_Name_Length);
    end record;
 
    --  uipcp (Application --> Kernel) to tell the kernel that a flow
@@ -747,8 +752,14 @@ package Bindings.Rlite.Kernel_Msg is
       )
    );
 
+   type Byte_Buffer is array (Natural range <>) of Unsigned_8;
+
     generic
       type T is private;
-   procedure Display_Bytes (V : T);
+   procedure Print_Bytes (V : T);
+
+    generic
+      type T is private;
+   function Serialize (V : T; print : Boolean) return Byte_Buffer;
 
 end Bindings.Rlite.Kernel_Msg;

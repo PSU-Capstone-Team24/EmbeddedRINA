@@ -1,8 +1,21 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
+--  Debug
 with Debug;
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+
+--  Ada
+with Ada.Strings;
+   use Ada.Strings;
+
+with Ada.Strings.Unbounded;
+   use Ada.Strings.Unbounded;
+
+with Ada.Text_IO;
+   use Ada.Text_IO;
+
+with Ada.Strings.Bounded;
+
 
 package body Bindings.Rlite.Ctrl is
    
@@ -11,14 +24,12 @@ package body Bindings.Rlite.Ctrl is
       Msg : Kernel_Msg.Rl_Msg_Base;
       Quiet : Integer) return OS.File_Descriptor is
 
-      -- Serbuf contains 4096 chars
-      type Ser_Buffer is array (0 .. 4095) of Character;
       Ser_Len : Natural;
       Ret : Integer;
    begin
 
       --  Get serialized message length for what we are trying to send
-      Debug.Print ("Rl_Write_Msg", "Msg_Type " & Kernel_Msg.Rl_Msg_T'Image(Msg.Hdr.Msg_Type), Debug.Warning);
+      Debug.Print ("Rl_Write_Msg", "Msg_Type " & Kernel_Msg.Rl_Msg_T'Image (Msg.Hdr.Msg_Type), Debug.Warning);
 
       --  MT: WIP
       --  Ser_Len := Kernel_Msg.Rl_Msg_Serlen (Msg);
@@ -36,18 +47,20 @@ package body Bindings.Rlite.Ctrl is
    end Rl_Write_Msg;
 
    function RINA_Register_Common (fd : OS.File_Descriptor;
-      dif_name : String;
-      local_appl : String;
+      dif_name : Unbounded_String;
+      local_appl : Unbounded_String;
       flags : Integer;
       reg : Unsigned_8) return OS.File_Descriptor is
 
-      off : Natural := 1;
-      req : Kernel_Msg.Rl_Kmsg_Appl_Register;
-      ret : OS.File_Descriptor;
-      wfd : OS.File_Descriptor;
+      ret : OS.File_Descriptor := OS.Invalid_FD;
+      wfd : OS.File_Descriptor := OS.Invalid_FD;
       res : constant OS.File_Descriptor := OS.Invalid_FD;
+
+      req : Kernel_Msg.Rl_Kmsg_Appl_Register;
+
       Bits_Other_Than_NoWait : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NOWAIT);
-      procedure Serialize is new Kernel_Msg.Display_Bytes (T => Kernel_Msg.Rl_Kmsg_Appl_Register);
+      
+      function Serialize is new Kernel_Msg.Serialize (T => Kernel_Msg.Rl_Kmsg_Appl_Register);
    begin
 
       if Bits_Other_Than_NoWait /= 0 then
@@ -70,12 +83,18 @@ package body Bindings.Rlite.Ctrl is
       req.Hdr.Version   := Kernel_Msg.RLITE_API_VERSION;
       req.Hdr.Msg_Type  := Kernel_Msg.RLITE_KER_APPL_REGISTER;
       req.Hdr.Event_Id  := Bindings.Rlite.API.RINA_REG_EVENT_ID;
-      req.Dif_Name      := To_Unbounded_String (dif_name);
       req.Reg           := reg;
-      req.Appl_Name     := To_Unbounded_String (local_appl);
+      req.Pad1          := (others => 0);
+      req.Appl_Name     := local_appl;
+      req.Dif_Name      := dif_name;
 
-      Serialize (req);
-      Debug.Print ("RINA_Register_Common", "Message Type: " & Kernel_Msg.Rl_Msg_T'Image(req.Hdr.Msg_Type), Debug.Info);
+      declare
+         buf : Kernel_Msg.Byte_Buffer(1 .. req'Size / 8 - 7) := (others => 0);
+      begin
+         buf := Serialize (req, true);
+      end;
+      
+      Debug.Print ("RINA_Register_Common", "Message Type: " & Kernel_Msg.Rl_Msg_T'Image (req.Hdr.Msg_Type), Debug.Info);
 
       --  MT: TODO: Rl_Msg_Free implementation, check flags again and return rina_register_wait
       --  instead of a file descriptor to the result
@@ -84,7 +103,7 @@ package body Bindings.Rlite.Ctrl is
 
    function RINA_Flow_Accept(
       fd          : OS.File_Descriptor;
-      remote_appl : String;
+      remote_appl : Unbounded_String;
       spec        : Bindings.Rlite.API.RINA_FLOW_SPEC;
       flags       : Integer
    ) return Os.File_Descriptor is

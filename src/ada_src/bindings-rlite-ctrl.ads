@@ -11,6 +11,8 @@ with Bindings.Rlite.List;
 with System;
 with GNAT.OS_Lib;
 
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+
 package Bindings.Rlite.Ctrl is
    --  OS Library Package
    package OS renames GNAT.OS_Lib;
@@ -29,8 +31,8 @@ package Bindings.Rlite.Ctrl is
    end record;
 
    function RINA_Register_Common (fd : OS.File_Descriptor;
-   dif_name : String;
-   local_appl : String;
+   dif_name : Unbounded_String;
+   local_appl : Unbounded_String;
    flags : Integer;
    reg : Unsigned_8) return OS.File_Descriptor;
 
@@ -51,7 +53,7 @@ package Bindings.Rlite.Ctrl is
 
    function RINA_Flow_Accept(
       fd          : OS.File_Descriptor;
-      remote_appl : String;
+      remote_appl : Unbounded_String;
       spec        : Bindings.Rlite.API.RINA_FLOW_SPEC;
       flags       : Integer
    ) return Os.File_Descriptor;

@@ -36,16 +36,16 @@ package body Bindings.Rlite.API is
   --  After a successful registration, flow allocation requests can be received
   --  on fd.
    function RINA_Register (fd : OS.File_Descriptor;
-      dif_name : String;
-      local_appl : String;
+      dif_name : Unbounded_String;
+      local_appl : Unbounded_String;
       flags : Integer) return OS.File_Descriptor is
    begin
       return Ctrl.RINA_Register_Common (fd, dif_name, local_appl, flags, 1);
    end RINA_Register;
 
    function RINA_Unregister (fd : OS.File_Descriptor;
-      dif_name : String;
-      local_appl : String;
+      dif_name : Unbounded_String;
+      local_appl : Unbounded_String;
       flags : Integer
    ) return OS.File_Descriptor is
    begin
@@ -54,7 +54,7 @@ package body Bindings.Rlite.API is
 
    function RINA_Flow_Accept (
       fd           : OS.File_Descriptor;
-      remote_appl : String;
+      remote_appl : Unbounded_String;
       spec         : RINA_FLOW_SPEC;
       flags        : Integer
    ) return Os.File_Descriptor is
