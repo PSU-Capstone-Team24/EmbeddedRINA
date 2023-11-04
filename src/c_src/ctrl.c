@@ -85,6 +85,16 @@ rl_read_next_msg(int rfd, int quiet)
     return resp;
 }
 
+// MT: DEBUG ONLY
+void
+rl_write_msg_from_ada(int rfd, const uint8_t* msg, size_t msg_size, int quiet)
+{
+    for(int i = 0; i < msg_size; i++){
+        printf("%.2x ", msg[i]);
+    }
+}
+
+
 int
 rl_write_msg(int rfd, const struct rl_msg_base *msg, int quiet)
 {

@@ -7,20 +7,25 @@ with System;
 
 with Interfaces; use Interfaces;
 with Interfaces.C.Strings;
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
-with Ada.Strings.Bounded; use Ada.Strings.Bounded;
+with Names; use Names.Name_String;
+with Buffers; use Buffers;
 
 package Bindings.Rlite.Kernel_Msg is
 
+   --  Renames
    package Common renames Bindings.Rlite.Common;
    
+   --  Types
    type Rl_Ipcp_Id_T is new Unsigned_16;
-   
-   --  Max name length to be used for DIF_Name, Appl_Name, etc
-   Max_Name_Length : constant Natural := 128;
 
+   --  Constants
    --  RLite version, hardcoded to 8
    RLITE_API_VERSION : constant Unsigned_16 := 8;
+
+   --  Generics
+    generic
+      type T is private;
+   function Serialize (V : T) return Byte_Buffer;
 
    --  Message types, must be listed alternating requests with corresponding responses   
    type Rl_Msg_T is (RLITE_DUMMY, RLITE_KER_IPCP_CREATE, RLITE_KER_IPCP_CREATE_RESP, RLITE_KER_IPCP_DESTROY,
@@ -36,12 +41,19 @@ package Bindings.Rlite.Kernel_Msg is
                      RLITE_KER_FLOW_STATE, RLITE_KER_IPCP_STATS_REQ, RLITE_KER_IPCP_STATS_RESP,
                      RLITE_KER_IPCP_CONFIG_GET_REQ, RLITE_KER_IPCP_CONFIG_GET_RESP, RLITE_KER_IPCP_SCHED_WRR,
                      RLITE_KER_IPCP_SCHED_PFIFO, RLITE_KER_MSG_MAX);
-   
+
    -- Header for all rLite messages, all the possible messages begin with this
    type Rl_Msg_Hdr is record
       Version  : Unsigned_16;
       Msg_Type : Rl_Msg_T;
       Event_Id : Unsigned_32;
+   end record;
+
+   --  Make sure whatever the compiler optimizes, these fields will always take up their expected size
+   for Rl_Msg_Hdr use record
+      Version at 0 range 0 .. 15;
+      Msg_Type at 2 range 0 .. 15;
+      Event_Id at 4 range 0 .. 31;
    end record;
 
    --  Base message augmented with an ipcp_id
@@ -55,15 +67,18 @@ package Bindings.Rlite.Kernel_Msg is
       Hdr : Rl_Msg_Hdr;
    end record;
 
+   --  MT: TODO: Procedure that sends a kernel message to the RLite file descriptor
+   procedure Send (Self : Rl_Msg_Base);
+
    --  unsigned int rl_msg_serlen(size_t num_entries,
    --                          const struct rl_msg_base *msg);
    --  function Rl_Msg_Serlen (Message : Rl_Msg_Base) return Integer;
 
    --  (Application --> Kernel) message to create a new IPC process.
    type Rl_Kmsg_IPCP_Create is new Rl_Msg_Base with record
-      Name     : String(1 .. Max_Name_Length);
-      DIF_Type : String(1 .. Max_Name_Length);
-      DIF_Name : String(1 .. Max_Name_Length);
+      Name     : Bounded_String;
+      DIF_Type : Bounded_String;
+      DIF_Name : Bounded_String;
    end record;
 
    --  MT: 6 element char array for padding (kernel <--> application) messages
@@ -113,7 +128,7 @@ package Bindings.Rlite.Kernel_Msg is
       Pending  : Unsigned_8; -- Is registration pending?
       Ipcp_Id  : Rl_Ipcp_Id_T;
       Pad1     : Unsigned_32;
-      Appl_Name: String(1 .. Max_Name_Length);
+      Appl_Name: Bounded_String;
    end record;
 
    Rl_IPCP_Update_Add      : constant Integer := 1;
@@ -134,9 +149,9 @@ package Bindings.Rlite.Kernel_Msg is
       tailroom    : Unsigned_16;
       Pad2        : Unsigned_16;
       pcisizes    : Common.Pci_Sizes;
-      Ipcp_Name   : String(1 .. Max_Name_Length);
-      Dif_Name    : String(1 .. Max_Name_Length);
-      Dif_Type    : String(1 .. Max_Name_Length);
+      Ipcp_Name   : Bounded_String;
+      Dif_Name    : Bounded_String;
+      Dif_Type    : Bounded_String;
    end record;
 
    Rl_Flow_State_Down   : constant Integer := 0;
@@ -151,12 +166,13 @@ package Bindings.Rlite.Kernel_Msg is
    end record;
 
    -- (Application --> Kernel) to register a name.
-   type rl_kmsg_register_pad1_array is array (0 .. 6) of Unsigned_8;
-   type Rl_Kmsg_Appl_Register is new Rl_Msg_Base with record
-      Reg         : Unsigned_8;
-      Pad1        : rl_kmsg_register_pad1_array;
-      Appl_Name   : Unbounded_String;
-      Dif_Name    : Unbounded_String;
+   type Rl_Kmsg_Appl_Register (Appl_Size : Natural; Dif_Size : Natural) is record
+      Hdr            : Rl_Msg_Hdr;
+      Reg            : Unsigned_8;
+      Appl_Name_Size : Natural := Appl_Size;
+      Appl_Name      : Byte_Buffer(1 .. Appl_Size);
+      Dif_Name_Size  : Natural := Dif_Size;
+      Dif_Name       : Byte_Buffer(1 .. Dif_Size);
    end record;
 
   --  (Application <-- Kernel) report the result of (un)registration.  
@@ -165,7 +181,7 @@ package Bindings.Rlite.Kernel_Msg is
       Reg         : Unsigned_8;
       Response    : Unsigned_8;
       Pad1        : Unsigned_32;
-      Appl_Name   : Unbounded_String;
+      Appl_Name   : Bounded_String;
    end record;
 
   --  (Application --> Kernel) to finalize a registration operation.  
@@ -183,9 +199,9 @@ package Bindings.Rlite.Kernel_Msg is
       Local_Cep   : Common.Rlm_Cepid_T;
       Uid         : Unsigned_32;
       Cookie      : Unsigned_32;
-      Local_Appl  : String(1 .. Max_Name_Length);
-      Remote_Appl : String(1 .. Max_Name_Length);
-      Dif_Name    : String(1 .. Max_Name_Length);
+      Local_Appl  : Bounded_String;
+      Remote_Appl : Bounded_String;
+      Dif_Name    : Bounded_String;
    end record;
 
    --  (Application <-- Kernel) to notify about an incoming flow response.
@@ -202,9 +218,9 @@ package Bindings.Rlite.Kernel_Msg is
       Port_Id     : Common.Rl_Port_T;
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       Flowspec    : Common.RINA_Flow_Spec;
-      Local_Appl  : String(1 .. Max_Name_Length);
-      Remote_Appl : String(1 .. Max_Name_Length);
-      Dif_Name    : String(1 .. Max_Name_Length);
+      Local_Appl  : Bounded_String;
+      Remote_Appl : Bounded_String;
+      Dif_Name    : Bounded_String;
    end record;
 
    --  (Application --> Kernel) to respond to an incoming flow request.
@@ -228,7 +244,7 @@ package Bindings.Rlite.Kernel_Msg is
    type RL_Kmsg_Ipcp_Config is new Rl_Msg_Base with record
       Ipcp_Id  : Common.Rl_IPCP_Id_T;
       Pad1     : RL_Kmsg_Ipcp_Config_Pad1;
-      Name     : String(1 .. Max_Name_Length);
+      Name     : Bounded_String;
       Value    : Interfaces.C.Strings.chars_ptr;
    end record;
 
@@ -237,7 +253,7 @@ package Bindings.Rlite.Kernel_Msg is
    type RL_Kmsg_Ipcp_Config_Get_Req is new Rl_Msg_Base with record
       Ipcp_Id     : Common.Rl_IPCP_Id_T;
       Pad1        : RL_Kmsg_Ipcp_Config_Get_Req_Pad1;
-      Param_Name  : String(1 .. Max_Name_Length);
+      Param_Name  : Bounded_String;
    end record;
 
    --  (Application <-- Kernel) to return IPCP config value.
@@ -282,9 +298,9 @@ package Bindings.Rlite.Kernel_Msg is
       Flowcfg     : Common.Rl_Flow_Config;
       Flowspec    : Common.RINA_Flow_Spec;
       --  Request application
-      Local_Appl  : String(1 .. Max_Name_Length);
+      Local_Appl  : Bounded_String;
       --  Requesting application
-      Remote_Appl : String(1 .. Max_Name_Length);
+      Remote_Appl : Bounded_String;
    end record;
 
    --  uipcp (Application --> Kernel) to tell the kernel that a flow
@@ -397,369 +413,4 @@ package Bindings.Rlite.Kernel_Msg is
       Buf : System.Address;
       Len : Unsigned_32;
    end record;
-
-   Rl_Ker_Numtables : array (Rl_Msg_T range <>) of Rl_Msg_Layout := (
-      RLITE_DUMMY => (
-         copylen => 0,
-         names   => 0,
-         strings => 0,
-         buffers => 0,
-         arrays  => 0
-      ),
-      
-      RLITE_KER_IPCP_CREATE =>
-      ( 
-         copylen => Rl_Kmsg_IPCP_Create'Size / 8 - 3 * System.Address'Size / 8,
-         names => 0,
-         strings => 3,
-         buffers => 0,
-         arrays => 0
-      ),
-
-      RLITE_KER_IPCP_CREATE_RESP =>
-      (
-         copylen => Rl_Kmsg_Ipcp_Create_Resp'Size / 8,
-         names => 0,
-         strings => 0,
-         buffers => 0,
-         arrays => 0
-      ),
-
-      RLITE_KER_IPCP_DESTROY =>
-      (
-         copylen => Rl_Kmsg_Ipcp_Destroy'Size / 8,
-         names   => 0,
-         strings => 0,
-         buffers => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_FLOW_FETCH =>
-      (
-         copylen => Rl_Kmsg_Flow_Fetch'Size / 8,
-         names   => 0,
-         strings => 0,
-         buffers => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_FLOW_FETCH_RESP =>
-      (
-         copylen => Rl_Kmsg_Flow_Fetch_Resp'Size / 8,
-         names   => 0,
-         strings => 0,
-         buffers => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_UPDATE =>
-      (
-         copylen => Rl_Kmsg_Ipcp_Update'Size / 8 - 3 * System.Address'Size / 8,
-         names   => 0,
-         strings => 3,
-         buffers => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_APPL_REGISTER =>
-      (
-         copylen => Rl_Kmsg_Appl_Register'Size / 8 - 2 * System.Address'Size / 8,
-         names   => 0,
-         strings => 2,
-         buffers => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_APPL_REGISTER_RESP =>
-      (
-         copylen => Rl_Kmsg_Appl_Register_Resp'Size / 8 - System.Address'Size / 8,
-         names   => 0,
-         strings => 1,
-         buffers => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_FA_REQ =>
-      (
-         copylen => Rl_Kmsg_Fa_Req'Size / 8 - 3 * System.Address'Size / 8,
-         names   => 0,
-         strings => 3,
-         buffers => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_FA_RESP_ARRIVED =>
-      (
-         copylen => Rl_Kmsg_Fa_Resp_Arrived'Size / 8,
-         names   => 0,
-         strings => 0,
-         buffers => 0,
-         arrays  => 0
-      ),
-      
-      RLITE_KER_FA_RESP =>
-      (
-         copylen => RL_Kmsg_Fa_Resp'Size / 8,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_FA_REQ_ARRIVED =>
-      (
-         copylen => Rl_Kmsg_Fa_Req_Arrived'Size / 8 - 3 * System.Address'Size / 8,
-         names => 0,
-         buffers => 0,
-         strings => 3,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_CONFIG =>
-      (
-         copylen => RL_Kmsg_Ipcp_Config'Size / 8 - 2 * System.Address'Size / 8,
-         names => 0,
-         buffers => 0,
-         strings => 2,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_PDUFT_SET =>
-      (
-         copylen => Rl_Kmsg_Ipcp_Pduft_Mod'Size / 8,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_PDUFT_DEL =>
-      (
-         copylen => Rl_Kmsg_Ipcp_Pduft_Mod'Size / 8,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_PDUFT_FLUSH =>
-      (
-         copylen => Rl_Kmsg_Ipcp_Pduft_Flush'Size / 8,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      --  MT: TODO: Add rest of Kernel_Msg records so we can continue adding here
-
-      RLITE_KER_IPCP_UIPCP_SET =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_UIPCP_FA_REQ_ARRIVED =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_UIPCP_FA_RESP_ARRIVED =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_FLOW_DEALLOCATED =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_FLOW_DEALLOC =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_UIPCP_WAIT =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_FLOW_STATS_REQ =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_FLOW_STATS_RESP =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_FLOW_CFG_UPDATE =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_QOS_SUPPORTED =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_APPL_MOVE =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_MEMTRACK_DUMP =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_REG_FETCH =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_REG_FETCH_RESP =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_FLOW_STATE =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_STATS_REQ =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_STATS_RESP =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_CONFIG_GET_REQ =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_CONFIG_GET_RESP =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_SCHED_WRR =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_IPCP_SCHED_PFIFO =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      ),
-
-      RLITE_KER_MSG_MAX =>
-      (
-         copylen => 0,
-         names => 0,
-         buffers => 0,
-         strings => 0,
-         arrays  => 0
-      )
-   );
-
-   type Byte_Buffer is array (Natural range <>) of Unsigned_8;
-
-    generic
-      type T is private;
-   procedure Print_Bytes (V : T);
-
-    generic
-      type T is private;
-   function Serialize (V : T; print : Boolean) return Byte_Buffer;
-
 end Bindings.Rlite.Kernel_Msg;

@@ -5,20 +5,14 @@ pragma Style_Checks (Off);
 with Debug;
 
 --  Ada
-with Ada.Strings;
-   use Ada.Strings;
-
-with Ada.Strings.Unbounded;
-   use Ada.Strings.Unbounded;
-
 with Ada.Text_IO;
    use Ada.Text_IO;
 
-with Ada.Strings.Bounded;
-
+with Names; use Names;
+with Buffers; use Buffers;
 
 package body Bindings.Rlite.Ctrl is
-   
+
    function Rl_Write_Msg
      (Rfd : OS.File_Descriptor;
       Msg : Kernel_Msg.Rl_Msg_Base;
@@ -47,8 +41,8 @@ package body Bindings.Rlite.Ctrl is
    end Rl_Write_Msg;
 
    function RINA_Register_Common (fd : OS.File_Descriptor;
-      dif_name : Unbounded_String;
-      local_appl : Unbounded_String;
+      dif_name : Bounded_String;
+      local_appl : Bounded_String;
       flags : Integer;
       reg : Unsigned_8) return OS.File_Descriptor is
 
@@ -56,11 +50,12 @@ package body Bindings.Rlite.Ctrl is
       wfd : OS.File_Descriptor := OS.Invalid_FD;
       res : constant OS.File_Descriptor := OS.Invalid_FD;
 
-      req : Kernel_Msg.Rl_Kmsg_Appl_Register;
-
       Bits_Other_Than_NoWait : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NOWAIT);
       
-      function Serialize is new Kernel_Msg.Serialize (T => Kernel_Msg.Rl_Kmsg_Appl_Register);
+      subtype Message is Kernel_Msg.Rl_Kmsg_Appl_Register(Used_Size (local_appl), Used_Size (dif_name));
+      req : Message;
+
+      function Serialize is new Kernel_Msg.Serialize (T => Message);
    begin
 
       if Bits_Other_Than_NoWait /= 0 then
@@ -84,15 +79,14 @@ package body Bindings.Rlite.Ctrl is
       req.Hdr.Msg_Type  := Kernel_Msg.RLITE_KER_APPL_REGISTER;
       req.Hdr.Event_Id  := Bindings.Rlite.API.RINA_REG_EVENT_ID;
       req.Reg           := reg;
-      req.Pad1          := (others => 0);
-      req.Appl_Name     := local_appl;
-      req.Dif_Name      := dif_name;
+      req.Appl_Name     := To_Packed_Buffer (local_appl);
+      req.Dif_Name      := To_Packed_Buffer (dif_name);
 
       declare
-         buf : Kernel_Msg.Byte_Buffer(1 .. req'Size / 8 - 7) := (others => 0);
+         buff : Byte_Buffer := Serialize (req);
       begin
-         buf := Serialize (req, true);
-      end;
+         Ada.Text_IO.New_Line;
+      end; 
       
       Debug.Print ("RINA_Register_Common", "Message Type: " & Kernel_Msg.Rl_Msg_T'Image (req.Hdr.Msg_Type), Debug.Info);
 
@@ -103,7 +97,7 @@ package body Bindings.Rlite.Ctrl is
 
    function RINA_Flow_Accept(
       fd          : OS.File_Descriptor;
-      remote_appl : Unbounded_String;
+      remote_appl : Bounded_String;
       spec        : Bindings.Rlite.API.RINA_FLOW_SPEC;
       flags       : Integer
    ) return Os.File_Descriptor is

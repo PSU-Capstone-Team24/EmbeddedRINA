@@ -4,13 +4,11 @@ pragma Style_Checks (Off);
 --  GNAT
 with GNAT.OS_Lib;
 
--- Ada
-with Ada.Strings.Unbounded;
-   use Ada.Strings.Unbounded;
-
 --  Interfaces
 with Interfaces;
    use Interfaces;
+
+with Names; use Names.Name_String;
 
 package Bindings.Rlite.API is
    package OS renames GNAT.OS_Lib;
@@ -39,21 +37,21 @@ package Bindings.Rlite.API is
    procedure RINA_Close(fd : OS.File_Descriptor);
 
    function RINA_Register (fd : OS.File_Descriptor;
-      dif_name : Unbounded_String;
-      local_appl : Unbounded_String;
+      dif_name : Bounded_String;
+      local_appl : Bounded_String;
       flags : Integer) return OS.File_Descriptor;
 
    function RINA_Unregister (
       fd : OS.File_Descriptor;
-      dif_name : Unbounded_String;
-      local_appl : Unbounded_String;
+      dif_name : Bounded_String;
+      local_appl : Bounded_String;
       flags : Integer
    ) return OS.File_Descriptor;
 
    -- int rina_flow_accept(int fd, char **remote_appl, struct rina_flow_spec *spec, unsigned int flags);
    function RINA_Flow_Accept (
       fd           : OS.File_Descriptor;
-      remote_appl  : Unbounded_String;
+      remote_appl  : Bounded_String;
       spec         : RINA_FLOW_SPEC;
       flags        : Integer
       ) return Os.File_Descriptor;
