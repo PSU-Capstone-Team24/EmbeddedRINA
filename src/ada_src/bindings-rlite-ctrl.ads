@@ -3,6 +3,11 @@ pragma Style_Checks (Off);
 
 with Interfaces; use Interfaces;
 
+with Bindings.Rlite.Msg;
+  use Bindings.Rlite.Msg;
+
+with Bindings.Rlite.Msg.Flow;
+
 with Bindings.Rlite.Kernel_Msg;
 with Bindings.Rlite.API;
 with Bindings.Rlite.Common;
@@ -11,6 +16,9 @@ with Bindings.Rlite.List;
 with System;
 with GNAT.OS_Lib;
 
+with Buffers;
+  use Buffers;
+  
 with Names; use Names.Name_String;
 
 package Bindings.Rlite.Ctrl is
@@ -24,9 +32,9 @@ package Bindings.Rlite.Ctrl is
    package Utils renames Bindings.Rlite.Utils;
    package List renames Bindings.Rlite.List;
 
-   type Sa_Pending_Item is record
+   type Sa_Pending_Item(Local_Appl_Size : Natural; Remote_Appl_Size : Natural; Dif_Name_Size : Natural) is record
       handle : Integer;
-      req : Kernel_Msg.Rl_Kmsg_Fa_Req_Arrived;
+      req : Flow.Request_Arrived(Local_Appl_Size, Remote_Appl_Size, Dif_Name_Size);
       node : List.List_Head;
    end record;
 
@@ -38,10 +46,10 @@ package Bindings.Rlite.Ctrl is
 
 
    --  int rl_write_msg(int rfd, const struct rl_msg_base *msg, int quiet);
-   function Rl_Write_Msg
+   procedure Rl_Write_Msg
      (Rfd : OS.File_Descriptor;
-      Msg : Kernel_Msg.Rl_Msg_Base;
-      Quiet : Integer) return OS.File_Descriptor;
+      Msg : Byte_Buffer;
+      Quiet : Integer);
      
    --  void rl_msg_free(struct rl_msg_layout *numtables, size_t num_entries,
    --                   struct rl_msg_base *msg);
@@ -54,7 +62,7 @@ package Bindings.Rlite.Ctrl is
    function RINA_Flow_Accept(
       fd          : OS.File_Descriptor;
       remote_appl : Bounded_String;
-      spec        : Bindings.Rlite.API.RINA_FLOW_SPEC;
+      spec        : Flow.RINA_Flow_Spec;
       flags       : Integer
    ) return Os.File_Descriptor;
 end Bindings.Rlite.Ctrl;

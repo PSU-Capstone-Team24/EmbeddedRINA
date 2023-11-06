@@ -1,13 +1,16 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
+with Debug;
+with Ada.Text_IO;
+
 package body Buffers is
-    procedure Put_Bytes (Input : Byte_Buffer) is
-    
-      function ToHex(Val : Unsigned_8) return String is
+
+   procedure Put_Bytes (Input : Byte_Buffer) is
+      function ToHex(Val : Byte) return String is
          Str : String := "0x00";
-         First_Digit : Unsigned_8 := ((Val / 16) mod 16) + 48;
-         Second_Digit : Unsigned_8 := (Val mod 16) + 48;
+         First_Digit : Byte := ((Val / 16) mod 16) + 48;
+         Second_Digit : Byte := (Val mod 16) + 48;
       begin
          --  ASCII offset so we go from 0-9, then jump to A-F
          if First_Digit > 57 then
@@ -25,7 +28,6 @@ package body Buffers is
 
          return Str;
       end ToHex;
-
    begin
       Ada.Text_IO.Put ("Byte Stream: ");
 
@@ -35,4 +37,10 @@ package body Buffers is
 
       Ada.Text_IO.New_Line;
    end Put_Bytes;
+
+   procedure Push_Bytes (Self : Byte_Buffer; To_Push : in T) is
+   begin
+      Debug.Print("Push_Bytes", "Push", Debug.Info);
+   end Push_Bytes;
+
 end Buffers;

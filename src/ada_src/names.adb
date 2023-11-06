@@ -1,9 +1,8 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
-with Ada.Text_IO;
-
 package body Names is
+    
     function Used_Size(Input : Bounded_String) return Natural is
         Len : Natural := 0;
     begin
@@ -22,7 +21,7 @@ package body Names is
         for I in Buffer'Range loop
             Buffer (I) := Character'Pos (Element (Input, I));
         end loop;
-        
+
         return Buffer;
     end To_Packed_Buffer;
 end Names;

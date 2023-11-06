@@ -55,7 +55,7 @@ package body Bindings.Rlite.API is
    function RINA_Flow_Accept (
       fd           : OS.File_Descriptor;
       remote_appl : Bounded_String;
-      spec         : RINA_FLOW_SPEC;
+      spec         : Flow.RINA_Flow_Spec;
       flags        : Integer
    ) return Os.File_Descriptor is
    begin

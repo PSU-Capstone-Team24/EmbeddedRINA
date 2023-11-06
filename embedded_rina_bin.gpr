@@ -4,7 +4,7 @@ project Embedded_Rina_Bin is
    -- Specify we want to bind from Ada to C
    for Languages use ("ada", "c");
 
-   for Source_Dirs use ("src/ada_src/", "config/", "src/c_src/");
+   for Source_Dirs use ("src/ada_src/", "src/ada_src/messages/", "config/", "src/c_src/");
    for Object_Dir use "obj/" & Embedded_Rina_Bin_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";

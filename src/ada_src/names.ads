@@ -2,7 +2,11 @@
 pragma Style_Checks (Off);
 
 with Ada.Strings.Bounded;
-with Buffers; use Buffers;
+with Buffers;
+  use Buffers;
+
+with Interfaces;
+  use Interfaces;
 
 --  Max name length to be used for DIF_Name, Appl_Name, etc
 package Names is

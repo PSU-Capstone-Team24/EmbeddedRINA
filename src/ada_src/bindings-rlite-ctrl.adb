@@ -6,38 +6,39 @@ with Debug;
 
 --  Ada
 with Ada.Text_IO;
-   use Ada.Text_IO;
+  use Ada.Text_IO;
 
-with Names; use Names;
-with Buffers; use Buffers;
+with Names;
+  use Names;
+
+with Buffers;
+  use Buffers;
+
+with Bindings.Rlite.Msg.Flow;
+
+with Bindings.Rlite.Msg.Register;
+  use Bindings.Rlite.Msg;
 
 package body Bindings.Rlite.Ctrl is
-
-   function Rl_Write_Msg
+   
+   procedure Rl_Write_Msg
      (Rfd : OS.File_Descriptor;
-      Msg : Kernel_Msg.Rl_Msg_Base;
-      Quiet : Integer) return OS.File_Descriptor is
+      Msg : Byte_Buffer;
+      Quiet : Integer) is
 
-      Ser_Len : Natural;
-      Ret : Integer;
+      Ser_Len : Natural := Msg'Size / 8;
+
+      --  Result can be less than N if a disk full condition was detected
+      --  https://sites.radford.edu/~nokie/classes/320/std_lib_html/gnat-os_lib.html#204
+      Ret : Integer := 0;
    begin
+      Ret := OS.Write (Rfd, Msg'Address, Ser_Len);
+      Debug.Print("RINA_Register_Common", "Bytes Written " & Integer'Image(Ret), Debug.Info);
 
-      --  Get serialized message length for what we are trying to send
-      Debug.Print ("Rl_Write_Msg", "Msg_Type " & Kernel_Msg.Rl_Msg_T'Image (Msg.Hdr.Msg_Type), Debug.Warning);
-
-      --  MT: WIP
-      --  Ser_Len := Kernel_Msg.Rl_Msg_Serlen (Msg);
-
-      --  Ada 'Size is in bits, account for this!
-      --  if Ser_Len * 8 > Ser_Buffer'Size then
-      --     Debug.Print ("Rl_Write_Msg", "Serialized message would be too long " & Integer'Image (Ser_Len * 8) & " > " & Integer'Image (Ser_Buffer'Size), Debug.Error);
-      --     return OS.Invalid_FD;
-      --  end if;
-
-      --  Serialize the message
-      --  Ser_Len := Serialize_Rlite_Msg (Utils.Rl_Ker_Numtables'Address, Integer (Kernel_Msg.RLITE_KER_MSG_MAX), Ser_Buffer'Address, Msg);
-
-      return OS.Invalid_FD;
+      --  Check for failure conditions
+      if Ret < 0 then
+         Debug.Print ("Rl_Write_Msg", "Disk full condition? Ret < 0", Debug.Error);
+      end if;
    end Rl_Write_Msg;
 
    function RINA_Register_Common (fd : OS.File_Descriptor;
@@ -52,10 +53,7 @@ package body Bindings.Rlite.Ctrl is
 
       Bits_Other_Than_NoWait : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NOWAIT);
       
-      subtype Message is Kernel_Msg.Rl_Kmsg_Appl_Register(Used_Size (local_appl), Used_Size (dif_name));
-      req : Message;
-
-      function Serialize is new Kernel_Msg.Serialize (T => Message);
+      req : Register.Request;
    begin
 
       if Bits_Other_Than_NoWait /= 0 then
@@ -74,21 +72,19 @@ package body Bindings.Rlite.Ctrl is
          return wfd;
       end if;
 
-      --  Setup request message, originally done in rl_register_req_fill
-      req.Hdr.Version   := Kernel_Msg.RLITE_API_VERSION;
-      req.Hdr.Msg_Type  := Kernel_Msg.RLITE_KER_APPL_REGISTER;
-      req.Hdr.Event_Id  := Bindings.Rlite.API.RINA_REG_EVENT_ID;
+      --  Setup request message
+      req.Hdr.Msg_Type  := RLITE_KER_APPL_REGISTER;
       req.Reg           := reg;
-      req.Appl_Name     := To_Packed_Buffer (local_appl);
-      req.Dif_Name      := To_Packed_Buffer (dif_name);
+      req.Appl_Name     := local_appl;
+      req.Dif_Name      := dif_name;
 
       declare
-         buff : Byte_Buffer := Serialize (req);
+         Buffer : Byte_Buffer := Bindings.Rlite.Msg.Register.Serialize (req);
       begin
-         Ada.Text_IO.New_Line;
+         Rl_Write_Msg (fd, Buffer, 0);
       end; 
       
-      Debug.Print ("RINA_Register_Common", "Message Type: " & Kernel_Msg.Rl_Msg_T'Image (req.Hdr.Msg_Type), Debug.Info);
+      Debug.Print ("RINA_Register_Common", "Message Type: " & Rl_Msg_T'Image (req.Hdr.Msg_Type), Debug.Info);
 
       --  MT: TODO: Rl_Msg_Free implementation, check flags again and return rina_register_wait
       --  instead of a file descriptor to the result
@@ -98,12 +94,12 @@ package body Bindings.Rlite.Ctrl is
    function RINA_Flow_Accept(
       fd          : OS.File_Descriptor;
       remote_appl : Bounded_String;
-      spec        : Bindings.Rlite.API.RINA_FLOW_SPEC;
+      spec        : Flow.RINA_Flow_Spec;
       flags       : Integer
    ) return Os.File_Descriptor is
-      req : Kernel_Msg.Rl_Kmsg_Fa_Req_Arrived;
-      spi : Sa_Pending_Item;
-      resp : Kernel_Msg.rl_kmsg_fa_resp;
+      req : Flow.Request_Arrived(0, Used_Size (remote_appl), 0);
+      spi : Sa_Pending_Item(0, Used_Size (remote_appl), 0);
+      resp : Flow.Response;
    begin
       return 1;
    end RINA_Flow_Accept;
