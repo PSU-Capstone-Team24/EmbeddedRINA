@@ -61,4 +61,27 @@ package body Bindings.Rlite.API is
    begin
       return Ctrl.RINA_Flow_Accept(fd, remote_appl, spec, flags);
    end RINA_Flow_Accept;
+
+   function RINA_Flow_Alloc(
+      dif_name       : Bounded_String;
+      local_appl     : Bounded_String;
+      remote_appl    : Bounded_String;
+      flowspec       : Flow.RINA_Flow_Spec;
+      flags          : Unsigned_32
+   )  return OS.File_Descriptor is
+   begin
+      return Ctrl.RINA_Flow_Alloc(dif_name, local_appl, remote_appl,
+      flowspec, flags, 16#FFFF#);
+   end RINA_Flow_Alloc;
+
+   function RINA_Flow_Alloc_Wait(
+      wfd            : OS.File_Descriptor 
+   )  return OS.File_Descriptor is
+   begin
+      return Ctrl.RINA_Flow_Alloc_Wait(wfd, 0);
+   end RINA_Flow_Alloc_Wait;
+
+
+
+
 end Bindings.Rlite.API;

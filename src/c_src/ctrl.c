@@ -532,8 +532,7 @@ rina_flow_alloc(const char *dif_name, const char *local_appl,
                 const char *remote_appl, const struct rina_flow_spec *flowspec,
                 unsigned int flags)
 {
-    return __rina_flow_alloc(dif_name, local_appl, remote_appl, flowspec, flags,
-                             0xffff);
+    return __rina_flow_alloc(dif_name, local_appl, remote_appl, flowspec, flags,0xffff);
 }
 
 /* Split accept lock and pending lists. */

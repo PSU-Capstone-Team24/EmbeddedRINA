@@ -65,4 +65,20 @@ package Bindings.Rlite.Ctrl is
       spec        : Flow.RINA_Flow_Spec;
       flags       : Integer
    ) return Os.File_Descriptor;
+
+   function RINA_Flow_Alloc(
+      dif_name       : Bounded_String;
+      local_appl     : Bounded_String;
+      remote_appl    : Bounded_String;
+      flowspec       : Flow.RINA_Flow_Spec;
+      flags          : Unsigned_32;
+      upper_ipcp_id  : Unsigned_16
+   ) return OS.File_Descriptor;
+
+   function RINA_Flow_Alloc_Wait(
+      wfd            : OS.File_Descriptor;
+      port_id        : Unsigned_16
+   )return OS.File_Descriptor;
+
+
 end Bindings.Rlite.Ctrl;

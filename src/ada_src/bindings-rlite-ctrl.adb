@@ -19,6 +19,8 @@ with Bindings.Rlite.Msg.Flow;
 with Bindings.Rlite.Msg.Register;
   use Bindings.Rlite.Msg;
 
+with Bindings.Rlite.API;
+
 package body Bindings.Rlite.Ctrl is
    
    procedure Rl_Write_Msg
@@ -103,4 +105,61 @@ package body Bindings.Rlite.Ctrl is
    begin
       return 1;
    end RINA_Flow_Accept;
+
+   function RINA_Flow_Alloc(
+      dif_name       : Bounded_String;
+      local_appl     : Bounded_String;
+      remote_appl    : Bounded_String;
+      flowspec       : Flow.RINA_Flow_Spec;
+      flags          : Unsigned_32;
+      upper_ipcp_id  : Unsigned_16
+   ) return OS.File_Descriptor is
+      req      : Msg.Flow.Request;
+      wfd, ret : OS.File_Descriptor;
+      function Get_Pid return Unsigned_32
+         with Import, Convention => C, External_Name => "getpid";
+      Bits_Other_Than_NoWait : constant Unsigned_32 := 
+         Unsigned_32 (flags) and not Unsigned_32 
+         (Bindings.Rlite.API.RINA_F_NOWAIT);
+   begin
+      if Bits_Other_Than_NoWait /= 0 then
+         --  Flag has bits other than RINA_Flow_Alloc set, return invalid file descriptor
+         Debug.Print ("RINA_Flow_Alloc", "Flag has bits other than RINA_Flow_Alloc", Debug.Error);
+         return OS.Invalid_FD;
+      end if;
+
+      if flowspec.Version /= Msg.Flow.RINA_FLOW_SPEC_VERSION then
+      --  Flag has bits other than RINA_Flow_Spec_Version set, return invalid file descriptor
+         Debug.Print ("RINA_Flow_Alloc", "flowspec version doesn't match", Debug.Error);
+         return OS.Invalid_FD;
+      end if;
+
+      --  Setup rl_fa_req_fill - flow allocation
+      req.Hdr.Msg_Type  := RLITE_KER_FA_REQ;
+      req.Hdr.Event_ID  := RINA_REG_EVENT_ID;
+      req.Dif_Name      := dif_name;
+      req.Upper_Ipcp_Id := upper_ipcp_id;
+      req.Local_Appl    := local_appl;
+      req.Remote_Appl   := remote_appl;
+      req.Cookie        := Get_Pid / 2;
+
+      wfd := Bindings.Rlite.API.RINA_Open;
+      
+      --need to fix
+      return wfd;
+
+   end RINA_Flow_Alloc;
+
+
+
+   function RINA_Flow_Alloc_Wait(
+      wfd            : OS.File_Descriptor;
+      port_id        : Unsigned_16
+   )return OS.File_Descriptor is
+   begin
+      return wfd;
+   end RINA_Flow_Alloc_Wait;
+
+
+
 end Bindings.Rlite.Ctrl;
