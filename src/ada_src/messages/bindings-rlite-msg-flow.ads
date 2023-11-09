@@ -9,6 +9,8 @@ with Buffers;
 
 package Bindings.Rlite.Msg.Flow is
 
+   RINA_FLOW_SPEC_VERSION : constant Unsigned_32 := 2;
+
    --  Record to specify the flow QoS parameters asked by
    --  the application issuing a flow allocation request.
    type RINA_Flow_Spec is record

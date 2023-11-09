@@ -8,9 +8,7 @@ with Interfaces.C.Strings;
 package Bindings.Rlite.Common is
    package C renames Interfaces.C;
 
-   --  MT: TODO: Temp set to 2**63 until I can get this to compile lol
-   type Unsigned_64 is range 0 .. 2**63 - 1;
-   pragma Convention (C, Unsigned_64);
+   type Unsigned_64 is mod 2 ** 64 with size => 64;
 
    --  Application naming information:
    --  Application Process Name
