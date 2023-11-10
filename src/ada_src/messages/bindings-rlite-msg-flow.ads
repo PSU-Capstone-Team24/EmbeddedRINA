@@ -15,7 +15,7 @@ package Bindings.Rlite.Msg.Flow is
    --  the application issuing a flow allocation request.
    type RINA_Flow_Spec is record
       --  Version = 2 for rLite
-      Version : Unsigned_32;
+      Version : Unsigned_32 := RINA_FLOW_SPEC_VERSION;
       --  Max delay in microseconds
       Max_Delay : Unsigned_32;
       --  Max in SDUs (Service Data Units)

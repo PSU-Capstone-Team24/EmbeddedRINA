@@ -63,7 +63,7 @@ package body Bindings.Rlite.Ctrl is
       end if;
 
       --  Open dedicated file descriptor to perform the operation and wait for response
-      wfd := Bindings.Rlite.API.RINA_Open;
+      wfd := API.RINA_Open;
 
       if Integer (wfd) < 0 then
          Debug.Print ("RINA_Register_Common", "RINA_Register_Common WFD < 0", Debug.Error);

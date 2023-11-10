@@ -395,26 +395,27 @@ rina_register_common(int fd, const char *dif_name, const char *local_appl,
 
     ret = rl_register_req_fill(&req, RINA_REG_EVENT_ID, dif_name, reg,
                                local_appl);
-    //if (ret) {
-    //    errno = ENOMEM;
-    //    goto out;
-    //}
+    if (ret) {
+        errno = ENOMEM;
+        goto out;
+    }
 
     /* Issue the request ad wait for the response. */
     ret = rl_write_msg(wfd, RLITE_MB(&req), 1);
-    //rl_msg_free(rl_ker_numtables, RLITE_KER_MSG_MAX, RLITE_MB(&req));
-    //if (ret < 0) {
-    //    goto out;
-    //}
+    rl_msg_free(rl_ker_numtables, RLITE_KER_MSG_MAX, RLITE_MB(&req));
+    if (ret < 0) {
+        goto out;
+    }
 
-    //if (flags & RINA_F_NOWAIT) {
-    //    return wfd; /* Return the file descriptor to wait on. */
-    //}
+    if (flags & RINA_F_NOWAIT) {
+        return wfd; /* Return the file descriptor to wait on. */
+    }
 
-    ///* Wait for the operation to complete right now. */
-    //return rina_register_wait(fd, wfd);
-//out:
-    //close(wfd);
+    /* Wait for the operation to complete right now. */
+    return rina_register_wait(fd, wfd);
+
+out:
+    close(wfd);
 
     return ret;
 }
