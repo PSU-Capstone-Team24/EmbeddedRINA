@@ -35,7 +35,7 @@ package Bindings.Rlite.Msg.Flow is
 
    -- struct rl_kmsg_fa_req
    -- (Application --> Kernel) to initiate a flow allocation.
-   type Request(Local_Appl_Size : Natural; Remote_Appl_Size : Natural; Dif_Name_Size : Natural) is new Rl_Msg_Base with record
+   type Request is new Rl_Msg_Base with record
       Flow_Spec      : RINA_Flow_Spec;
       
       --  The local port, local CEP and unique id are
@@ -49,9 +49,9 @@ package Bindings.Rlite.Msg.Flow is
       --  It may be used by the uipcp e.g. for consistent load balancing
       Cookie         : Unsigned_32;
 
-      Local_Appl     : Byte_Buffer(1 .. Local_Appl_Size);
-      Remote_Appl    : Byte_Buffer(1 .. Remote_Appl_Size);
-      Dif_Name       : Byte_Buffer(1 .. Dif_Name_Size);
+      Local_Appl     : Bounded_String;
+      Remote_Appl    : Bounded_String;
+      Dif_Name       : Bounded_String;
    end record;
 
    overriding

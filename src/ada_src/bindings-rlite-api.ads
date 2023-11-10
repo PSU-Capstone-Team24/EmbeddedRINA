@@ -46,5 +46,18 @@ package Bindings.Rlite.API is
       spec         : Msg.Flow.RINA_Flow_Spec;
       flags        : Integer
       ) return Os.File_Descriptor;
-      
+
+   function RINA_Flow_Alloc(
+      dif_name       : Bounded_String;
+      local_appl     : Bounded_String;
+      remote_appl    : Bounded_String;
+      flowspec       : Flow.RINA_Flow_Spec;
+      flags          : Unsigned_32
+   )  return OS.File_Descriptor;
+
+   function RINA_Flow_Alloc_Wait(
+      wfd            : OS.File_Descriptor 
+   )  return OS.File_Descriptor;
+
+
 end Bindings.Rlite.API;

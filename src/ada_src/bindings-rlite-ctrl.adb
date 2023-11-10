@@ -19,6 +19,8 @@ with Bindings.Rlite.Msg.Flow;
 with Bindings.Rlite.Msg.Register;
   use Bindings.Rlite.Msg;
 
+with Bindings.Rlite.API;
+
 package body Bindings.Rlite.Ctrl is
    
    procedure Rl_Write_Msg
@@ -41,6 +43,33 @@ package body Bindings.Rlite.Ctrl is
       end if;
    end Rl_Write_Msg;
 
+   function RINA_Register_Wait (fd : OS.File_Descriptor;
+      wfd : OS.File_Descriptor) return OS.File_Descriptor is
+      Buffer : Byte_Buffer(1 .. 64) := (others => 0);
+      Bytes_Read : Integer := 0;
+   begin
+      --  Read 64 bytes from our file descriptor
+      Bytes_Read := OS.Read (fd, Buffer'Address, 64);
+
+      if Bytes_Read < 0 then
+         Debug.Print ("RINA_Register_Wait", "Error reading from file descriptor.", Debug.Error);
+         return OS.Invalid_FD;
+      end if;
+
+      if Buffer(3) /= 16#05#  and Buffer(4) /= 16#00# then
+         Debug.Print("RINA_Register_Wait", "Received wrong message type", Debug.Error);
+         return OS.Invalid_FD;
+      end if;
+
+      if Buffer(5) /= 16#6B#  and Buffer(6) /= 16#7A# then
+         Debug.Print("RINA_Register_Wait", "Event_ID does not match expected value", Debug.Error);
+         return OS.Invalid_FD;
+      end if;
+
+      --  MT: TODO: Finish this up
+      return fd;
+   end RINA_Register_Wait;
+
    function RINA_Register_Common (fd : OS.File_Descriptor;
       dif_name : Bounded_String;
       local_appl : Bounded_String;
@@ -49,27 +78,25 @@ package body Bindings.Rlite.Ctrl is
 
       ret : OS.File_Descriptor := OS.Invalid_FD;
       wfd : OS.File_Descriptor := OS.Invalid_FD;
-      res : constant OS.File_Descriptor := OS.Invalid_FD;
 
-      Bits_Other_Than_NoWait : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NOWAIT);
-      
+      Bits_Other_Than_NoWait : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (API.RINA_F_NOWAIT);
+      No_Wait : constant Unsigned_32 := Unsigned_32 (flags) and Unsigned_32 (API.RINA_F_NOWAIT);
       req : Register.Request;
    begin
 
       if Bits_Other_Than_NoWait /= 0 then
          --  Flag has bits other than RINA_F_NOWAIT set, return invalid file descriptor
          Debug.Print ("RINA_Register_Common", "Flag has bits other than RINA_F_NOWAIT", Debug.Error);
-         return res;
+         return OS.Invalid_FD;
       end if;
 
       --  Open dedicated file descriptor to perform the operation and wait for response
       wfd := API.RINA_Open;
 
       if Integer (wfd) < 0 then
-         Debug.Print ("RINA_Register_Common", "RINA_Register_Common WFD < 0", Debug.Error);
-
          --  Invalid control device file descriptor
-         return wfd;
+         Debug.Print ("RINA_Register_Common", "File descriptor to RINA control device < 0", Debug.Error);
+         return OS.Invalid_FD;
       end if;
 
       --  Setup request message
@@ -82,13 +109,17 @@ package body Bindings.Rlite.Ctrl is
          Buffer : Byte_Buffer := Bindings.Rlite.Msg.Register.Serialize (req);
       begin
          Rl_Write_Msg (fd, Buffer, 0);
-      end; 
+      end;
       
       Debug.Print ("RINA_Register_Common", "Message Type: " & Rl_Msg_T'Image (req.Hdr.Msg_Type), Debug.Info);
 
-      --  MT: TODO: Rl_Msg_Free implementation, check flags again and return rina_register_wait
-      --  instead of a file descriptor to the result
-      return ret;
+      
+      if No_Wait > 0 then
+         --  Return the file descriptor to wait on
+         return wfd;
+      end if;
+
+      return RINA_Register_Wait (fd, wfd);
    end RINA_Register_Common;
 
    function RINA_Flow_Accept(
@@ -103,4 +134,60 @@ package body Bindings.Rlite.Ctrl is
    begin
       return 1;
    end RINA_Flow_Accept;
+
+   function RINA_Flow_Alloc(
+      dif_name       : Bounded_String;
+      local_appl     : Bounded_String;
+      remote_appl    : Bounded_String;
+      flowspec       : Flow.RINA_Flow_Spec;
+      flags          : Unsigned_32;
+      upper_ipcp_id  : Rl_Ipcp_Id_T
+   ) return OS.File_Descriptor is
+      req      : Msg.Flow.Request;
+      wfd, ret : OS.File_Descriptor;
+      function Get_Pid return Unsigned_32
+         with Import, Convention => C, External_Name => "getpid";
+      Bits_Other_Than_NoWait : constant Unsigned_32 := 
+         Unsigned_32 (flags) and not Unsigned_32 
+         (Bindings.Rlite.API.RINA_F_NOWAIT);
+   begin
+      if Bits_Other_Than_NoWait /= 0 then
+         --  Flag has bits other than RINA_Flow_Alloc set, return invalid file descriptor
+         Debug.Print ("RINA_Flow_Alloc", "Flag has bits other than RINA_Flow_Alloc", Debug.Error);
+         return OS.Invalid_FD;
+      end if;
+
+      if flowspec.Version /= Msg.Flow.RINA_FLOW_SPEC_VERSION then
+      --  Flag has bits other than RINA_Flow_Spec_Version set, return invalid file descriptor
+         Debug.Print ("RINA_Flow_Alloc", "flowspec version doesn't match", Debug.Error);
+         return OS.Invalid_FD;
+      end if;
+
+      --  Setup rl_fa_req_fill - flow allocation
+      req.Hdr.Msg_Type  := RLITE_KER_FA_REQ;
+      req.Dif_Name      := dif_name;
+      req.Upper_Ipcp_Id := upper_ipcp_id;
+      req.Local_Appl    := local_appl;
+      req.Remote_Appl   := remote_appl;
+      req.Cookie        := Get_Pid / 2;
+
+      wfd := Bindings.Rlite.API.RINA_Open;
+      
+      --need to fix
+      return wfd;
+
+   end RINA_Flow_Alloc;
+
+
+
+   function RINA_Flow_Alloc_Wait(
+      wfd            : OS.File_Descriptor;
+      port_id        : Unsigned_16
+   )return OS.File_Descriptor is
+   begin
+      return wfd;
+   end RINA_Flow_Alloc_Wait;
+
+
+
 end Bindings.Rlite.Ctrl;
