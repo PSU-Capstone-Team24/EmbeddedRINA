@@ -31,6 +31,9 @@ package Bindings.Rlite.Msg is
    --  Casual value used for assert (0x7a6b)
    RINA_REG_EVENT_ID : constant Unsigned_32 := 16#7a6b#;
 
+   -- Casual value used for assert (0x6271)
+   RINA_FA_EVENT_ID : constant Unsigned_32 := 16#6271#;
+
    --  Message types, must be listed alternating requests with corresponding responses   
    type Rl_Msg_T is (RLITE_DUMMY, RLITE_KER_IPCP_CREATE, RLITE_KER_IPCP_CREATE_RESP, RLITE_KER_IPCP_DESTROY,
                      RLITE_KER_APPL_REGISTER, RLITE_KER_APPL_REGISTER_RESP, RLITE_KER_FA_REQ,
@@ -53,7 +56,7 @@ package Bindings.Rlite.Msg is
    type Rl_Msg_Hdr is record
       Version  : Unsigned_16  := RLITE_API_VERSION;
       Msg_Type : Rl_Msg_T     := RLITE_DUMMY;
-      Event_Id : Unsigned_32  := RINA_REG_EVENT_ID;
+      Event_Id : Unsigned_32;
    end record;
 
    type Rl_Msg_Base is abstract tagged record

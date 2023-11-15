@@ -10,6 +10,7 @@ with Buffers;
 package Bindings.Rlite.Msg.Flow is
 
    RINA_FLOW_SPEC_VERSION : constant Unsigned_32 := 2;
+   RINA_FLOW_SPEC_LOSS_MAX : constant Unsigned_16 := 10000;
 
    --  Record to specify the flow QoS parameters asked by
    --  the application issuing a flow allocation request.
@@ -17,20 +18,20 @@ package Bindings.Rlite.Msg.Flow is
       --  Version = 2 for rLite
       Version : Unsigned_32 := RINA_FLOW_SPEC_VERSION;
       --  Max delay in microseconds
-      Max_Delay : Unsigned_32;
+      Max_Delay : Unsigned_32 := 0;
       --  Max in SDUs (Service Data Units)
       --  MT: TODO: This is originally a uint64_t, will this be an issue?
-      Max_SDU_Gap : Unsigned_32;
+      Max_SDU_Gap : Unsigned_64 := 0;
       --  Average bandwith in bits per second
-      Avg_Bandwith : Unsigned_32;
+      Avg_Bandwith : Unsigned_32 := 0;
       --  Maximum packet loss from 0 (0%) to 10000 (100%)
-      Max_Loss : Unsigned_16;
+      Max_Loss : Unsigned_16 := RINA_FLOW_SPEC_LOSS_MAX;
       --  In order delivery
-      In_Order_Delivery : Unsigned_8;
+      In_Order_Delivery : Unsigned_8 := 0;
       --  Message boundaries
-      Msg_Boundaries : Unsigned_8;
+      Msg_Boundaries : Unsigned_8 := 1;
       --  Max jitter in microseconds
-      Max_Jitter : Unsigned_32;
+      Max_Jitter : Unsigned_32 := 0;
    end record;
 
    -- struct rl_kmsg_fa_req
