@@ -4,22 +4,10 @@ pragma Style_Checks (Off);
 --  Debug
 with Debug;
 
---  Ada
-with Ada.Text_IO;
-  use Ada.Text_IO;
-
 with Names;
   use Names;
 
-with Buffers;
-  use Buffers;
-
-with Bindings.Rlite.Msg.Flow;
-
 with Bindings.Rlite.Msg.Register;
-  use Bindings.Rlite.Msg;
-
-with Bindings.Rlite.API;
 
 package body Bindings.Rlite.Ctrl is
    
@@ -28,7 +16,7 @@ package body Bindings.Rlite.Ctrl is
       Msg : Byte_Buffer;
       Quiet : Integer) is
 
-      Ser_Len : Natural := Msg'Size / 8;
+      Ser_Len : constant Natural := Msg'Size / 8;
 
       --  Result can be less than N if a disk full condition was detected
       --  https://sites.radford.edu/~nokie/classes/320/std_lib_html/gnat-os_lib.html#204
@@ -76,7 +64,6 @@ package body Bindings.Rlite.Ctrl is
       flags : Integer;
       reg : Unsigned_8) return OS.File_Descriptor is
 
-      ret : OS.File_Descriptor := OS.Invalid_FD;
       wfd : OS.File_Descriptor := OS.Invalid_FD;
 
       Bits_Other_Than_NoWait : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (API.RINA_F_NOWAIT);
@@ -93,7 +80,7 @@ package body Bindings.Rlite.Ctrl is
       --  Open dedicated file descriptor to perform the operation and wait for response
       wfd := API.RINA_Open;
 
-      if Integer (wfd) < 0 then
+      if wfd = Invalid_FD then
          --  Invalid control device file descriptor
          Debug.Print ("RINA_Register_Common", "File descriptor to RINA control device < 0", Debug.Error);
          return OS.Invalid_FD;
@@ -101,12 +88,13 @@ package body Bindings.Rlite.Ctrl is
 
       --  Setup request message
       req.Hdr.Msg_Type  := RLITE_KER_APPL_REGISTER;
+      req.Hdr.Event_Id  := RINA_REG_EVENT_ID;
       req.Reg           := reg;
       req.Appl_Name     := local_appl;
       req.Dif_Name      := dif_name;
 
       declare
-         Buffer : Byte_Buffer := Bindings.Rlite.Msg.Register.Serialize (req);
+         Buffer : constant Byte_Buffer := Msg.Register.Serialize (req);
       begin
          Rl_Write_Msg (fd, Buffer, 0);
       end;
@@ -147,9 +135,7 @@ package body Bindings.Rlite.Ctrl is
       wfd, ret : OS.File_Descriptor;
       function Get_Pid return Unsigned_32
          with Import, Convention => C, External_Name => "getpid";
-      Bits_Other_Than_NoWait : constant Unsigned_32 := 
-         Unsigned_32 (flags) and not Unsigned_32 
-         (Bindings.Rlite.API.RINA_F_NOWAIT);
+      Bits_Other_Than_NoWait : constant Unsigned_32 := flags and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NOWAIT);
    begin
       if Bits_Other_Than_NoWait /= 0 then
          --  Flag has bits other than RINA_Flow_Alloc set, return invalid file descriptor
@@ -158,21 +144,34 @@ package body Bindings.Rlite.Ctrl is
       end if;
 
       if flowspec.Version /= Msg.Flow.RINA_FLOW_SPEC_VERSION then
-      --  Flag has bits other than RINA_Flow_Spec_Version set, return invalid file descriptor
-         Debug.Print ("RINA_Flow_Alloc", "flowspec version doesn't match", Debug.Error);
+      --  Flowspec version malformed or otherwise incorrect, return invalid file descriptor
+         Debug.Print ("RINA_Flow_Alloc", "FlowSpec version does not match constant RINA_FLOW_SPEC_VERSION", Debug.Error);
          return OS.Invalid_FD;
       end if;
 
       --  Setup rl_fa_req_fill - flow allocation
       req.Hdr.Msg_Type  := RLITE_KER_FA_REQ;
+      req.Hdr.Event_Id  := RINA_FA_EVENT_ID;
       req.Dif_Name      := dif_name;
       req.Upper_Ipcp_Id := upper_ipcp_id;
       req.Local_Appl    := local_appl;
       req.Remote_Appl   := remote_appl;
+
+      --  Was originally bitshifted right 1x
       req.Cookie        := Get_Pid / 2;
 
-      wfd := Bindings.Rlite.API.RINA_Open;
+      wfd := API.RINA_Open;
       
+      if wfd = Invalid_FD then
+         Debug.Print ("RINA_Flow_Alloc", "Error creating file descriptor to RINA control device", Debug.Error);
+         return OS.Invalid_FD;
+      end if;
+
+      declare
+         Buffer : Byte_Buffer := Msg.Flow.Serialize (req);
+      begin
+         Rl_Write_Msg (wfd, Buffer, 0);
+      end;
       --need to fix
       return wfd;
 

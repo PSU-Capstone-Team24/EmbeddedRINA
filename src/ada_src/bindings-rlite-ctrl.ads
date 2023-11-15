@@ -3,30 +3,27 @@ pragma Style_Checks (Off);
 
 with Interfaces; use Interfaces;
 
-with Bindings.Rlite.Msg;
-  use Bindings.Rlite.Msg;
-
-with Bindings.Rlite.Msg.Flow;
-
-with Bindings.Rlite.Kernel_Msg;
 with Bindings.Rlite.API;
 with Bindings.Rlite.Common;
 with Bindings.Rlite.Utils;
 with Bindings.Rlite.List;
 with System;
 with GNAT.OS_Lib;
+   use GNAT.OS_Lib;
 
 with Buffers;
   use Buffers;
   
 with Names; use Names.Name_String;
 
+with Bindings.Rlite.Msg.Flow;
+  use Bindings.Rlite.Msg;
+
 package Bindings.Rlite.Ctrl is
    --  OS Library Package
    package OS renames GNAT.OS_Lib;
 
    --  RLite Binding Packages
-   package Kernel_Msg renames Bindings.Rlite.Kernel_Msg;
    package API renames Bindings.Rlite.API;
    package Common renames Bindings.Rlite.Common;
    package Utils renames Bindings.Rlite.Utils;
