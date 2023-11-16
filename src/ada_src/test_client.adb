@@ -15,6 +15,7 @@ with Names;
    use Names.Name_String;
 
 with Exceptions;
+with Debug;
 
 with GNAT.OS_Lib;
    use GNAT.OS_Lib;
