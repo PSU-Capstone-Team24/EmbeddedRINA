@@ -55,7 +55,6 @@ package body Bindings.Rlite.Msg.Flow is
       return Serialized_Msg;
    end Serialize;
 
-
    function Serialize (Self : Response_Arrived) return Byte_Buffer is
       Buf : Byte_Buffer(0 .. 128) := (others => 0);
    begin

@@ -23,7 +23,7 @@ package Bindings.Rlite.Msg.Flow is
       --  MT: TODO: This is originally a uint64_t, will this be an issue?
       Max_SDU_Gap : Unsigned_64 := 0;
       --  Average bandwith in bits per second
-      Avg_Bandwith : Unsigned_32 := 0;
+      Avg_Bandwith : Unsigned_64 := 0;
       --  Maximum packet loss from 0 (0%) to 10000 (100%)
       Max_Loss : Unsigned_16 := RINA_FLOW_SPEC_LOSS_MAX;
       --  In order delivery

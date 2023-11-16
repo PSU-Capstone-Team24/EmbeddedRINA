@@ -21,7 +21,7 @@ package Bindings.Rlite.Msg is
    type Rlm_Addr_T   is new Unsigned_64;
    type Rlm_Seq_T    is new Unsigned_64;
    type Rlm_Pdulen_T is new Unsigned_64;
-   type Rlm_Cepid_T  is new Unsigned_64;
+   type Rlm_Cepid_T  is new Unsigned_32;
    type Rlm_Qosid_T  is new Unsigned_64;
 
    --  Constants
