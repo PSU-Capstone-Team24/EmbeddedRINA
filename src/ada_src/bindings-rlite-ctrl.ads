@@ -37,9 +37,9 @@ package Bindings.Rlite.Ctrl is
 
    -- struct rl_msg_base *rl_read_next_msg(int rfd, int quiet)
    function Rl_Read_Msg (
-      rfd : Integer;
+      rfd : OS.File_Descriptor;
       quiet : Integer
-   ) return Msg.Rl_Msg_Base;
+   ) return Byte_Buffer;
 
    --  int rl_write_msg(int rfd, const struct rl_msg_base *msg, int quiet);
    procedure Rl_Write_Msg

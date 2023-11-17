@@ -1,6 +1,8 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
+with Ada.Unchecked_Conversion;
+
 with Interfaces;
   use Interfaces;
 
@@ -58,6 +60,25 @@ package Bindings.Rlite.Msg is
       Msg_Type : Rl_Msg_T     := RLITE_DUMMY;
       Event_Id : Unsigned_32;
    end record;
+
+   --  Only use these when we are super-duper sure we know what we're doing
+   --  Otherwise what we assume is usable data can end up being garbage...
+   function Buffer_To_Rl_Msg_Hdr is
+      new Ada.Unchecked_Conversion (Source => Byte_Buffer,
+                                    Target => Rl_Msg_Hdr);
+
+   function Buffer_To_Unsigned_8 is
+      new Ada.Unchecked_Conversion (Source => Byte_Buffer,
+                                    Target => Unsigned_8);
+
+   function Buffer_To_Unsigned_16 is
+      new Ada.Unchecked_Conversion (Source => Byte_Buffer,
+                                    Target => Unsigned_16);
+
+   function Buffer_To_Unsigned_32 is
+      new Ada.Unchecked_Conversion (Source => Byte_Buffer,
+                                    Target => Unsigned_32);
+
 
    type Rl_Msg_Base is abstract tagged record
       Hdr : Rl_Msg_Hdr;

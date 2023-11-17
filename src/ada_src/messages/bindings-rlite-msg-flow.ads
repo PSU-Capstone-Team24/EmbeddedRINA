@@ -7,6 +7,9 @@ with Bindings.Rlite.Msg;
 with Buffers;
   use Buffers;
 
+with Bindings.Rlite.List;
+   use Bindings.Rlite;
+
 package Bindings.Rlite.Msg.Flow is
 
    RINA_FLOW_SPEC_VERSION : constant Unsigned_32 := 2;

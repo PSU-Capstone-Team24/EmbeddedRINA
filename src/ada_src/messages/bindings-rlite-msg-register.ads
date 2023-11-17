@@ -29,5 +29,16 @@ package Bindings.Rlite.Msg.Register is
 
    overriding
    function Serialize (Self : in Response) return Byte_Buffer;
+   function Deserialize (Buffer : in Byte_Buffer) return Response;
+
+   --  (Application --> Kernel) to finalize a registration operation.
+   type Move is new Rl_Msg_Base with record
+      Ipcp_Id     : Rl_Ipcp_Id_T;
+      Fd          : Integer_32;
+   end record;
+   pragma Pack(Move);
+
+   overriding
+   function Serialize (Self : in Move) return Byte_Buffer;
 
 end Bindings.Rlite.Msg.Register;

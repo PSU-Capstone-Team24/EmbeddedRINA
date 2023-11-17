@@ -33,33 +33,43 @@ package body Bindings.Rlite.Ctrl is
 
       -- TODO: Needs to be implemented. Maybe first 16 bits are header where rest is body.
    function Rl_Read_Msg (
-      rfd : Integer;
+      rfd : OS.File_Descriptor;
       quiet : Integer
-   ) return Msg.Rl_Msg_Base is
-      resp : Msg.Rl_Msg_Base;
+   ) return Byte_Buffer is
+      Bytes_Read : Integer;
+      Buffer : Byte_Buffer(1 .. 4096);
    begin
-      return 0;
+      --  Arbitrary 4096 bytes to follow along with rlite serbuf[4096]
+      Bytes_Read := OS.Read (rfd, Buffer'Address, 4096);
+      return Buffer;
    end Rl_Read_Msg;
 
    function RINA_Register_Wait (fd : OS.File_Descriptor;
       wfd : OS.File_Descriptor) return OS.File_Descriptor is
-      Buffer : Byte_Buffer(1 .. 64) := (others => 0);
+      Buffer : Byte_Buffer(1 .. 4096) := (others => 0);
       Bytes_Read : Integer := 0;
+      reg : Msg.Register.Response;
    begin
-      --  Read 64 bytes from our file descriptor
-      Bytes_Read := OS.Read (fd, Buffer'Address, 64);
+      --  Read 4096 bytes from our file descriptor
+      Bytes_Read := OS.Read (fd, Buffer'Address, 4096);
+      
+      --  MT: DEBUG ONLY
+      reg := Msg.Register.Deserialize (Buffer);
 
+      --  Make sure we've actually read something
       if Bytes_Read < 0 then
          Debug.Print ("RINA_Register_Wait", "Error reading from file descriptor.", Debug.Error);
          return OS.Invalid_FD;
       end if;
 
-      if Buffer(3) /= 16#05#  and Buffer(4) /= 16#00# then
+      --  Assert msg_type = RLITE_KER_APPL_REGISTER_RESP = 0x0005
+      if Buffer(3) /= 16#05# and Buffer(4) /= 16#00# then
          Debug.Print("RINA_Register_Wait", "Received wrong message type", Debug.Error);
          return OS.Invalid_FD;
       end if;
 
-      if Buffer(5) /= 16#6B#  and Buffer(6) /= 16#7A# then
+      --  Assert event_id = RINA_REG_EVENT_ID = 0x7A6B
+      if Buffer(5) /= 16#6B# and Buffer(6) /= 16#7A# then
          Debug.Print("RINA_Register_Wait", "Event_ID does not match expected value", Debug.Error);
          return OS.Invalid_FD;
       end if;
@@ -109,8 +119,8 @@ package body Bindings.Rlite.Ctrl is
          Rl_Write_Msg (fd, Buffer, 0);
       end;
       
+      --  Verbose
       Debug.Print ("RINA_Register_Common", "Message Type: " & Rl_Msg_T'Image (req.Hdr.Msg_Type), Debug.Info);
-
       
       if No_Wait > 0 then
          --  Return the file descriptor to wait on
@@ -131,8 +141,8 @@ package body Bindings.Rlite.Ctrl is
       resp : Msg.Flow.Response;
       ffd : Integer := -1;
       ret : OS.File_Descriptor;
-      Bits_Other_Than_NoResp : constant Unsigned_32 := flags and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NORESP);
-      Bits_Same_As_NoResp : constant Unsigned_32 := falgs and Unsigned_32 (Bindings.Rlite.Api.RINA_F_NORESP);
+      Bits_Other_Than_NoResp : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NORESP);
+      Bits_Same_As_NoResp : constant Unsigned_32 := Unsigned_32 (flags) and Unsigned_32 (Bindings.Rlite.Api.RINA_F_NORESP);
    begin
       if spec.Version /= Msg.Flow.RINA_FLOW_SPEC_VERSION then
          Debug.Print("RINA_Flow_Accept", "FlowSpec version does not match constant RINA_FLOW_SPEC_VERSION", Debug.Error);
@@ -142,13 +152,13 @@ package body Bindings.Rlite.Ctrl is
          Debug.Print("RINA_Flow_Accept", "No response flag was not set", Debug.Error);
       end if;
 
-      req := Rl_Read_Msg(fd, 1); -- TODO: See RL_Read_Msg func
+      --  req := Rl_Read_Msg(fd, 1); -- TODO: See RL_Read_Msg func
 
       if Bits_Same_As_NoResp /= 0 then
-         Debug.Print("RINA_Flow_Accept", "No response flag was set", Debug.Erorr);
+         Debug.Print("RINA_Flow_Accept", "No response flag was set", Debug.Error);
       end if;
 
-
+      return OS.Invalid_FD;
    end RINA_Flow_Accept;
 
    function RINA_Flow_Alloc(
