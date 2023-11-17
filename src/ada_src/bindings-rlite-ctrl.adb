@@ -31,6 +31,16 @@ package body Bindings.Rlite.Ctrl is
       end if;
    end Rl_Write_Msg;
 
+      -- TODO: Needs to be implemented. Maybe first 16 bits are header where rest is body.
+   function Rl_Read_Msg (
+      rfd : Integer;
+      quiet : Integer
+   ) return Msg.Rl_Msg_Base is
+      resp : Msg.Rl_Msg_Base;
+   begin
+      return 0;
+   end Rl_Read_Msg;
+
    function RINA_Register_Wait (fd : OS.File_Descriptor;
       wfd : OS.File_Descriptor) return OS.File_Descriptor is
       Buffer : Byte_Buffer(1 .. 64) := (others => 0);
@@ -116,11 +126,29 @@ package body Bindings.Rlite.Ctrl is
       spec        : Flow.RINA_Flow_Spec;
       flags       : Integer
    ) return Os.File_Descriptor is
-      req : Flow.Request_Arrived(0, Used_Size (remote_appl), 0);
-      spi : Sa_Pending_Item(0, Used_Size (remote_appl), 0);
-      resp : Flow.Response;
+      req : Msg.Flow.Request_Arrived;
+      spi : Msg.Flow.Sa_Pending_Item;
+      resp : Msg.Flow.Response;
+      ffd : Integer := -1;
+      ret : OS.File_Descriptor;
+      Bits_Other_Than_NoResp : constant Unsigned_32 := flags and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NORESP);
+      Bits_Same_As_NoResp : constant Unsigned_32 := falgs and Unsigned_32 (Bindings.Rlite.Api.RINA_F_NORESP);
    begin
-      return 1;
+      if spec.Version /= Msg.Flow.RINA_FLOW_SPEC_VERSION then
+         Debug.Print("RINA_Flow_Accept", "FlowSpec version does not match constant RINA_FLOW_SPEC_VERSION", Debug.Error);
+      end if;
+
+      if Bits_Other_Than_NoResp /= 0 then
+         Debug.Print("RINA_Flow_Accept", "No response flag was not set", Debug.Error);
+      end if;
+
+      req := Rl_Read_Msg(fd, 1); -- TODO: See RL_Read_Msg func
+
+      if Bits_Same_As_NoResp /= 0 then
+         Debug.Print("RINA_Flow_Accept", "No response flag was set", Debug.Erorr);
+      end if;
+
+
    end RINA_Flow_Accept;
 
    function RINA_Flow_Alloc(

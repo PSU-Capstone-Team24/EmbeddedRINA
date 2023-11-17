@@ -92,14 +92,20 @@ package Bindings.Rlite.Msg.Flow is
    function Serialize (Self : in Response) return Byte_Buffer;
 
    --  (Application <-- Kernel) to notify an incoming flow request.
-   type Request_Arrived(Local_Appl_Size : Natural; Remote_Appl_Size : Natural; Dif_Name_Size : Natural) is new Rl_Msg_Base with record
+   type Request_Arrived is new Rl_Msg_Base with record
       Kevent_Id   : Unsigned_32;
       Port_Id     : Msg.Rl_Port_T;
       Ipcp_Id     : Msg.Rl_IPCP_Id_T;
       Flowspec    : Flow.RINA_Flow_Spec;
-      Local_Appl  : Byte_Buffer(1 .. Local_Appl_Size);
-      Remote_Appl : Byte_Buffer(1 .. Remote_Appl_Size);
-      Dif_Name    : Byte_Buffer(1 .. Dif_Name_Size);
+      Local_Appl  : Bounded_String;
+      Remote_Appl : Bounded_String;
+      Dif_Name    : Bounded_String;
+   end record;
+
+   type Sa_Pending_Item is record
+      handle : Integer;
+      req : Flow.Request_Arrived;
+      node : List.List_Head;
    end record;
 
    overriding
