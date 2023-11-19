@@ -19,6 +19,8 @@ with Exceptions;
 with GNAT.OS_Lib;
    use GNAT.OS_Lib;
 
+with Debug;
+
 procedure Test_Server is
    package Text_IO renames Ada.Text_IO;
 
@@ -72,6 +74,10 @@ begin
          Flow_Incoming : Boolean := False;
       begin
          Flow_Incoming := RINA_Flow_Accept (RINA_Dev_FD, Incoming_APN, Spec, RINA_F_NORESP);
+
+         if Flow_Incoming then
+            Debug.Print("Test_Server", "Received incoming flow request from " & To_String (Incoming_APN), Debug.Info);
+         end if;
       end;
    end loop;
 
