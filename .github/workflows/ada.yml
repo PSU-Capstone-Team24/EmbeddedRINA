@@ -2,9 +2,7 @@ name: Ada (GNAT)
 
 on:
   push:
-    branches: [ "master", "rLite_API_Bind" ]
   pull_request:
-    branches: [ "master", "rLite_API_Bind" ]
 
 jobs:
   build:
