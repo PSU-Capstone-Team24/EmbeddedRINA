@@ -12,7 +12,12 @@ with Buffers;
 with Names;
   use Names.Name_String;
 
+with GNAT.OS_Lib;
+
 package Bindings.Rlite.Msg is
+
+   -- Renames
+   package OS renames GNAT.OS_Lib;
 
    --  Types
    type Rl_Ipcp_Id_T is new Unsigned_16;
@@ -86,7 +91,9 @@ package Bindings.Rlite.Msg is
 
    --  Abstract base serialization function, must be overridden by child messages
    function Serialize (Self : in Rl_Msg_Base) return Byte_Buffer is abstract;
+   procedure Deserialize (Self : in out Rl_Msg_Base; fd : OS.File_Descriptor) is abstract;
 
+   function Read_Next_Msg(fd : OS.File_Descriptor) return Byte_Buffer;
 
    --  Match values for PDUFT entries.
    type Rl_PCI_Match is record
