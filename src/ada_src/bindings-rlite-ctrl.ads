@@ -29,16 +29,16 @@ package Bindings.Rlite.Ctrl is
    package Utils renames Bindings.Rlite.Utils;
    package List renames Bindings.Rlite.List;
 
-   function RINA_Register_Common (fd : OS.File_Descriptor;
-   dif_name : Bounded_String;
-   local_appl : Bounded_String;
-   flags : Integer;
-   reg : Unsigned_8) return OS.File_Descriptor;
+   function RINA_Register_Common (Fd : OS.File_Descriptor;
+   Dif_Name : Bounded_String;
+   Local_Appl : Bounded_String;
+   Flags : Integer;
+   Reg : Unsigned_8) return OS.File_Descriptor;
 
    -- struct rl_msg_base *rl_read_next_msg(int rfd, int quiet)
    function Rl_Read_Msg (
-      rfd : OS.File_Descriptor;
-      quiet : Integer
+      Rfd : OS.File_Descriptor;
+      Quiet : Integer
    ) return Byte_Buffer;
 
    --  int rl_write_msg(int rfd, const struct rl_msg_base *msg, int quiet);

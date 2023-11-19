@@ -7,6 +7,8 @@ with Debug;
 with Names;
   use Names;
 
+with Exceptions;
+
 with Bindings.Rlite.Msg.Register;
 
 package body Bindings.Rlite.Ctrl is
@@ -23,18 +25,28 @@ package body Bindings.Rlite.Ctrl is
       Ret : Integer := 0;
    begin
       Ret := OS.Write (Rfd, Msg'Address, Ser_Len);
-      Debug.Print("RINA_Register_Common", "Bytes Written " & Integer'Image(Ret), Debug.Info);
+
+      --  Verbose
+      Put_Bytes (Msg);
+      Debug.Print ("Rl_Write_Msg", "Bytes Written " & Integer'Image(Ret), Debug.Info);
+      Debug.Print ("Rl_Write_Msg", "Message Type: " & Rl_Msg_T'Enum_Val (Msg (3))'Image, Debug.Info);
 
       --  Check for failure conditions
       if Ret < 0 then
          Debug.Print ("Rl_Write_Msg", "Disk full condition? Ret < 0", Debug.Error);
       end if;
+
+      --  Check that we were actually able to write something
+      if Ret = 0 then
+         Debug.Print ("Rl_Write_Msg", "0 bytes written during OS.Write", Debug.Warning);
+      end if;
+
    end Rl_Write_Msg;
 
       -- TODO: Needs to be implemented. Maybe first 16 bits are header where rest is body.
    function Rl_Read_Msg (
-      rfd : OS.File_Descriptor;
-      quiet : Integer
+      Rfd : OS.File_Descriptor;
+      Quiet : Integer
    ) return Byte_Buffer is
       Bytes_Read : Integer;
       Buffer : Byte_Buffer(1 .. 4096);
@@ -44,37 +56,59 @@ package body Bindings.Rlite.Ctrl is
       return Buffer;
    end Rl_Read_Msg;
 
-   function RINA_Register_Wait (fd : OS.File_Descriptor;
-      wfd : OS.File_Descriptor) return OS.File_Descriptor is
+   function RINA_Register_Wait (Fd : OS.File_Descriptor;
+      Wfd : OS.File_Descriptor) return OS.File_Descriptor is
       Buffer : Byte_Buffer(1 .. 4096) := (others => 0);
       Bytes_Read : Integer := 0;
-      reg : Msg.Register.Response;
+      Resp : Msg.Register.Response;
+      Move : Msg.Register.Move;
    begin
       --  Read 4096 bytes from our file descriptor
       Bytes_Read := OS.Read (fd, Buffer'Address, 4096);
       
-      --  MT: DEBUG ONLY
-      reg := Msg.Register.Deserialize (Buffer);
-
       --  Make sure we've actually read something
       if Bytes_Read < 0 then
-         Debug.Print ("RINA_Register_Wait", "Error reading from file descriptor.", Debug.Error);
+         Debug.Print ("RINA_Register_Wait", "Error reading from file descriptor", Debug.Error);
          return OS.Invalid_FD;
       end if;
 
+      Resp := Msg.Register.Deserialize (Buffer);
+      
+      --  Malformed or received wrong msg_type/event_id, throw exception? idk maybe
       --  Assert msg_type = RLITE_KER_APPL_REGISTER_RESP = 0x0005
-      if Buffer(3) /= 16#05# and Buffer(4) /= 16#00# then
-         Debug.Print("RINA_Register_Wait", "Received wrong message type", Debug.Error);
+      if Resp.Hdr.Msg_Type /= RLITE_KER_APPL_REGISTER_RESP then
+         Debug.Print("RINA_Register_Wait", "Deserialized wrong message type?", Debug.Error);
          return OS.Invalid_FD;
       end if;
 
       --  Assert event_id = RINA_REG_EVENT_ID = 0x7A6B
-      if Buffer(5) /= 16#6B# and Buffer(6) /= 16#7A# then
-         Debug.Print("RINA_Register_Wait", "Event_ID does not match expected value", Debug.Error);
+      if Resp.Hdr.Event_Id /= RINA_REG_EVENT_ID then
+         Debug.Print("RINA_Register_Wait", "Deserialized wrong event_id?", Debug.Error);
          return OS.Invalid_FD;
       end if;
 
-      --  MT: TODO: Finish this up
+      --  Response != 0, close and throw
+      if Resp.Response > 0 then
+         API.RINA_Close (wfd);
+         raise Exceptions.DIF_Registration_Failure;
+      end if;
+
+      --  Registration was successful: associate the registered application
+      --  with the file descriptor specified by the caller
+      Move.Hdr.Msg_Type := RLITE_KER_APPL_MOVE;
+      Move.Hdr.Event_Id := 1;
+      Move.Ipcp_Id      := Resp.Ipcp_Id;
+      Move.Fd           := Integer_32 (fd);
+
+      declare
+         Buffer : constant Byte_Buffer := Msg.Register.Serialize (Move);
+      begin
+         Rl_Write_Msg (wfd, Buffer, 1);
+      end;
+
+      --  Close our temp writing fd
+      API.RINA_Close (wfd);
+
       return fd;
    end RINA_Register_Wait;
 
@@ -118,15 +152,13 @@ package body Bindings.Rlite.Ctrl is
       begin
          Rl_Write_Msg (fd, Buffer, 0);
       end;
-      
-      --  Verbose
-      Debug.Print ("RINA_Register_Common", "Message Type: " & Rl_Msg_T'Image (req.Hdr.Msg_Type), Debug.Info);
-      
+
       if No_Wait > 0 then
          --  Return the file descriptor to wait on
          return wfd;
       end if;
 
+      --  Wait for the operation to complete right now
       return RINA_Register_Wait (fd, wfd);
    end RINA_Register_Common;
 
