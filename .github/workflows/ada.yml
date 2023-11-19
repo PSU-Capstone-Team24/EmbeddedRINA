@@ -2,6 +2,10 @@ name: Ada (GNAT)
 
 on:
   push:
+    paths:
+      - '**.adb'
+      - '**.ads'
+      - '**.gpr'
   pull_request:
 
 jobs:
