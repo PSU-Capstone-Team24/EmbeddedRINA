@@ -10,9 +10,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -24,3 +22,17 @@ jobs:
 
     - name: Build
       run: gprbuild -j0 -p
+
+  slackNotification:
+    name: Slack Notification
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Slack Notification
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_CHANNEL: github-notifications
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_ICON: https://i.imgur.com/B8K3gi8.png
+        SLACK_USERNAME: Build Bot
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}

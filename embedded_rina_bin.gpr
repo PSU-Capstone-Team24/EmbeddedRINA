@@ -18,5 +18,5 @@ project Embedded_RINA_Bin is
    package Install is
       for Artifacts (".") use ("share");
    end Install;
-
+ 
 end Embedded_RINA_Bin;
