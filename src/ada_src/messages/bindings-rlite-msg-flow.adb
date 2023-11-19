@@ -51,7 +51,6 @@ package body Bindings.Rlite.Msg.Flow is
 
       Serialized_Msg : constant Byte_Buffer := Hdr_Ptr & Flow_Spec & Upper_Ipcp_Id & Local_Port & Local_Cep & Uid & Cookie & Local_Appl_Size_Ptr & Local_Appl_Ptr & Remote_Appl_Size_Ptr & Remote_Appl_Ptr & DIF_Name_Size_Ptr & DIF_Name_Ptr;
    begin
-      Put_Bytes(Serialized_Msg);
       return Serialized_Msg;
    end Serialize;
 

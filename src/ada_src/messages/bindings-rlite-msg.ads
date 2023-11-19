@@ -172,7 +172,6 @@ package Bindings.Rlite.Msg is
       Pad2                 : Unsigned_32;
    end record;
 
-
    type Rl_Flow_Config_Pad1 is array(0 .. 5) of Unsigned_8;
    type Rl_Flow_Config_Pad2 is array(0 .. 2) of Unsigned_16;
    type Rl_Flow_Config is record
