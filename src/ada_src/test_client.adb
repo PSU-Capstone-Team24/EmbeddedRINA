@@ -74,6 +74,7 @@ begin
 
    if Alloc_Success = Invalid_FD then
       Debug.Print ("Client", "Error allocating flow!", Debug.Error);
+      RINA_Close (RINA_Dev_FD);
       raise Exceptions.Flow_Alloc_Failure;
    end if;
    

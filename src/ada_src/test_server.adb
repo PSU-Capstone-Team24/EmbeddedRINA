@@ -55,6 +55,7 @@ begin
    
    if Register_Success = Invalid_FD then
       Text_IO.Put_Line ("Error registering application " & Application_Name & " to " & DIF_Name);
+      RINA_Close (RINA_Dev_FD);
       raise Exceptions.DIF_Registration_Failure;
    else
       Text_IO.Put_Line ("Successfully registered application " & Application_Name & " to " & DIF_Name);
