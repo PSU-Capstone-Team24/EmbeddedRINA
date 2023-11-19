@@ -66,10 +66,10 @@ package Bindings.Rlite.API is
    --                       unsigned int flags);
    function RINA_Flow_Accept (
       fd           : OS.File_Descriptor;
-      remote_appl  : Bounded_String;
+      remote_appl  : in out Bounded_String;
       spec         : Msg.Flow.RINA_Flow_Spec;
       flags        : Integer
-      ) return Os.File_Descriptor;
+      ) return Boolean;
 
 
    --  Issue a flow allocation request towards the destination application called

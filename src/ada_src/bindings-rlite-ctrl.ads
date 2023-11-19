@@ -57,10 +57,10 @@ package Bindings.Rlite.Ctrl is
 
    function RINA_Flow_Accept(
       fd          : OS.File_Descriptor;
-      remote_appl : Bounded_String;
+      remote_appl : in out Bounded_String;
       spec        : Flow.RINA_Flow_Spec;
       flags       : Integer
-   ) return Os.File_Descriptor;
+   ) return Boolean;
 
    function RINA_Flow_Alloc(
       dif_name       : Bounded_String;
