@@ -4,9 +4,6 @@ pragma Style_Checks (Off);
 with Bindings.Rlite.Msg;
   use Bindings.Rlite.Msg;
 
-with Buffers;
-  use Buffers;
-
 with Bindings.Rlite.List;
    use Bindings.Rlite;
 
@@ -59,6 +56,9 @@ package Bindings.Rlite.Msg.Flow is
    end record;
 
    overriding
+   procedure Deserialize (Self : in out Request; fd : OS.File_Descriptor);
+
+   overriding
    function Serialize (Self : in Request) return Byte_Buffer;
 
    --  struct rl_kmsg_fa_resp_arrived
@@ -67,6 +67,9 @@ package Bindings.Rlite.Msg.Flow is
       Port_Id : Rl_Port_T;
       Response : Unsigned_8;
    end record;
+
+   overriding
+   procedure Deserialize (Self : in out Response_Arrived; fd : OS.File_Descriptor);
 
    overriding
    function Serialize (Self : in Response_Arrived) return Byte_Buffer;
@@ -92,6 +95,9 @@ package Bindings.Rlite.Msg.Flow is
    end record;
 
    overriding
+   procedure Deserialize (Self : in out Response; fd : OS.File_Descriptor);
+
+   overriding
    function Serialize (Self : in Response) return Byte_Buffer;
 
    --  (Application <-- Kernel) to notify an incoming flow request.
@@ -112,7 +118,9 @@ package Bindings.Rlite.Msg.Flow is
    end record;
 
    overriding
-   function Serialize (Self : in Request_Arrived) return Byte_Buffer;
+   procedure Deserialize (Self : in out Request_Arrived; fd : OS.File_Descriptor);
 
+   overriding
+   function Serialize (Self : in Request_Arrived) return Byte_Buffer;
 
 end Bindings.Rlite.Msg.Flow;

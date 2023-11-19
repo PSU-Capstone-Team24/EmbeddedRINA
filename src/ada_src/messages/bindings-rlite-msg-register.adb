@@ -4,8 +4,15 @@ pragma Style_Checks (Off);
 with Names;
   use Names;
 
+with Exceptions;
+
 package body Bindings.Rlite.Msg.Register is
 
+   procedure Deserialize (Self : in out Request; fd : OS.File_Descriptor) is
+   begin
+      raise Exceptions.Not_Implemented_Exception;
+   end Deserialize;
+   
    function Serialize (Self : in Request) return Byte_Buffer is
       --  This is starting to look... not so robust... :(
       Hdr_Ptr        : constant Byte_Buffer(1 .. Self.Hdr'Size / 8)
@@ -39,30 +46,29 @@ package body Bindings.Rlite.Msg.Register is
       return Serialized_Msg;
    end Serialize;
 
-   function Serialize (Self : in Response) return Byte_Buffer is
-      t : constant Byte_Buffer(1 .. 128) := (others => 0);
-   begin
-      return t;
-   end Serialize;
-
-   function Deserialize (Buffer : in Byte_Buffer) return Response is
-      resp : Response;
+   procedure Deserialize (Self : in out Response; fd : OS.File_Descriptor) is
+      Buffer   : constant Byte_Buffer := Read_Next_Msg(fd);
       Msg_Data : constant Byte_Buffer := Buffer(Rl_Msg_Hdr'Size / 8 .. Buffer'Size / 8);
    begin
       --  Byte buffer must not include any tagged record parts. This assumes
       --  byte_buffer is coming from C struct read from FD and not Ada!
-      resp.Hdr := Buffer_To_Rl_Msg_Hdr (Buffer (1 .. Rl_Msg_Hdr'Size / 8));
+      Self.Hdr := Buffer_To_Rl_Msg_Hdr (Buffer (1 .. Rl_Msg_Hdr'Size / 8));
+
+      --  We are processing the wrong message
+      if Self.Hdr.Msg_Type /= RLITE_KER_APPL_REGISTER_RESP then
+         return;
+      end if;
 
       --  Oh man, this is super ugly
       --  [===== HDR =====][== IPCP_ID ==][= Reg =][= Resp =][===== Pad1 =====][= Appl_Name_Size =][======= Appl_Name =======]
-      resp.Ipcp_Id   := Rl_Ipcp_Id_T (Buffer_To_Unsigned_16 (Buffer_Reverse (Msg_Data (Msg_Data'First .. Msg_Data'First + 2))));
+      Self.Ipcp_Id   := Rl_Ipcp_Id_T (Buffer_To_Unsigned_16 (Buffer_Reverse (Msg_Data (Msg_Data'First .. Msg_Data'First + 2))));
 
       --  No need to correct endianness on single byte fields
-      resp.Reg       := Unsigned_8 (Msg_Data (Msg_Data'First + 2));
-      resp.Response  := Unsigned_8 (Msg_Data (Msg_Data'First + 4));
+      Self.Reg       := Unsigned_8 (Msg_Data (Msg_Data'First + 2));
+      Self.Response  := Unsigned_8 (Msg_Data (Msg_Data'First + 4));
 
       --  Padding always blank, we don't care what's in here
-      resp.Pad1      := 0;
+      Self.Pad1      := 0;
 
       --  Appl_Name decoding
       declare
@@ -76,10 +82,19 @@ package body Bindings.Rlite.Msg.Register is
          Name : constant String := Buffer_To_String (Msg_Data (Msg_Data'First + 11 .. Msg_Data'First + 11 + Integer (Name_Length)));
       begin
          --  Convert pulled string into a bounded one for use the response object
-         resp.Appl_Name := To_Bounded_String (Name);
+         Self.Appl_Name := To_Bounded_String (Name);
       end;
-      
-      return resp;
+   end Deserialize;
+
+   function Serialize (Self : in Response) return Byte_Buffer is
+      t : constant Byte_Buffer(1 .. 128) := (others => 0);
+   begin
+      return t;
+   end Serialize;
+   
+   procedure Deserialize (Self : in out Move; fd : OS.File_Descriptor) is
+   begin
+      raise Exceptions.Not_Implemented_Exception;
    end Deserialize;
 
    function Serialize (Self : in Move) return Byte_Buffer is

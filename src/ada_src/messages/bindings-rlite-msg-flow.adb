@@ -4,7 +4,14 @@ pragma Style_Checks (Off);
 with Names;
   use Names;
 
+with Exceptions;
+
 package body Bindings.Rlite.Msg.Flow is
+
+   procedure Deserialize (Self : in out Request; fd : OS.File_Descriptor) is
+   begin
+      raise Exceptions.Not_Implemented_Exception;
+   end Deserialize;
 
    function Serialize (Self : in Request) return Byte_Buffer is
       Hdr_Ptr        : constant Byte_Buffer(1 .. Self.Hdr'Size / 8)
@@ -54,20 +61,64 @@ package body Bindings.Rlite.Msg.Flow is
       return Serialized_Msg;
    end Serialize;
 
+   procedure Deserialize (Self : in out Response_Arrived; fd : OS.File_Descriptor) is
+   begin
+      raise Exceptions.Not_Implemented_Exception;
+   end Deserialize;
+
    function Serialize (Self : Response_Arrived) return Byte_Buffer is
-      Buf : Byte_Buffer(0 .. 128) := (others => 0);
+      Buf : constant Byte_Buffer(0 .. 128) := (others => 0);
    begin
       return Buf;
    end Serialize;
+
+   procedure Deserialize (Self : in out Response; fd : OS.File_Descriptor) is
+      Buffer   : constant Byte_Buffer := Read_Next_Msg(fd);
+      Msg_Data : constant Byte_Buffer := Buffer(Rl_Msg_Hdr'Size / 8 .. Buffer'Size / 8);
+   begin
+      --  Byte buffer must not include any tagged record parts. This assumes
+      --  byte_buffer is coming from C struct read from FD and not Ada!
+      Self.Hdr := Buffer_To_Rl_Msg_Hdr (Buffer (1 .. Rl_Msg_Hdr'Size / 8));
+
+      --  We are processing the wrong message
+      if Self.Hdr.Msg_Type /= RLITE_KER_FA_REQ_ARRIVED then
+         return;
+      end if;
+
+      --  [===== HDR =====][==== KeventId ====][== PortId ==][== IpcpId ==][===== FlowSpec =====][= Local_Appl_Size =][======= Local_Appl =======][= Remote_Appl_Size =][======= Remote_Appl =======][= Dif_Name_Size =][======= Dif_Name =======]
+      Self.Kevent_Id    := Buffer_To_Unsigned_32 (Buffer_Reverse (Msg_Data (Msg_Data'First .. Msg_Data'First + 3)));
+      Self.Port_Id      := Rl_Port_T (Buffer_To_Unsigned_16 (Buffer_Reverse (Msg_Data (Msg_Data'First + 3 .. Msg_Data'First + 4))));
+      Self.Ipcp_Id      := Rl_Ipcp_Id_T (Buffer_To_Unsigned_16 (Buffer_Reverse (Msg_Data (Msg_Data'First + 4 .. Msg_Data'First + 5))));
+      
+      --  Appl_Name decoding
+      --declare
+         --  Fix endianness of bytes
+      --   Name_Buffer : constant Byte_Buffer := Buffer_Reverse (Msg_Data (Msg_Data'First + 8 .. Msg_Data'First + 9));
+
+         --  Covert these bytes to a 16-bit u16
+      --   Name_Length : constant Unsigned_16 := Buffer_To_Unsigned_16 (Name_Buffer);
+
+         --  Now we know the length of the Appl_Name string, pull it out of the buffer
+      --   Name : constant String := Buffer_To_String (Msg_Data (Msg_Data'First + 11 .. Msg_Data'First + 11 + Integer (Name_Length)));
+      --begin
+         --  Convert pulled string into a bounded one for use the response object
+      --   resp.Appl_Name := To_Bounded_String (Name);
+      --end;
+   end Deserialize;
 
    function Serialize (Self : Response) return Byte_Buffer is
-      Buf : Byte_Buffer(0 .. 128) := (others => 0);
+      Buf : constant Byte_Buffer(0 .. 128) := (others => 0);
    begin
       return Buf;
    end Serialize;
 
+   procedure Deserialize (Self : in out Request_Arrived; fd : OS.File_Descriptor) is
+   begin
+      raise Exceptions.Not_Implemented_Exception;
+   end Deserialize;
+
    function Serialize (Self : Request_Arrived) return Byte_Buffer is
-      Buf : Byte_Buffer(0 .. 128) := (others => 0);
+      Buf : constant Byte_Buffer(0 .. 128) := (others => 0);
    begin
       return Buf;
    end Serialize;

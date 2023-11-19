@@ -60,19 +60,10 @@ package body Bindings.Rlite.Ctrl is
       Wfd : OS.File_Descriptor) return OS.File_Descriptor is
       Buffer : Byte_Buffer(1 .. 4096) := (others => 0);
       Bytes_Read : Integer := 0;
-      Resp : Msg.Register.Response;
-      Move : Msg.Register.Move;
+      Resp : Register.Response;
+      Move : Register.Move;
    begin
-      --  Read 4096 bytes from our file descriptor
-      Bytes_Read := OS.Read (fd, Buffer'Address, 4096);
-      
-      --  Make sure we've actually read something
-      if Bytes_Read < 0 then
-         Debug.Print ("RINA_Register_Wait", "Error reading from file descriptor", Debug.Error);
-         return OS.Invalid_FD;
-      end if;
-
-      Resp := Msg.Register.Deserialize (Buffer);
+      Register.Deserialize (Resp, Fd);
       
       --  Malformed or received wrong msg_type/event_id, throw exception? idk maybe
       --  Assert msg_type = RLITE_KER_APPL_REGISTER_RESP = 0x0005
@@ -101,7 +92,7 @@ package body Bindings.Rlite.Ctrl is
       Move.Fd           := Integer_32 (fd);
 
       declare
-         Buffer : constant Byte_Buffer := Msg.Register.Serialize (Move);
+         Buffer : constant Byte_Buffer := Register.Serialize (Move);
       begin
          Rl_Write_Msg (wfd, Buffer, 1);
       end;
@@ -148,7 +139,7 @@ package body Bindings.Rlite.Ctrl is
       req.Dif_Name      := dif_name;
 
       declare
-         Buffer : constant Byte_Buffer := Msg.Register.Serialize (req);
+         Buffer : constant Byte_Buffer := Register.Serialize (req);
       begin
          Rl_Write_Msg (fd, Buffer, 0);
       end;
@@ -163,20 +154,18 @@ package body Bindings.Rlite.Ctrl is
    end RINA_Register_Common;
 
    function RINA_Flow_Accept(
-      fd          : OS.File_Descriptor;
-      remote_appl : Bounded_String;
-      spec        : Flow.RINA_Flow_Spec;
-      flags       : Integer
-   ) return Os.File_Descriptor is
-      req : Msg.Flow.Request_Arrived;
-      spi : Msg.Flow.Sa_Pending_Item;
-      resp : Msg.Flow.Response;
-      ffd : Integer := -1;
-      ret : OS.File_Descriptor;
+      Fd          : OS.File_Descriptor;
+      Remote_Appl : in out Bounded_String;
+      Spec        : Flow.RINA_Flow_Spec;
+      Flags       : Integer
+   ) return Boolean is
+      Resp : Flow.Response;
+      Req  : Flow.Request_Arrived;
+      Buffer : Byte_Buffer(1 .. 4096) := (others => 0);
       Bits_Other_Than_NoResp : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NORESP);
       Bits_Same_As_NoResp : constant Unsigned_32 := Unsigned_32 (flags) and Unsigned_32 (Bindings.Rlite.Api.RINA_F_NORESP);
    begin
-      if spec.Version /= Msg.Flow.RINA_FLOW_SPEC_VERSION then
+      if Spec.Version /= Flow.RINA_FLOW_SPEC_VERSION then
          Debug.Print("RINA_Flow_Accept", "FlowSpec version does not match constant RINA_FLOW_SPEC_VERSION", Debug.Error);
       end if;
 
@@ -184,13 +173,20 @@ package body Bindings.Rlite.Ctrl is
          Debug.Print("RINA_Flow_Accept", "No response flag was not set", Debug.Error);
       end if;
 
-      --  req := Rl_Read_Msg(fd, 1); -- TODO: See RL_Read_Msg func
+      --  Wait for response message from the kernel
+      Flow.Deserialize (Resp, Fd);
+
+      --  Message read in from FD was not a flow request, we can
+      --  stop our processing logic here and throw this message out
+      if Resp.Hdr.Msg_Type /= RLITE_KER_FA_REQ_ARRIVED then
+         return False;
+      end if;
 
       if Bits_Same_As_NoResp /= 0 then
          Debug.Print("RINA_Flow_Accept", "No response flag was set", Debug.Error);
       end if;
 
-      return OS.Invalid_FD;
+      return False;
    end RINA_Flow_Accept;
 
    function RINA_Flow_Alloc(
@@ -201,7 +197,7 @@ package body Bindings.Rlite.Ctrl is
       flags          : Unsigned_32;
       upper_ipcp_id  : Rl_Ipcp_Id_T
    ) return OS.File_Descriptor is
-      req      : Msg.Flow.Request;
+      req      : Flow.Request;
       wfd, ret : OS.File_Descriptor;
       function Get_Pid return Unsigned_32
          with Import, Convention => C, External_Name => "getpid";
@@ -213,7 +209,7 @@ package body Bindings.Rlite.Ctrl is
          return OS.Invalid_FD;
       end if;
 
-      if flowspec.Version /= Msg.Flow.RINA_FLOW_SPEC_VERSION then
+      if flowspec.Version /= Flow.RINA_FLOW_SPEC_VERSION then
       --  Flowspec version malformed or otherwise incorrect, return invalid file descriptor
          Debug.Print ("RINA_Flow_Alloc", "FlowSpec version does not match constant RINA_FLOW_SPEC_VERSION", Debug.Error);
          return OS.Invalid_FD;
@@ -238,7 +234,7 @@ package body Bindings.Rlite.Ctrl is
       end if;
 
       declare
-         Buffer : Byte_Buffer := Msg.Flow.Serialize (req);
+         Buffer : Byte_Buffer := Flow.Serialize (req);
       begin
          Rl_Write_Msg (wfd, Buffer, 0);
       end;

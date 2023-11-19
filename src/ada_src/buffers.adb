@@ -1,7 +1,6 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
-with Debug;
 with Ada.Text_IO;
 with Exceptions;
 
@@ -42,7 +41,7 @@ package body Buffers is
 
    procedure Push_Bytes (Self : Byte_Buffer; To_Push : in T) is
    begin
-      Debug.Print("Push_Bytes", "Push", Debug.Info);
+      --  pls don't call me >:(
       raise Exceptions.Not_Implemented_Exception;
    end Push_Bytes;
 
@@ -53,7 +52,7 @@ package body Buffers is
       for I in Buffer'Range loop
          Result(I - Buffer'First + 1) := Character'Val(Buffer(I));
 
-         --  We've hit a null terminator, stop reading
+         --  We've hit a null terminator, stop reading early
          exit when Character'Val(Buffer(I)) = ASCII.NUL;
       end loop;
 
