@@ -170,23 +170,37 @@ package body Bindings.Rlite.Ctrl is
       end if;
 
       if Bits_Other_Than_NoResp /= 0 then
-         Debug.Print("RINA_Flow_Accept", "No response flag was not set", Debug.Error);
+         Debug.Print("RINA_Flow_Accept", "Wrong flags", Debug.Error);
       end if;
 
       --  Wait for response message from the kernel
-      Flow.Deserialize (Resp, Fd);
+      Flow.Deserialize (Req, Fd);
 
       --  Message read in from FD was not a flow request, we can
       --  stop our processing logic here and throw this message out
-      if Resp.Hdr.Msg_Type /= RLITE_KER_FA_REQ_ARRIVED then
+      if Req.Hdr.Msg_Type /= RLITE_KER_FA_REQ_ARRIVED then
          return False;
       end if;
 
-      if Bits_Same_As_NoResp /= 0 then
-         Debug.Print("RINA_Flow_Accept", "No response flag was set", Debug.Error);
-      end if;
+      --  Update Remote_Appl to what was received from flow allocation request msg
+      Remote_Appl := Req.Remote_Appl;
 
-      return False;
+      --  Build flow allocation request response message
+      Resp.Hdr.Msg_Type := RLITE_KER_FA_RESP;
+      Resp.Hdr.Event_Id := 1;
+      Resp.Kevent_Id := Req.Kevent_Id;
+      Resp.Ipcp_Id := Req.Ipcp_Id;
+      Resp.Upper_Ipcp_Id := 16#FFFF#;
+      Resp.Port_Id := Req.Port_Id;
+      Resp.Response := 1;
+
+      declare
+         Buffer : constant Byte_Buffer := Flow.Serialize (Resp);
+      begin
+         Rl_Write_Msg (Fd, Buffer, 0);
+      end;
+
+      return True;
    end RINA_Flow_Accept;
 
    function RINA_Flow_Alloc(

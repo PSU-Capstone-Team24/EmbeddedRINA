@@ -34,6 +34,10 @@ package Bindings.Rlite.Msg.Flow is
       Max_Jitter : Unsigned_32 := 0;
    end record;
 
+   function Buffer_To_Flow_Spec is
+      new Ada.Unchecked_Conversion (Source => Byte_Buffer,
+                                    Target => Flow.RINA_Flow_Spec);
+
    -- struct rl_kmsg_fa_req
    -- (Application --> Kernel) to initiate a flow allocation.
    type Request is new Rl_Msg_Base with record
@@ -100,6 +104,7 @@ package Bindings.Rlite.Msg.Flow is
    overriding
    function Serialize (Self : in Response) return Byte_Buffer;
 
+   --  struct rl_kmsg_fa_req_arrived
    --  (Application <-- Kernel) to notify an incoming flow request.
    type Request_Arrived is new Rl_Msg_Base with record
       Kevent_Id   : Unsigned_32;
@@ -111,16 +116,16 @@ package Bindings.Rlite.Msg.Flow is
       Dif_Name    : Bounded_String;
    end record;
 
-   type Sa_Pending_Item is record
-      handle : Integer;
-      req : Flow.Request_Arrived;
-      node : List.List_Head;
-   end record;
-
    overriding
    procedure Deserialize (Self : in out Request_Arrived; fd : OS.File_Descriptor);
 
    overriding
    function Serialize (Self : in Request_Arrived) return Byte_Buffer;
+
+   type Sa_Pending_Item is record
+      handle : Integer;
+      req : Flow.Request_Arrived;
+      node : List.List_Head;
+   end record;
 
 end Bindings.Rlite.Msg.Flow;

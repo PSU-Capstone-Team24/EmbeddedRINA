@@ -71,7 +71,7 @@ package Bindings.Rlite.Msg is
    function Buffer_To_Rl_Msg_Hdr is
       new Ada.Unchecked_Conversion (Source => Byte_Buffer,
                                     Target => Rl_Msg_Hdr);
-
+                                    
    function Buffer_To_Unsigned_8 is
       new Ada.Unchecked_Conversion (Source => Byte_Buffer,
                                     Target => Unsigned_8);

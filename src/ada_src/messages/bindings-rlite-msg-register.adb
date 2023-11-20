@@ -48,7 +48,7 @@ package body Bindings.Rlite.Msg.Register is
 
    procedure Deserialize (Self : in out Response; fd : OS.File_Descriptor) is
       Buffer   : constant Byte_Buffer := Read_Next_Msg(fd);
-      Msg_Data : constant Byte_Buffer := Buffer(Rl_Msg_Hdr'Size / 8 .. Buffer'Size / 8);
+      Msg_Data : constant Byte_Buffer := Buffer(Rl_Msg_Hdr'Size / 8 + 1 .. Buffer'Size / 8);
    begin
       --  Byte buffer must not include any tagged record parts. This assumes
       --  byte_buffer is coming from C struct read from FD and not Ada!
@@ -61,25 +61,22 @@ package body Bindings.Rlite.Msg.Register is
 
       --  Oh man, this is super ugly
       --  [===== HDR =====][== IPCP_ID ==][= Reg =][= Resp =][===== Pad1 =====][= Appl_Name_Size =][======= Appl_Name =======]
-      Self.Ipcp_Id   := Rl_Ipcp_Id_T (Buffer_To_Unsigned_16 (Buffer_Reverse (Msg_Data (Msg_Data'First .. Msg_Data'First + 2))));
+      Self.Ipcp_Id   := Rl_Ipcp_Id_T (Buffer_To_Unsigned_16 (Buffer_Reverse (Msg_Data (Msg_Data'First .. Msg_Data'First + 1))));
 
       --  No need to correct endianness on single byte fields
       Self.Reg       := Unsigned_8 (Msg_Data (Msg_Data'First + 2));
-      Self.Response  := Unsigned_8 (Msg_Data (Msg_Data'First + 4));
+      Self.Response  := Unsigned_8 (Msg_Data (Msg_Data'First + 3));
 
       --  Padding always blank, we don't care what's in here
       Self.Pad1      := 0;
 
       --  Appl_Name decoding
       declare
-         --  Fix endianness of bytes
-         Name_Buffer : constant Byte_Buffer := Buffer_Reverse (Msg_Data (Msg_Data'First + 8 .. Msg_Data'First + 9));
-
          --  Covert these bytes to a 16-bit u16
-         Name_Length : constant Unsigned_16 := Buffer_To_Unsigned_16 (Name_Buffer);
+         Name_Length : constant Unsigned_16 := Buffer_To_Unsigned_16 (Msg_Data (Msg_Data'First + 8 .. Msg_Data'First + 9));
 
          --  Now we know the length of the Appl_Name string, pull it out of the buffer
-         Name : constant String := Buffer_To_String (Msg_Data (Msg_Data'First + 11 .. Msg_Data'First + 11 + Integer (Name_Length)));
+         Name : constant String := Buffer_To_String (Msg_Data (Msg_Data'First + 10 .. Msg_Data'First + 10 + Integer (Name_Length)));
       begin
          --  Convert pulled string into a bounded one for use the response object
          Self.Appl_Name := To_Bounded_String (Name);
@@ -89,6 +86,7 @@ package body Bindings.Rlite.Msg.Register is
    function Serialize (Self : in Response) return Byte_Buffer is
       t : constant Byte_Buffer(1 .. 128) := (others => 0);
    begin
+      raise Exceptions.Not_Implemented_Exception;
       return t;
    end Serialize;
    
