@@ -10,9 +10,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -30,3 +28,25 @@ jobs:
 
     - name: Build
       run: gprbuild -j0 -p
+    
+    - name: Slack Notification Success
+      if: success()
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_CHANNEL: github-notifications
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_ICON: https://i.imgur.com/B8K3gi8.png
+        SLACK_USERNAME: Build Bot
+        SLACK_MESSAGE: 'Build Passed'
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+    - name: Slack Notification Failure
+      if: failure()
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_CHANNEL: github-notifications
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_ICON: https://i.imgur.com/B8K3gi8.png
+        SLACK_USERNAME: Build Bot
+        SLACK_MESSAGE: 'Build Failed'
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
