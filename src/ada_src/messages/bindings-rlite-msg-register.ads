@@ -15,8 +15,11 @@ package Bindings.Rlite.Msg.Register is
    pragma Pack(Request);
 
    overriding
-   function Serialize (Self : in Request) return Byte_Buffer;
+   procedure Deserialize (Self : in out Request; fd : OS.File_Descriptor);
 
+   overriding
+   function Serialize (Self : in Request) return Byte_Buffer;
+   
   --  (Application <-- Kernel) report the result of (un)registration.  
    type Response is new Rl_Msg_Base with record
       Ipcp_Id     : Rl_Ipcp_Id_T;
@@ -28,6 +31,22 @@ package Bindings.Rlite.Msg.Register is
    pragma Pack(Response);
 
    overriding
+   procedure Deserialize (Self : in out Response; fd : OS.File_Descriptor);
+
+   overriding
    function Serialize (Self : in Response) return Byte_Buffer;
+
+   --  (Application --> Kernel) to finalize a registration operation.
+   type Move is new Rl_Msg_Base with record
+      Ipcp_Id     : Rl_Ipcp_Id_T;
+      Fd          : Integer_32;
+   end record;
+   pragma Pack(Move);
+
+   overriding
+   procedure Deserialize (Self : in out Move; fd : OS.File_Descriptor);
+
+   overriding
+   function Serialize (Self : in Move) return Byte_Buffer;
 
 end Bindings.Rlite.Msg.Register;

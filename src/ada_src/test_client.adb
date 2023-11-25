@@ -24,8 +24,8 @@ procedure Test_Client is
    package Text_IO renames Ada.Text_IO;
 
    --  Placeholders for file descriptor values, assume invalid (< 0)
-   RINA_Dev_FD : OS.File_Descriptor;
-   Alloc_Success : OS.File_Descriptor;
+   RINA_Dev_FD : GNAT.OS_Lib.File_Descriptor;
+   Alloc_Success : GNAT.OS_Lib.File_Descriptor;
 
    Server_Name : String(1 .. 128) := (others => ASCII.NUL);
    Server_Name_Last : Integer;
@@ -43,7 +43,7 @@ begin
       Debug.Print ("Client", "Error opening RINA control device", Debug.Error);
       raise Exceptions.RINA_Control_Failure;
    else
-      Text_IO.Put_Line ("Successfully opened RINA control device (File Desc: " & OS.File_Descriptor'Image (RINA_Dev_FD) & ")");
+      Text_IO.Put_Line ("Successfully opened RINA control device (File Desc: " & GNAT.OS_Lib.File_Descriptor'Image (RINA_Dev_FD) & ")");
    end if;
 
    Ada.Text_IO.Put ("Enter name of client (this) application: ");
@@ -74,6 +74,7 @@ begin
 
    if Alloc_Success = Invalid_FD then
       Debug.Print ("Client", "Error allocating flow!", Debug.Error);
+      RINA_Close (RINA_Dev_FD);
       raise Exceptions.Flow_Alloc_Failure;
    end if;
    

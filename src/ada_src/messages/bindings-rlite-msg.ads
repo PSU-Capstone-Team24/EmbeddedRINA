@@ -1,6 +1,8 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
+with Ada.Unchecked_Conversion;
+
 with Interfaces;
   use Interfaces;
 
@@ -10,7 +12,12 @@ with Buffers;
 with Names;
   use Names.Name_String;
 
+with GNAT.OS_Lib;
+
 package Bindings.Rlite.Msg is
+
+   -- Renames
+   package OS renames GNAT.OS_Lib;
 
    --  Types
    type Rl_Ipcp_Id_T is new Unsigned_16;
@@ -59,13 +66,34 @@ package Bindings.Rlite.Msg is
       Event_Id : Unsigned_32;
    end record;
 
+   --  Only use these when we are super-duper sure we know what we're doing
+   --  Otherwise what we assume is usable data can end up being garbage...
+   function Buffer_To_Rl_Msg_Hdr is
+      new Ada.Unchecked_Conversion (Source => Byte_Buffer,
+                                    Target => Rl_Msg_Hdr);
+                                    
+   function Buffer_To_Unsigned_8 is
+      new Ada.Unchecked_Conversion (Source => Byte_Buffer,
+                                    Target => Unsigned_8);
+
+   function Buffer_To_Unsigned_16 is
+      new Ada.Unchecked_Conversion (Source => Byte_Buffer,
+                                    Target => Unsigned_16);
+
+   function Buffer_To_Unsigned_32 is
+      new Ada.Unchecked_Conversion (Source => Byte_Buffer,
+                                    Target => Unsigned_32);
+
+
    type Rl_Msg_Base is abstract tagged record
       Hdr : Rl_Msg_Hdr;
    end record;
 
    --  Abstract base serialization function, must be overridden by child messages
    function Serialize (Self : in Rl_Msg_Base) return Byte_Buffer is abstract;
+   procedure Deserialize (Self : in out Rl_Msg_Base; fd : OS.File_Descriptor) is abstract;
 
+   function Read_Next_Msg(fd : OS.File_Descriptor) return Byte_Buffer;
 
    --  Match values for PDUFT entries.
    type Rl_PCI_Match is record
@@ -150,7 +178,6 @@ package Bindings.Rlite.Msg is
       Seqq_Len             : Unsigned_32;
       Pad2                 : Unsigned_32;
    end record;
-
 
    type Rl_Flow_Config_Pad1 is array(0 .. 5) of Unsigned_8;
    type Rl_Flow_Config_Pad2 is array(0 .. 2) of Unsigned_16;

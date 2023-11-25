@@ -29,18 +29,17 @@ package Bindings.Rlite.Ctrl is
    package Utils renames Bindings.Rlite.Utils;
    package List renames Bindings.Rlite.List;
 
-   type Sa_Pending_Item(Local_Appl_Size : Natural; Remote_Appl_Size : Natural; Dif_Name_Size : Natural) is record
-      handle : Integer;
-      req : Flow.Request_Arrived(Local_Appl_Size, Remote_Appl_Size, Dif_Name_Size);
-      node : List.List_Head;
-   end record;
+   function RINA_Register_Common (Fd : OS.File_Descriptor;
+   Dif_Name : Bounded_String;
+   Local_Appl : Bounded_String;
+   Flags : Integer;
+   Reg : Unsigned_8) return OS.File_Descriptor;
 
-   function RINA_Register_Common (fd : OS.File_Descriptor;
-   dif_name : Bounded_String;
-   local_appl : Bounded_String;
-   flags : Integer;
-   reg : Unsigned_8) return OS.File_Descriptor;
-
+   -- struct rl_msg_base *rl_read_next_msg(int rfd, int quiet)
+   function Rl_Read_Msg (
+      Rfd : OS.File_Descriptor;
+      Quiet : Integer
+   ) return Byte_Buffer;
 
    --  int rl_write_msg(int rfd, const struct rl_msg_base *msg, int quiet);
    procedure Rl_Write_Msg
@@ -58,10 +57,10 @@ package Bindings.Rlite.Ctrl is
 
    function RINA_Flow_Accept(
       fd          : OS.File_Descriptor;
-      remote_appl : Bounded_String;
+      remote_appl : in out Bounded_String;
       spec        : Flow.RINA_Flow_Spec;
       flags       : Integer
-   ) return Os.File_Descriptor;
+   ) return Boolean;
 
    function RINA_Flow_Alloc(
       dif_name       : Bounded_String;

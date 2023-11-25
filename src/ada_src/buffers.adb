@@ -1,8 +1,8 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
-with Debug;
 with Ada.Text_IO;
+with Exceptions;
 
 package body Buffers is
 
@@ -29,6 +29,7 @@ package body Buffers is
          return Str;
       end ToHex;
    begin
+      Ada.Text_IO.New_Line;
       Ada.Text_IO.Put ("Byte Stream: ");
 
       for Byte of Input loop   
@@ -40,7 +41,35 @@ package body Buffers is
 
    procedure Push_Bytes (Self : Byte_Buffer; To_Push : in T) is
    begin
-      Debug.Print("Push_Bytes", "Push", Debug.Info);
+      --  pls don't call me >:(
+      raise Exceptions.Not_Implemented_Exception;
    end Push_Bytes;
+
+   function Buffer_To_String (Buffer : Byte_Buffer) return String is
+      --  +1 to account for ASCII.NUL
+      Result : String(1 .. Buffer'Length) := (others => ASCII.NUL);
+   begin
+      for I in Buffer'Range loop
+         Result(I - Buffer'First + 1) := Character'Val(Buffer(I));
+
+         --  We've hit a null terminator, stop reading early
+         exit when Character'Val(Buffer(I)) = ASCII.NUL;
+      end loop;
+
+      --  Append null terminator
+      Result(Result'Last) := ASCII.NUL;
+
+      return Result;
+   end Buffer_To_String;
+
+   function Buffer_Reverse (Buffer : in Byte_Buffer) return Byte_Buffer is
+      Return_Buffer : Byte_Buffer(Buffer'First .. Buffer'Last) := (others => 0);
+   begin
+      for I in reverse Buffer'First .. Buffer'Last loop
+         Return_Buffer(I) := Buffer(Buffer'Last - I + Buffer'First);
+      end loop;
+
+      return Return_Buffer;
+   end Buffer_Reverse;
 
 end Buffers;
