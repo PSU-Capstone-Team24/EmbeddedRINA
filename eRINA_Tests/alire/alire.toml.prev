@@ -1,0 +1,9 @@
+name = "erina_tests"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["Mason Ticehurst"]
+maintainers = ["Mason Ticehurst <masonticehurst@me.com>"]
+maintainers-logins = ["masonticehurst"]
+
+executables = ["erina_tests"]
