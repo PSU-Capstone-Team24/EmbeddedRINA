@@ -1,0 +1,2 @@
+bindings-rlite-utils.adb:4:01: spec of this package does not allow a body
+bindings-rlite-utils.ads:5:06: warning: unit "Debug" is not referenced

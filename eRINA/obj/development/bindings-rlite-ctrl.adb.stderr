@@ -1,0 +1,10 @@
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/bindings-rlite-ctrl.adb:19:07: warning: formal parameter "Quiet" is not referenced
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/bindings-rlite-ctrl.adb:49:07: warning: formal parameter "Quiet" is not referenced
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/bindings-rlite-ctrl.adb:51:07: warning: variable "Bytes_Read" is assigned but never read
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/bindings-rlite-ctrl.adb:61:07: warning: variable "Buffer" is not referenced
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/bindings-rlite-ctrl.adb:62:07: warning: variable "Bytes_Read" is not referenced
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/bindings-rlite-ctrl.adb:164:07: warning: variable "Buffer" is not referenced
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/bindings-rlite-ctrl.adb:166:07: warning: constant "Bits_Same_As_NoResp" is not referenced
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/bindings-rlite-ctrl.adb:215:12: warning: variable "ret" is never read and never assigned
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/bindings-rlite-ctrl.adb:251:10: warning: "Buffer" is not modified, could be declared constant
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/bindings-rlite-ctrl.adb:264:07: warning: formal parameter "port_id" is not referenced

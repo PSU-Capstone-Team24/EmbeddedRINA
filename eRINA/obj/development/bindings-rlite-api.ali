@@ -1,0 +1,172 @@
+V "GNAT Lib v9"
+A -Og
+A -gnatA
+A -ffunction-sections
+A -fdata-sections
+A -g
+A -gnatwa
+A -gnatw.X
+A -gnatVa
+A -gnaty3
+A -gnatya
+A -gnatyA
+A -gnatyB
+A -gnatyb
+A -gnatyc
+A -gnaty-
+A -gnatyd
+A -gnatye
+A -gnatyf
+A -gnatyh
+A -gnatyi
+A -gnatyI
+A -gnatyk
+A -gnatyl
+A -gnatym
+A -gnatyn
+A -gnatyO
+A -gnatyp
+A -gnatyr
+A -gnatyS
+A -gnatyt
+A -gnatyu
+A -gnatyx
+A -mtune=generic
+A -march=x86-64
+P SS ZX
+
+RN
+RV NO_IMPLEMENTATION_PRAGMAS
+RV SPARK_05
+
+U bindings.rlite.api%b	bindings-rlite-api.adb	0d731a7d NE OO PK
+W bindings%s		bindings.ads		bindings.ali
+W bindings.rlite%s	bindings-rlite.ads	bindings-rlite.ali
+W bindings.rlite.ctrl%s	bindings-rlite-ctrl.adb	bindings-rlite-ctrl.ali
+Z interfaces%s		interfac.ads		interfac.ali
+
+U bindings.rlite.api%s	bindings-rlite-api.ads	4bcea6a0 EE NE OO PK
+W bindings%s		bindings.ads		bindings.ali
+W bindings.rlite%s	bindings-rlite.ads	bindings-rlite.ali
+W bindings.rlite.msg%s	bindings-rlite-msg.adb	bindings-rlite-msg.ali
+W bindings.rlite.msg.flow%s  bindings-rlite-msg-flow.adb  bindings-rlite-msg-flow.ali
+W gnat%s		gnat.ads		gnat.ali
+W gnat.os_lib%s		g-os_lib.ads		g-os_lib.ali
+W interfaces%s		interfac.ads		interfac.ali
+W names%s		names.adb		names.ali
+
+D ada.ads		20210601075304 76789da1 ada%s
+D a-charac.ads		20210601075304 2d3ec45b ada.characters%s
+D a-chlat1.ads		20210601075304 66457d31 ada.characters.latin_1%s
+D a-except.ads		20210601075304 291912d5 ada.exceptions%s
+D a-stream.ads		20210601075304 119b8fb3 ada.streams%s
+D a-string.ads		20210601075304 90ac6797 ada.strings%s
+D a-strbou.ads		20210601075304 53ab54ae ada.strings.bounded%s
+D a-strmap.ads		20210601075304 e8bb714a ada.strings.maps%s
+D a-strsup.ads		20210601075304 a27dcb33 ada.strings.superbounded%s
+D a-tags.ads		20210601075304 491b781d ada.tags%s
+D a-unccon.ads		20210601075304 0e9b276f ada.unchecked_conversion%s
+D a-uncdea.ads		20210601075304 eff36322 ada.unchecked_deallocation%s
+D bindings.ads		20231120025330 6c899da8 bindings%s
+D bindings-rlite.ads	20231120025330 d0bd31fc bindings.rlite%s
+D bindings-rlite-api.ads  20231120025330 0a3a6723 bindings.rlite.api%s
+D bindings-rlite-api.adb  20231120025330 5181551c bindings.rlite.api%b
+D bindings-rlite-common.ads  20231120025330 ab59339d bindings.rlite.common%s
+D bindings-rlite-ctrl.ads  20231120025330 56c82842 bindings.rlite.ctrl%s
+D bindings-rlite-list.ads  20231120025330 e090d857 bindings.rlite.list%s
+D bindings-rlite-msg.ads  20231120040834 d31a5b69 bindings.rlite.msg%s
+D bindings-rlite-msg-flow.ads  20231120050717 a4bf7177 bindings.rlite.msg.flow%s
+D bindings-rlite-utils.ads  20231120025330 22065319 bindings.rlite.utils%s
+D buffers.ads		20231120025330 18d97e12 buffers%s
+D gnat.ads		20210601075304 b5988c27 gnat%s
+D g-os_lib.ads		20210601075304 0db74523 gnat.os_lib%s
+D interfac.ads		20210601075304 5ab55268 interfaces%s
+D i-c.ads		20210601075304 5421119b interfaces.c%s
+D i-cstrin.ads		20210601075304 341d0ddf interfaces.c.strings%s
+D names.ads		20231120025330 62f49643 names%s
+D system.ads		20210601075304 4635ec04 system%s
+D s-exctab.ads		20210601075304 54135002 system.exception_table%s
+D s-os_lib.ads		20221024092806 caa7faea system.os_lib%s
+D s-parame.ads		20210601075304 48ec542b system.parameters%s
+D s-secsta.ads		20210601075304 20bbe636 system.secondary_stack%s
+D s-soflin.ads		20210601075304 a7318a92 system.soft_links%s
+D s-stache.ads		20210601075304 a37c21ec system.stack_checking%s
+D s-stalib.ads		20210601075304 09bd3940 system.standard_library%s
+D s-stoele.ads		20210601075304 2dc34a04 system.storage_elements%s
+D s-stratt.ads		20210601075304 aedef97e system.stream_attributes%s
+D s-string.ads		20210601075304 8fe54fb7 system.strings%s
+D s-ststop.ads		20210601075304 5fbf1b38 system.strings.stream_ops%s
+D s-traent.ads		20210601075304 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20210601075304 34867c83 system.unsigned_types%s
+X 7 a-strbou.ads
+50R12*Bounded_String<9|47R9> 15|45r18[29|13] 46r20[29|13] 56r18[29|13] 57r20[29|13]
+. 69r29[29|13] 83r24[29|13] 84r24[29|13] 85r24[29|13] 16|23r18[29|13] 24r20[29|13]
+. 31r18[29|13] 32r20[29|13] 41r28[29|13] 50r24[29|13] 51r24[29|13] 52r24[29|13]
+X 13 bindings.ads
+1K9*Bindings 3e13 15|14r6 15r8 17r9 99r5 16|5r6 7r14 10r25 68r5
+X 14 bindings-rlite.ads
+1K18*Rlite 13|1k9 14|3e19 15|14r15 15r17 17r18 99r14 16|5r15 7r23 10r34 68r14
+X 15 bindings-rlite-api.ads
+17K24*API 14|1k18 15|99l20 99e23 16|7b29 68l20 68t23
+18K12*OS=18:28 30r30 35r30 44r33 47r31 55r12 59r13 68r22 88r14 95r24 96r14
+. 16|12r30 14r14 14r48 17r30 19r7 22r33 25r31 30r35 34r13 40r22 55r14 62r24
+. 63r14
+21i4*RINA_F_NOWAIT{integer}
+22i4*RINA_F_NORESP{integer}
+30V13*RINA_Open{32|190I9} 16|12b13 15l8 15t17
+35U14*RINA_Close 35>25 16|17b14 20l8 20t18
+35i25 fd{32|190I9} 16|17b25 19r17
+44V13*RINA_Register{32|190I9} 44>28 45>7 46>7 47>7 16|22b13 28l8 28t21
+44i28 fd{32|190I9} 16|22b28 27r41
+45r7 dif_name{7|50R12[29|13]} 16|23b7 27r45
+46r7 local_appl{7|50R12[29|13]} 16|24b7 27r55
+47i7 flags{integer} 16|25b7 27r67
+54V13*RINA_Unregister{32|190I9} 55>7 56>7 57>7 58>7 16|30b13 37l8 37t23
+55i7 fd{32|190I9} 16|30b30 36r41
+56r7 dif_name{7|50R12[29|13]} 16|31b7 36r45
+57r7 local_appl{7|50R12[29|13]} 16|32b7 36r55
+58i7 flags{integer} 16|33b7 36r67
+67V13*RINA_Flow_Accept{boolean} 68>7 69=7 70>7 71>7 16|39b13 47l8 47t24
+68i7 fd{32|190I9} 16|40b7 46r36
+69r7 remote_appl{7|50R12[29|13]} 16|41b7 46m40 46r40
+70r7 spec{21|17R9} 16|42b7 46r53
+71i7 flags{integer} 16|43b7 46r59
+82V13*RINA_Flow_Alloc{32|190I9} 83>7 84>7 85>7 86>7 87>7 16|49b13 59l8 59t23
+83r7 dif_name{7|50R12[29|13]} 16|50b7 57r35
+84r7 local_appl{7|50R12[29|13]} 16|51b7 57r45
+85r7 remote_appl{7|50R12[29|13]} 16|52b7 57r57
+86r7 flowspec{21|17R9} 16|53b7 58r7
+87m7 flags{26|74M9} 16|54b7 58r17
+94V13*RINA_Flow_Alloc_Wait{32|190I9} 95>7 16|61b13 66l8 66t28
+95i7 wfd{32|190I9} 16|62b7 65r40
+X 16 bindings-rlite-api.adb
+10K12 Ctrl=10:40 27r14 36r14 46r14 57r14 65r14
+X 18 bindings-rlite-ctrl.ads
+22K24*Ctrl 16|5w21 10r40 18|80e24
+32V13*RINA_Register_Common{32|190I9} 16|27s19 36s19
+58V13*RINA_Flow_Accept{boolean} 16|46s19
+65V13*RINA_Flow_Alloc{32|190I9} 16|57s19
+74V13*RINA_Flow_Alloc_Wait{32|190I9} 16|65s19
+X 20 bindings-rlite-msg.ads
+17K24*Msg 15|14r21 15r23 70r22 20|207e23
+X 21 bindings-rlite-msg-flow.ads
+10K28*Flow 15|14w25 70r26 86r24 16|42r22 53r24 21|131e28
+17R9*RINA_Flow_Spec 15|70r31 86r29 16|42r27 53r29 21|35e14
+X 24 gnat.ads
+34K9*GNAT 15|5r6 18r23 24|57e9
+X 25 g-os_lib.ads
+51K14*OS_Lib=51:36 15|5w11 18r28
+X 26 interfac.ads
+38K9*Interfaces 15|8w6 9r8 26|184e15
+74M9*Unsigned_32 15|87r24 16|54r24
+X 29 names.ads
+12K9*Names 15|11w6 12r7 29|22e10
+13K13*Name_String[7|46] 15|12r13
+X 32 s-os_lib.ads
+190I9*File_Descriptor<integer> 15|30r33 35r33 44r36 47r34 55r15 59r16 68r25
+. 88r17 95r27 96r17 16|12r33 17r33 22r36 25r34 30r38 34r16 40r25 55r17 62r27
+. 63r17
+209U14*Close 16|19s10
+285n18*Binary{285E9} 16|14r51
+581V13*Open_Read_Write{190I9} 16|14s17
+

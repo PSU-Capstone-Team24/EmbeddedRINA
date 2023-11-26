@@ -1,0 +1,80 @@
+V "GNAT Lib v9"
+A -Og
+A -gnatA
+A -ffunction-sections
+A -fdata-sections
+A -g
+A -gnatwa
+A -gnatw.X
+A -gnatVa
+A -gnaty3
+A -gnatya
+A -gnatyA
+A -gnatyB
+A -gnatyb
+A -gnatyc
+A -gnaty-
+A -gnatyd
+A -gnatye
+A -gnatyf
+A -gnatyh
+A -gnatyi
+A -gnatyI
+A -gnatyk
+A -gnatyl
+A -gnatym
+A -gnatyn
+A -gnatyO
+A -gnatyp
+A -gnatyr
+A -gnatyS
+A -gnatyt
+A -gnatyu
+A -gnatyx
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+RV NO_IMPLEMENTATION_PRAGMAS
+RV SPARK_05
+
+U bindings.rlite.common%s  bindings-rlite-common.ads  416d4c4d NE OO PK
+W bindings.rlite%s	bindings-rlite.ads	bindings-rlite.ali
+W interfaces%s		interfac.ads		interfac.ali
+W interfaces.c%s	i-c.adb			i-c.ali
+W interfaces.c.strings%s  i-cstrin.adb		i-cstrin.ali
+
+D ada.ads		20210601075304 76789da1 ada%s
+D a-unccon.ads		20210601075304 0e9b276f ada.unchecked_conversion%s
+D bindings.ads		20231120025330 6c899da8 bindings%s
+D bindings-rlite.ads	20231120025330 d0bd31fc bindings.rlite%s
+D bindings-rlite-common.ads  20231120025330 ab59339d bindings.rlite.common%s
+D interfac.ads		20210601075304 5ab55268 interfaces%s
+D i-c.ads		20210601075304 5421119b interfaces.c%s
+D i-cstrin.ads		20210601075304 341d0ddf interfaces.c.strings%s
+D system.ads		20210601075304 4635ec04 system%s
+D s-exctab.ads		20210601075304 54135002 system.exception_table%s
+D s-parame.ads		20210601075304 48ec542b system.parameters%s
+D s-stalib.ads		20210601075304 09bd3940 system.standard_library%s
+X 3 bindings.ads
+1K9*Bindings 3e13 5|8r9 28r5
+X 4 bindings-rlite.ads
+1K18*Rlite 3|1k9 4|3e19 5|8r18 28r14
+X 5 bindings-rlite-common.ads
+8K24*Common 4|1k18 5|28l20 28e26
+9K12*C=9:33 19r13 20r13 21r13 22r13
+11M9*Unsigned_64
+18R9*RINA_Name 23e14
+19p7*Apn{8|47P9}
+20p7*Api{8|47P9}
+21p7*Aen{8|47P9}
+22p7*Aei{8|47P9}
+X 6 interfac.ads
+38K9*Interfaces 5|4w6 4r22 5r6 6r6 9r22 6|184e15
+X 7 i-c.ads
+18K20*C 5|5w17 6r17 9r33 7|230e17
+X 8 i-cstrin.ads
+36K22*Strings 5|6w19 19r15 20r15 21r15 22r15 8|106e25
+47P9*chars_ptr 5|19r23 20r23 21r23 22r23
+

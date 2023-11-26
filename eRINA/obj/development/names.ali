@@ -1,0 +1,109 @@
+V "GNAT Lib v9"
+A -Og
+A -gnatA
+A -ffunction-sections
+A -fdata-sections
+A -g
+A -gnatwa
+A -gnatw.X
+A -gnatVa
+A -gnaty3
+A -gnatya
+A -gnatyA
+A -gnatyB
+A -gnatyb
+A -gnatyc
+A -gnaty-
+A -gnatyd
+A -gnatye
+A -gnatyf
+A -gnatyh
+A -gnatyi
+A -gnatyI
+A -gnatyk
+A -gnatyl
+A -gnatym
+A -gnatyn
+A -gnatyO
+A -gnatyp
+A -gnatyr
+A -gnatyS
+A -gnatyt
+A -gnatyu
+A -gnatyx
+A -mtune=generic
+A -march=x86-64
+P SS ZX
+
+RN
+RV NO_SECONDARY_STACK
+RV NO_DYNAMIC_SIZED_OBJECTS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_OBSOLESCENT_FEATURES
+RV SPARK_05
+
+U names%b		names.adb		883ea5ad NE OO PK
+Z interfaces%s		interfac.ads		interfac.ali
+Z system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+
+U names%s		names.ads		7333ee97 EE NE OO PK
+W ada%s			ada.ads			ada.ali
+W ada.strings%s		a-string.ads		a-string.ali
+W ada.strings.bounded%s	a-strbou.adb		a-strbou.ali
+W buffers%s		buffers.adb		buffers.ali
+W interfaces%s		interfac.ads		interfac.ali
+Z system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+
+D ada.ads		20210601075304 76789da1 ada%s
+D a-charac.ads		20210601075304 2d3ec45b ada.characters%s
+D a-chlat1.ads		20210601075304 66457d31 ada.characters.latin_1%s
+D a-string.ads		20210601075304 90ac6797 ada.strings%s
+D a-strbou.ads		20210601075304 53ab54ae ada.strings.bounded%s
+D a-strbou.adb		20210601075304 adb4aa70 ada.strings.bounded%b
+D a-strmap.ads		20210601075304 e8bb714a ada.strings.maps%s
+D a-strsup.ads		20210601075304 a27dcb33 ada.strings.superbounded%s
+D a-unccon.ads		20210601075304 0e9b276f ada.unchecked_conversion%s
+D buffers.ads		20231120025330 18d97e12 buffers%s
+D interfac.ads		20210601075304 5ab55268 interfaces%s
+D names.ads		20231120025330 62f49643 names%s
+D names.adb		20231120025330 eaca33ee names%b
+D system.ads		20210601075304 4635ec04 system%s
+D s-exctab.ads		20210601075304 54135002 system.exception_table%s
+D s-parame.ads		20210601075304 48ec542b system.parameters%s
+D s-secsta.ads		20210601075304 20bbe636 system.secondary_stack%s
+D s-stalib.ads		20210601075304 09bd3940 system.standard_library%s
+D s-stoele.ads		20210601075304 2dc34a04 system.storage_elements%s
+D s-unstyp.ads		20210601075304 34867c83 system.unsigned_types%s
+X 1 ada.ads
+16K9*Ada 20e8 12|4r6 13r32
+X 4 a-string.ads
+16K13*Strings 35e16 12|4r10 13r36
+X 5 a-strbou.ads
+39K21*Bounded 914e24 12|4w18 13r44
+43i7 Max{positive} 12|14r10
+46k12*Generic_Bounded_Length 912e30 12|13r52
+50R12*Bounded_String<8|47R9> 12|18r32[13] 21r39[13] 13|6r32[12|13] 17r39[12|13]
+55I15*Length_Range{natural}
+57V16*Length{55I15[12|13]} 13|9s23[12|13]
+135V16*Element{character} 13|10s23[12|13] 22s42[12|13]
+X 10 buffers.ads
+6K9*Buffers 18e12 12|5w6 6r7
+7M10*Byte<11|63M9>
+8A10*Byte_Buffer(7M10)<integer> 12|21r62 13|17r62 19r18
+X 11 interfac.ads
+38K9*Interfaces 184e15 12|8w6 9r7
+63M9*Unsigned_8
+X 12 names.ads
+12K9*Names 22l5 22e10 13|4b14 27l5 27t10
+13K13*Name_String[5|46] 15r9
+18V14*Used_Size{natural} 18>24 13|6b14 15l9 15t18 18s37
+18r24 Input{5|50R12[13]} 13|6b24 9r30 10r32
+21V14*To_Packed_Buffer{10|8A10} 21>31 13|17b14 26l9 26t25
+21r31 Input{5|50R12[13]} 13|17b31 18r48 22r51
+X 13 names.adb
+7i9 Len{natural} 11m13 11r20 14r16
+9i13 I{integer} 10r39
+18i9 Size{positive} 19r36
+19a9 Buffer{10|8A10} 21r18 22m13 25r16
+21i13 I{integer} 22r21 22r58
+

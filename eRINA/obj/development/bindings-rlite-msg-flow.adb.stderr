@@ -1,0 +1,2 @@
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/messages/bindings-rlite-msg-flow.adb:69:24: warning: formal parameter "Self" is not referenced
+/home/dev/Desktop/eRINA/EmbeddedRINA/src/ada_src/messages/bindings-rlite-msg-flow.adb:170:10: warning: possibly useless assignment to "Offset", value might not be referenced

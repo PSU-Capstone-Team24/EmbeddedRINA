@@ -1,0 +1,38 @@
+[GENERATED OBJECT FILE]
+b__eRINA.o
+[PROJECT FILES]
+/home/dev/Desktop/eRINA/EmbeddedRINA/eRINA.gpr
+20231116002743
+/home/dev/Desktop/eRINA/EmbeddedRINA/config/eRINA_config.gpr
+20231002190843
+[BOUND OBJECT FILES]
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/bindings.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/bindings-rlite.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/bindings-rlite-common.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/bindings-rlite-list.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/bindings-rlite-utils.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/debug.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/buffers.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/exceptions.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/names.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/bindings-rlite-msg.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/bindings-rlite-msg-flow.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/bindings-rlite-msg-register.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/bindings-rlite-ctrl.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/bindings-rlite-api.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/eRINA.o
+[GENERATED SOURCE FILES]
+b__eRINA.ads
+b__eRINA.adb
+b__eRINA.ali
+[RESULTING OPTIONS]
+-L/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/
+-L/home/dev/Desktop/eRINA/EmbeddedRINA/obj/development/
+-L/usr/lib/gcc/x86_64-linux-gnu/9/adalib/
+-shared
+-shared-libgcc
+-lgnat-9
+-ldl
+[RUN PATH OPTION]
+/usr/lib/gcc/x86_64-linux-gnu/9/adalib/
+/usr/lib

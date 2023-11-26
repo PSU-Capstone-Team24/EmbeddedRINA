@@ -1,0 +1,2 @@
+buffers.ads:14:27: warning: formal parameter "Self" is not referenced
+buffers.ads:14:47: warning: formal parameter "To_Push" is not referenced
