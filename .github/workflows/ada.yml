@@ -27,7 +27,7 @@ jobs:
         sudo make install depmod
 
     - name: Build
-      run: gprbuild eRINA/eRINA.gpr -j0 -p
+      run: gprbuild eRINA/erina.gpr -j0 -p
     
     - name: Slack Notification Success
       if: success()

@@ -1,5 +1,5 @@
 name = "erina_tests"
-description = "Shiny new project"
+description = "eRINA tests"
 version = "0.1.0-dev"
 
 authors = ["Mason Ticehurst"]
@@ -9,3 +9,7 @@ maintainers-logins = ["masonticehurst"]
 executables = ["erina_tests"]
 [[depends-on]]
 aunit = "^23.0.0"
+erina = "~0.1.0-dev"
+
+[[pins]]
+erina = { path = "../eRINA" }

@@ -1,3 +1,6 @@
+--  Temp disabling
+pragma Style_Checks (Off);
+
 --  AUnit
 with AUnit.Reporter.Text;
 with AUnit.Run;
@@ -7,14 +10,14 @@ with AUnit.Test_Suites;
 with Test_RINA_Open;
 
 procedure eRINA_Tests is
-
+   
    function Suite return AUnit.Test_Suites.Access_Test_Suite;
 
    function Suite return AUnit.Test_Suites.Access_Test_Suite is
       Result : constant AUnit.Test_Suites.Access_Test_Suite := AUnit.Test_Suites.New_Suite;
    begin
-      --  Add test suits here
       Result.Add_Test (Test_RINA_Open.Suite);
+
       return Result;
    end Suite;
 

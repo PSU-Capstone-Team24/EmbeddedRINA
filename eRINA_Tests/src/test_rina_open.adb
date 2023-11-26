@@ -1,17 +1,34 @@
+--  Temp disabling
+pragma Style_Checks (Off);
+
+with AUnit.Assertions;
+with AUnit.Test_Caller;
+with GNAT.OS_Lib;
+
 package body Test_RINA_Open is
-   use AUnit.Test_Suites;
+   use AUnit.Assertions;
+   use GNAT.OS_Lib;
 
-   -- Statically allocate test suite:
-   Result : aliased Test_Suite;
+   package OS renames GNAT.OS_Lib;
 
-   --  Statically allocate test cases:
-   --  Test_1 : aliased Test_Case_1.Test_Case;
-   --  Test_2 : aliased Test_Case_2.Test_Case;
+   package Caller is new AUnit.Test_Caller (Test);
+   
+   Test_Suite : aliased AUnit.Test_Suites.Test_Suite;
 
-   function Suite return Access_Test_Suite is
+   function Suite return AUnit.Test_Suites.Access_Test_Suite is
+      Name : constant String := "RINA_Open";
    begin
-      --  Add_Test (Result'Access, Test_Case_1'Access);
-      --  Add_Test (Result'Access, Test_Case_2'Access);
-      return Result'Access;
+      Test_Suite.Add_Test (Caller.Create
+         (Name & "Test rLite FD", Test_Open'Access));
+      
+      return Test_Suite'Access;
    end Suite;
+
+   procedure Test_Open (Object : in out Test) is
+      Fd : File_Descriptor := Invalid_FD;
+   begin
+      Fd := Open_Read_Write ("/dev/rlite", Binary);
+      Assert(Fd /= Invalid_FD, "Invalid file descriptor returned");
+   end Test_Open;
+
 end Test_RINA_Open;
