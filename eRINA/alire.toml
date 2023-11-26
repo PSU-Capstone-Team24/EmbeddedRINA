@@ -1,4 +1,4 @@
-name = "eRINA"
+name = "erina"
 description = "Embedded RINA (Recursive InterNetwork Architecture) Stack in Ada"
 version = "0.1.0-dev"
 
