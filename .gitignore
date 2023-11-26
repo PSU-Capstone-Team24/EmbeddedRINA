@@ -1,3 +1,6 @@
-/obj/
-/bin/
-/alire/
+/eRINA/obj/
+/eRINA/bin/
+/eRINA/alire/
+/eRINA_Tests/obj/
+/eRINA_Tests/bin/
+/eRINA_Tests/alire/

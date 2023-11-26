@@ -1,4 +1,0 @@
-/home/dev/Desktop/eRINA/EmbeddedRINA/src/c_src/wifi.c:36:10: fatal error: wpa-supplicant/wpa_ctrl.h: No such file or directory
-   36 | #include "wpa-supplicant/wpa_ctrl.h"
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.

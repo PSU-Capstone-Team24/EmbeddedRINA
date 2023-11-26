@@ -1,8 +1,0 @@
-bindings-rlite-kernel_msg.adb:7:01: spec of this package does not allow a body
-bindings-rlite-kernel_msg.adb:23:34: "Rl_Kmsg_Fa_Req_Arrived" is undefined
-bindings-rlite-kernel_msg.ads:11:18: warning: unit "Interfaces.C.Strings" is not referenced
-bindings-rlite-kernel_msg.ads:16:06: warning: no entities of "Buffers" are referenced in spec
-bindings-rlite-kernel_msg.ads:16:06: warning: with clause might be moved to body
-bindings-rlite-kernel_msg.ads:19:20: warning: no entities of "Bindings.Rlite.Msg" are referenced in spec
-bindings-rlite-kernel_msg.ads:19:20: warning: with clause might be moved to body
-bindings-rlite-kernel_msg.ads:22:24: warning: unit "Bindings.Rlite.Msg.Flow" is not referenced

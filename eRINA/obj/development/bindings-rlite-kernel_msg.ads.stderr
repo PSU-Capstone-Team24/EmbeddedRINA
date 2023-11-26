@@ -1,4 +1,0 @@
-bindings-rlite-kernel_msg.ads:11:18: warning: unit "Interfaces.C.Strings" is not referenced
-bindings-rlite-kernel_msg.ads:16:06: warning: no entities of "Buffers" are referenced
-bindings-rlite-kernel_msg.ads:19:20: warning: no entities of "Bindings.Rlite.Msg" are referenced
-bindings-rlite-kernel_msg.ads:22:24: warning: unit "Bindings.Rlite.Msg.Flow" is not referenced
