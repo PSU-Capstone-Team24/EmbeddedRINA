@@ -1,0 +1,30 @@
+[GENERATED OBJECT FILE]
+b__erina_tests.o
+[PROJECT FILES]
+/home/dev/Desktop/eRINA/EmbeddedRINA/eRINA_Tests/erina_tests.gpr
+20231121235111
+/home/dev/Desktop/eRINA/EmbeddedRINA/eRINA_Tests/alire/cache/dependencies/aunit_23.0.0_84ce7d0b/lib/gnat/aunit_shared.gpr
+20220908124416
+/home/dev/Desktop/eRINA/EmbeddedRINA/eRINA_Tests/alire/cache/dependencies/aunit_23.0.0_84ce7d0b/lib/gnat/aunit.gpr
+20220908124416
+/home/dev/Desktop/eRINA/EmbeddedRINA/eRINA_Tests/config/erina_tests_config.gpr
+20231121234217
+[BOUND OBJECT FILES]
+/home/dev/Desktop/eRINA/EmbeddedRINA/eRINA_Tests/obj/development/test_rina_open.o
+/home/dev/Desktop/eRINA/EmbeddedRINA/eRINA_Tests/obj/development/erina_tests.o
+[GENERATED SOURCE FILES]
+b__erina_tests.ads
+b__erina_tests.adb
+b__erina_tests.ali
+[RESULTING OPTIONS]
+-L/home/dev/Desktop/eRINA/EmbeddedRINA/eRINA_Tests/obj/development/
+-L/home/dev/Desktop/eRINA/EmbeddedRINA/eRINA_Tests/obj/development/
+-L/home/dev/Desktop/eRINA/EmbeddedRINA/eRINA_Tests/alire/cache/dependencies/aunit_23.0.0_84ce7d0b/lib/aunit/native-full/
+-L/usr/lib/gcc/x86_64-linux-gnu/9/adalib/
+-shared
+-shared-libgcc
+-lgnat-9
+-ldl
+[RUN PATH OPTION]
+/usr/lib/gcc/x86_64-linux-gnu/9/adalib/
+/usr/lib
