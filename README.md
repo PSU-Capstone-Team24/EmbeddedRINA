@@ -9,3 +9,10 @@ RINA (Recursive InterNetwork Architecture) is an innovative networking architect
 eRINA aims to take the fundamental principles of RINA and implement them as a software stack solution in Ada, specifically designed for embedded platforms. This means that eRINA provides a robust and efficient networking solution for resource-constrained devices, allowing them to benefit from the advantages of RINA's clean, lightweight, and scalable design.
 
 ## RINA Resources
+
+## Testing Setup
+1. Install rlite package on system
+2. Ensure `modprobe rlite` and `modprobe rlite-normal` are run to load those kernel modules
+3. Run `sudo rlite-uipcps` before running tests
+4. Enter `eRINA_Tests` directory with `cd eRINA_Tests`
+5. Run tests: `alr build` and `alr run`
