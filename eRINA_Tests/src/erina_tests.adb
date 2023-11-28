@@ -8,6 +8,7 @@ with AUnit.Test_Suites;
 
 --  Test suites
 with Test_RINA_Open;
+with Test_RINA_Register;
 
 procedure eRINA_Tests is
    
@@ -17,6 +18,7 @@ procedure eRINA_Tests is
       Result : constant AUnit.Test_Suites.Access_Test_Suite := AUnit.Test_Suites.New_Suite;
    begin
       Result.Add_Test (Test_RINA_Open.Suite);
+      Result.Add_Test (Test_RINA_Register.Suite);
 
       return Result;
    end Suite;
