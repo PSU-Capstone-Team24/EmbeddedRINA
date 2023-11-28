@@ -17,6 +17,6 @@ private
 
    procedure Test_Valid_Flow_Allocation (Object : in out Test);
    procedure Test_Invalid_Flags (Object : in out Test);
-   --procedure Test_Incorrect_Flowspec_Version (Object : in out Test);
-   --procedure Test_RINA_Open_Failure (Object : in out Test);
+   procedure Test_Incorrect_Flowspec_Version (Object : in out Test);
+   procedure Test_RINA_Open_Failure (Object : in out Test);
 end Test_RINA_Flow_Alloc;

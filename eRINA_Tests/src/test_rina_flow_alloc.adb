@@ -26,8 +26,8 @@ package body Test_RINA_Flow_Alloc is
     begin
       Test_Suite.Add_Test (Caller.Create("TC-025 Valid Flow Allocation", Test_Valid_Flow_Allocation'Access));
       Test_Suite.Add_Test (Caller.Create("TC-026 Invalid Flags", Test_Invalid_Flags'Access));
-      --Test_Suite.Add_Test (Caller.Create("TC-027 Incorrect Flowspec Version", Test_Incorrect_Flowspec_Version'Access));
-      --Test_Suite.Add_Test (Caller.Create("TC-028 RINA Open Failure", Test_RINA_Open_Failure'Access));
+      Test_Suite.Add_Test (Caller.Create("TC-027 Incorrect Flowspec Version", Test_Incorrect_Flowspec_Version'Access));
+      Test_Suite.Add_Test (Caller.Create("TC-028 RINA Open Failure", Test_RINA_Open_Failure'Access));
       return Test_Suite'Access;
     end Suite;
 
@@ -36,13 +36,13 @@ package body Test_RINA_Flow_Alloc is
       local_appl : Bounded_String := To_Bounded_String("TestLocalAppl");
       remote_appl : Bounded_String := To_Bounded_String("TestRemoteAppl");
       flow_spec : Bindings.Rlite.Msg.Flow.RINA_Flow_Spec;
+      flags : Unsigned_32 := 1;
       result : File_Descriptor;
    begin
-    -- Initialize flow_spec as needed, for example:
       flow_spec.Version := Bindings.Rlite.Msg.Flow.RINA_FLOW_SPEC_VERSION;
-      flow_spec.Max_Delay := 0; -- and so on for other fields
+      flow_spec.Max_Delay := 0;
 
-      result := RINA_Flow_Alloc(dif_name, local_appl, remote_appl, flow_spec, 0, 0);
+      result := RINA_Flow_Alloc(dif_name, local_appl, remote_appl, flow_spec, flags, 0);
       Assert(result /= Invalid_FD, "Invalid file descriptor returned");
    end Test_Valid_Flow_Allocation;
 
@@ -51,12 +51,35 @@ package body Test_RINA_Flow_Alloc is
       local_appl : Bounded_String := To_Bounded_String("TestLocalAppl");
       remote_appl : Bounded_String := To_Bounded_String("TestRemoteAppl");
       flow_spec : Bindings.Rlite.Msg.Flow.RINA_Flow_Spec;
+      flags : Unsigned_32 := 2; -- Set the flag to something other than a number with a 1 in the 1's place
       result : File_Descriptor;
    begin
-      result := RINA_Flow_Alloc(dif_name, local_appl, remote_appl, flow_spec, 2, 0);
-      Assert(result /= Invalid_FD, "Invalid file descriptor returned");
-
+      result := RINA_Flow_Alloc(dif_name, local_appl, remote_appl, flow_spec, flags, 0);
+      Assert(result = Invalid_FD, "Invalid file descriptor returned");
    end Test_Invalid_Flags;
 
+   procedure Test_Incorrect_Flowspec_Version (Object : in out Test ) is
+      dif_name : Bounded_String := To_Bounded_String("TestDIF");
+      local_appl : Bounded_String := To_Bounded_String("TestLocalAppl");
+      remote_appl : Bounded_String := To_Bounded_String("TestRemoteAppl");
+      flow_spec : Bindings.Rlite.Msg.Flow.RINA_Flow_Spec;
+      flags : Unsigned_32 := 1;
+      result : File_Descriptor;
+   begin
+      flow_spec.Version := 99; -- Set the flow spec version to something other than 2
+      result := RINA_Flow_Alloc(dif_name, local_appl, remote_appl, flow_spec, flags, 0);
+      Assert(result = Invalid_FD, "Invalid file descriptor returned");
+   end Test_Incorrect_Flowspec_Version;
 
+   procedure Test_RINA_Open_Failure (Object : in out Test) is
+      dif_name : Bounded_String := To_Bounded_String("TEST123DIF");
+      local_appl : Bounded_String := To_Bounded_String("TestLocalAppl");
+      remote_appl : Bounded_String := To_Bounded_String("TestRemoteAppl");
+      flow_spec : Bindings.Rlite.Msg.Flow.RINA_Flow_Spec;
+      flags : Unsigned_32 := 1;
+      result : File_Descriptor;
+   begin
+      result := RINA_Flow_Alloc(dif_name, local_appl, remote_appl, flow_spec, flags, 0);
+      Assert(result /= Invalid_FD, "Valid file descriptor returned");
+   end Test_RINA_Open_Failure;
 end Test_RINA_Flow_Alloc;
