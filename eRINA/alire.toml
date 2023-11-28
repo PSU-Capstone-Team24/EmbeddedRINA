@@ -1,4 +1,4 @@
-name = "embedded_rina_bin"
+name = "erina"
 description = "Embedded RINA (Recursive InterNetwork Architecture) Stack in Ada"
 version = "0.1.0-dev"
 
@@ -6,4 +6,4 @@ authors = ["Mason Ticehurst"]
 maintainers = ["Mason Ticehurst <mft5293@psu.edu>"]
 maintainers-logins = ["masonticehurst"]
 
-executables = ["embedded_rina_bin"]
+executables = ["eRINA"]
