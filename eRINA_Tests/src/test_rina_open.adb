@@ -18,10 +18,10 @@ package body Test_RINA_Open is
    Test_Suite : aliased AUnit.Test_Suites.Test_Suite;
 
    function Suite return AUnit.Test_Suites.Access_Test_Suite is
-      Name : constant String := "RINA_Open";
+      Name : constant String := "TC-001 ";
    begin
       Test_Suite.Add_Test (Caller.Create
-         (Name & "Test rLite FD", Test_Open'Access));
+         (Name & "Valid rLite File Descriptor", Test_Open'Access));
       
       return Test_Suite'Access;
    end Suite;
@@ -30,7 +30,7 @@ package body Test_RINA_Open is
       Fd : File_Descriptor := Invalid_FD;
    begin
       Fd := RINA_Open;
-      Assert(Fd = Invalid_FD, "Invalid file descriptor returned");
+      Assert(Fd /= Invalid_FD, "Invalid file descriptor returned");
    end Test_Open;
 
 end Test_RINA_Open;

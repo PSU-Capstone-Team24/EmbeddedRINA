@@ -21,7 +21,7 @@ package body Test_RINA_Flow_Alloc_Wait is
       Name : constant String := "RINA_Flow_Alloc_Wait";
     begin
       Test_Suite.Add_Test (Caller.Create
-         (Name & " TC-029 Positive Flow Alloc Response", Test_Positive_Flow_Alloc_Response'Access));
+         ("TC-029 Positive Flow Alloc Response", Test_Positive_Flow_Alloc_Response'Access));
       return Test_Suite'Access;
     end Suite;
 
