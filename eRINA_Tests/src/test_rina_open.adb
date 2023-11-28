@@ -4,10 +4,12 @@ pragma Style_Checks (Off);
 with AUnit.Assertions;
 with AUnit.Test_Caller;
 with GNAT.OS_Lib;
+with Bindings.Rlite.API;
 
 package body Test_RINA_Open is
    use AUnit.Assertions;
    use GNAT.OS_Lib;
+   use Bindings.Rlite.API;
 
    package OS renames GNAT.OS_Lib;
 
@@ -19,16 +21,18 @@ package body Test_RINA_Open is
       Name : constant String := "RINA_Open";
    begin
       Test_Suite.Add_Test (Caller.Create
-         (Name & "Test rLite FD", Test_Open'Access));
+         (Name & " - Can only open rLite FD", Test_Open'Access));
       
       return Test_Suite'Access;
    end Suite;
 
    procedure Test_Open (Object : in out Test) is
       Fd : File_Descriptor := Invalid_FD;
+      Rlite_Fd : File_Descriptor := Invalid_FD;
    begin
+      Rlite_Fd := RINA_Open;
       Fd := Open_Read_Write ("/dev/rlite", Binary);
-      Assert(Fd /= Invalid_FD, "Invalid file descriptor returned");
+      Assert(Rlite_Fd /= Fd, "Invalid file descriptor returned");
    end Test_Open;
 
 end Test_RINA_Open;
