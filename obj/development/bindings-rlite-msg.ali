@@ -1,0 +1,269 @@
+V "GNAT Lib v13"
+A -Og
+A -gnatA
+A -ffunction-sections
+A -fdata-sections
+A -g
+A -gnatwa
+A -gnatw.X
+A -gnatVa
+A -gnaty3
+A -gnatya
+A -gnatyA
+A -gnatyB
+A -gnatyb
+A -gnatyc
+A -gnaty-
+A -gnatyd
+A -gnatye
+A -gnatyf
+A -gnatyh
+A -gnatyi
+A -gnatyI
+A -gnatyk
+A -gnatyl
+A -gnatym
+A -gnatyn
+A -gnatyO
+A -gnatyp
+A -gnatyr
+A -gnatyS
+A -gnatyt
+A -gnatyu
+A -gnatyx
+A -mtune=generic
+A -march=x86-64
+P SS ZX
+
+RN
+RV NO_DISPATCHING_CALLS
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTIONS
+RV NO_IMPLICIT_CONDITIONALS
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_DYNAMIC_SIZED_OBJECTS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_IMPLICIT_LOOPS
+RV NO_ELABORATION_CODE
+
+U bindings.rlite.msg%s	bindings-rlite-msg.ads	e6bb6750 EE OO PK
+Z ada.exceptions%s	a-except.adb		a-except.ali
+Z ada.streams%s		a-stream.adb		a-stream.ali
+Z ada.strings.text_buffers%s  a-sttebu.adb	a-sttebu.ali
+Z ada.tags%s		a-tags.adb		a-tags.ali
+W bindings.rlite%s	bindings-rlite.ads	bindings-rlite.ali
+W buffers%s		buffers.adb		buffers.ali
+W interfaces%s		interfac.ads		interfac.ali
+W names%s		names.adb		names.ali
+Z system%s		system.ads		system.ali
+Z system.put_images%s	s-putima.adb		s-putima.ali
+Z system.stream_attributes%s  s-stratt.adb	s-stratt.ali
+
+D ada.ads		20230426070939 76789da1 ada%s
+D a-charac.ads		20230426070939 2d3ec45b ada.characters%s
+D a-chlat1.ads		20230426070939 e0d72e76 ada.characters.latin_1%s
+D a-except.ads		20230426070939 2a7d8d70 ada.exceptions%s
+D a-stream.ads		20230426070939 119b8fb3 ada.streams%s
+D a-string.ads		20230426070939 90ac6797 ada.strings%s
+D a-strbou.ads		20230426070939 1b38415e ada.strings.bounded%s
+D a-strmap.ads		20230426070939 ed8acfdb ada.strings.maps%s
+D a-strsea.ads		20230426070939 2d394feb ada.strings.search%s
+D a-strsup.ads		20230426070939 8a2a893f ada.strings.superbounded%s
+D a-sttebu.ads		20230426070939 f1ad67a2 ada.strings.text_buffers%s
+D a-stuten.ads		20230426070939 c6ced0ae ada.strings.utf_encoding%s
+D a-tags.ads		20230426070939 9eaa38c6 ada.tags%s
+D a-unccon.ads		20230426070939 0e9b276f ada.unchecked_conversion%s
+D bindings.ads		20231023224136 6c899da8 bindings%s
+D bindings-rlite.ads	20231023224136 d0bd31fc bindings.rlite%s
+D bindings-rlite-msg.ads  20231116230403 9d37b3cd bindings.rlite.msg%s
+D buffers.ads		20231116230403 dc32eae0 buffers%s
+D interfac.ads		20230426070939 15f799c2 interfaces%s
+D names.ads		20231116230403 62f49643 names%s
+D system.ads		20230426070939 426dafb8 system%s
+D s-exctab.ads		20230426070939 91bef6ef system.exception_table%s
+D s-parame.ads		20230426070939 d494a4a6 system.parameters%s
+D s-putima.ads		20230426070939 17291fe4 system.put_images%s
+D s-secsta.ads		20230426070939 578279f5 system.secondary_stack%s
+D s-soflin.ads		20230426070939 df77073e system.soft_links%s
+D s-stache.ads		20230426070939 0b81c1fe system.stack_checking%s
+D s-stalib.ads		20230426070939 1c9580f6 system.standard_library%s
+D s-stoele.ads		20230426070939 ab5468e4 system.storage_elements%s
+D s-stoele.adb		20230426070939 8f5a9db6 system.storage_elements%b
+D s-stratt.ads		20230426070939 f7dfd786 system.stream_attributes%s
+D s-traent.ads		20230426070939 c81cbf8c system.traceback_entries%s
+D s-unstyp.ads		20230426070939 fa2a7f59 system.unsigned_types%s
+G a e
+G c Z s s [rl_msg_hdrIP bindings__rlite__msg 56 9 none]
+G c Z s s [rl_msg_baseDA bindings__rlite__msg 62 9 none]
+G c Z s s [rl_msg_baseDF bindings__rlite__msg 62 9 none]
+G c Z s s [rl_msg_baseIP bindings__rlite__msg 62 9 none]
+G c Z s s [rl_pci_matchIP bindings__rlite__msg 71 9 none]
+G c Z s s [rl_flow_statsIP bindings__rlite__msg 81 9 none]
+G c Z s s [rl_rmt_statsIP bindings__rlite__msg 91 9 none]
+G c Z s s [rl_ipcp_statsIP bindings__rlite__msg 104 9 none]
+G c Z s s [rl_flow_dtpIP bindings__rlite__msg 120 9 none]
+G c Z s s [Trl_flow_config_pad1BIP bindings__rlite__msg 155 4 none]
+G c Z s s [Trl_flow_config_pad2BIP bindings__rlite__msg 156 4 none]
+G c Z s s [rl_flow_configIP bindings__rlite__msg 157 9 none]
+G c Z s s [Tpci_sizes_pad1BIP bindings__rlite__msg 170 4 none]
+G c Z s s [pci_sizesIP bindings__rlite__msg 171 9 none]
+X 15 bindings.ads
+1K9*Bindings 3e13 17|13r9 180r5
+X 16 bindings-rlite.ads
+1K18*Rlite 15|1k9 16|3e19 17|13r18 180r14
+X 17 bindings-rlite-msg.ads
+13K24*Msg 16|1k18 17|180l20 180e23
+16M9*Rl_Ipcp_Id_T<19|72M9>
+17M9*Rl_Port_T<19|72M9>
+21M9*Rlm_Addr_T<19|83M9> 72r21 73r21
+22M9*Rlm_Seq_T<19|83M9> 122r30 123r30 124r30 125r30 126r32 143r30 144r30
+. 145r30 146r30 147r30 148r30 161r27
+23M9*Rlm_Pdulen_T<19|83M9>
+24M9*Rlm_Cepid_T<19|80M9>
+25M9*Rlm_Qosid_T<19|83M9> 74r21 75r21 76r21 77r21
+29m4*RLITE_API_VERSION{19|72M9} 57r34
+32m4*RINA_REG_EVENT_ID{19|80M9}
+35m4*RINA_FA_EVENT_ID{19|80M9}
+38E9*Rl_Msg_T 50e68 53r8 58r18
+38n22*RLITE_DUMMY{38E9} 58r34
+38n35*RLITE_KER_IPCP_CREATE{38E9}
+38n58*RLITE_KER_IPCP_CREATE_RESP{38E9}
+38n86*RLITE_KER_IPCP_DESTROY{38E9}
+39n22*RLITE_KER_APPL_REGISTER{38E9}
+39n47*RLITE_KER_APPL_REGISTER_RESP{38E9}
+39n77*RLITE_KER_FA_REQ{38E9}
+40n22*RLITE_KER_FA_RESP_ARRIVED{38E9}
+40n49*RLITE_KER_FA_RESP{38E9}
+40n68*RLITE_KER_FA_REQ_ARRIVED{38E9}
+41n22*RLITE_KER_IPCP_CONFIG{38E9}
+41n45*RLITE_KER_IPCP_PDUFT_SET{38E9}
+41n71*RLITE_KER_IPCP_PDUFT_FLUSH{38E9}
+42n22*RLITE_KER_IPCP_UIPCP_SET{38E9}
+42n48*RLITE_KER_UIPCP_FA_REQ_ARRIVED{38E9}
+42n80*RLITE_KER_UIPCP_FA_RESP_ARRIVED{38E9}
+43n22*RLITE_KER_FLOW_DEALLOCATED{38E9}
+43n50*RLITE_KER_FLOW_DEALLOC{38E9}
+43n74*RLITE_KER_IPCP_UPDATE{38E9}
+44n22*RLITE_KER_FLOW_FETCH{38E9}
+44n44*RLITE_KER_FLOW_FETCH_RESP{38E9}
+44n71*RLITE_KER_IPCP_UIPCP_WAIT{38E9}
+45n22*RLITE_KER_FLOW_STATS_REQ{38E9}
+45n48*RLITE_KER_FLOW_STATS_RESP{38E9}
+45n75*RLITE_KER_FLOW_CFG_UPDATE{38E9}
+46n22*RLITE_KER_IPCP_QOS_SUPPORTED{38E9}
+46n52*RLITE_KER_APPL_MOVE{38E9}
+46n73*RLITE_KER_IPCP_PDUFT_DEL{38E9}
+47n22*RLITE_KER_MEMTRACK_DUMP{38E9}
+47n47*RLITE_KER_REG_FETCH{38E9}
+47n68*RLITE_KER_REG_FETCH_RESP{38E9}
+48n22*RLITE_KER_FLOW_STATE{38E9}
+48n44*RLITE_KER_IPCP_STATS_REQ{38E9}
+48n70*RLITE_KER_IPCP_STATS_RESP{38E9}
+49n22*RLITE_KER_IPCP_CONFIG_GET_REQ{38E9}
+49n53*RLITE_KER_IPCP_CONFIG_GET_RESP{38E9}
+49n85*RLITE_KER_IPCP_SCHED_WRR{38E9}
+50n22*RLITE_KER_IPCP_SCHED_PFIFO{38E9}
+50n50*RLITE_KER_MSG_MAX{38E9}
+56R9*Rl_Msg_Hdr 60e14 63r13
+57m7*Version{19|72M9}
+58e7*Msg_Type{38E9}
+59m7*Event_Id{19|80M9}
+62H9*Rl_Msg_Base 64e14 67p13 67r34
+63r7*Hdr{56R9}
+67y13*Serialize{18|8A10} 67>24
+67r24 Self{62R9}
+71R9*Rl_PCI_Match 78e14
+72m7*Dst_Addr{21M9}
+73m7*Src_Addr{21M9}
+74m7*Dst_Cepid{25M9}
+75m7*Src_Cepid{25M9}
+76m7*Qos_Id{25M9}
+77m7*Pad2{25M9}
+81R9*Rl_Flow_Stats 88e14
+82m7*tx_pkt{19|83M9}
+83m7*tx_byte{19|83M9}
+84m7*rx_pkt{19|83M9}
+85m7*rx_byte{19|83M9}
+86m7*rx_overrun_pkt{19|83M9}
+87m7*rx_overrun_byte{19|83M9}
+91R9*Rl_Rmt_Stats 101e14 116r17
+92m7*Fwd_Pkt{19|83M9}
+93m7*Fwd_Byte{19|83M9}
+94m7*Queued_Pkt{19|83M9}
+95m7*Queue_Drop{19|83M9}
+96m7*Noroute_Drop{19|83M9}
+97m7*Csum_Drop{19|83M9}
+98m7*Ttl_Drop{19|83M9}
+99m7*Noflow_Drop{19|83M9}
+100m7*Other_Drop{19|83M9}
+104R9*RL_Ipcp_Stats 117e14
+105m7*TX_Pkt{19|83M9}
+106m7*TX_Byte{19|83M9}
+107m7*TX_Err{19|83M9}
+109m7*RX_Pkt{19|83M9}
+110m7*RX_Byte{19|83M9}
+111m7*RX_Err{19|83M9}
+113m7*RTX_Pkt{19|83M9}
+114m7*RTX_Byte{19|83M9}
+116r7*Rmt{91R9}
+120R9*Rl_Flow_DTP 152e14
+122m7*Snd_LWE{22M9}
+123m7*Snd_RWE{22M9}
+124m7*Next_Seq_Num_To_Use{22M9}
+125m7*Last_Seq_Num_Sent{22M9}
+126m7*Last_Ctrl_Seq_Num_Rcvd{22M9}
+127m7*CWQ_Len{19|80M9}
+128m7*Max_CWQ_Len{19|80M9}
+129m7*RTXQ_Len{19|80M9}
+130m7*Max_RTXQ_Len{19|80M9}
+133m7*RTT{19|80M9}
+136m7*RTT_Stddev{19|80M9}
+139m7*CGWin{19|80M9}
+140m7*Pad1{19|80M9}
+143m7*Rcv_LWE{22M9}
+144m7*Rcv_Next_Seq_Num{22M9}
+145m7*Rcv_RWE{22M9}
+146m7*Max_Seq_Num_Rcvd{22M9}
+147m7*Last_LWE_Sent{22M9}
+148m7*Last_Seq_Num_Acked{22M9}
+149m7*Next_Snd_Ctl_Seq{19|80M9}
+150m7*Seqq_Len{19|80M9}
+151m7*Pad2{19|80M9}
+155A9*Rl_Flow_Config_Pad1(19|69M9)<integer> 160r27
+156A9*Rl_Flow_Config_Pad2(19|72M9)<integer> 167r27
+157R9*Rl_Flow_Config 168e14
+158m7*Msg_Boundaries{19|69M9}
+159m7*In_Order_Delivery{19|69M9}
+160a7*Pad1{155A9}
+161m7*Max_Sdu_Gap{22M9}
+164i7*Fd{19|53I9}
+165m7*Inet_Ip{19|80M9}
+166m7*Inet_Port{19|72M9}
+167a7*Pad2{156A9}
+170A9*Pci_Sizes_Pad1(19|72M9)<integer> 177r14
+171R9*Pci_Sizes 178e14
+172m7*Addr{19|72M9}
+173m7*Seq{19|72M9}
+174m7*Pdulen{19|72M9}
+175m7*Cepid{19|72M9}
+176m7*Qosid{19|72M9}
+177a7*Pad1{170A9}
+X 18 buffers.ads
+6K9*Buffers 17|7w6 8r7 18|15e12
+7M10*Byte<19|69M9>
+8A10*Byte_Buffer(7M10)<integer> 17|67r54
+X 19 interfac.ads
+38K9*Interfaces 17|4w6 5r7 19|232e15
+53I9*Integer_32<integer> 17|164r27
+69M9*Unsigned_8 17|155r49 158r27 159r27
+72M9*Unsigned_16 17|16r29 17r29 29r33 57r18 156r49 166r27 170r42 172r14 173r13
+. 174r16 175r15 176r15
+80M9*Unsigned_32 17|24r29 32r33 35r32 59r18 127r30 128r30 129r30 130r30 133r30
+. 136r30 139r30 140r30 149r30 150r30 151r30 165r27
+83M9*Unsigned_64 17|21r29 22r29 23r29 25r29 82r24 83r24 84r24 85r24 86r24
+. 87r25 92r24 93r24 94r24 95r24 96r24 97r24 98r24 99r24 100r24 105r17 106r17
+. 107r17 109r17 110r17 111r17 113r17 114r17
+X 20 names.ads
+12K9*Names 17|10w6 11r7 20|22e10
+13K13*Name_String[7|58] 17|11r13
+

@@ -1,0 +1,2 @@
+bindings-rlite-ctrl.adb:119:41: error: expected type "Request_Arrived" defined at bindings-rlite-msg-flow.ads:95
+bindings-rlite-ctrl.adb:119:41: error: found type universal access

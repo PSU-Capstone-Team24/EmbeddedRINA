@@ -1,0 +1,60 @@
+V "GNAT Lib v13"
+A -Og
+A -gnatA
+A -ffunction-sections
+A -fdata-sections
+A -g
+A -gnatwa
+A -gnatw.X
+A -gnatVa
+A -gnaty3
+A -gnatya
+A -gnatyA
+A -gnatyB
+A -gnatyb
+A -gnatyc
+A -gnaty-
+A -gnatyd
+A -gnatye
+A -gnatyf
+A -gnatyh
+A -gnatyi
+A -gnatyI
+A -gnatyk
+A -gnatyl
+A -gnatym
+A -gnatyn
+A -gnatyO
+A -gnatyp
+A -gnatyr
+A -gnatyS
+A -gnatyt
+A -gnatyu
+A -gnatyx
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_ELABORATION_CODE
+
+U exceptions%s		exceptions.ads		2e5d5311 EE OO PK
+Z system%s		system.ads		system.ali
+Z system.exception_table%s  s-exctab.adb	s-exctab.ali
+Z system.standard_library%s  s-stalib.adb	s-stalib.ali
+
+D ada.ads		20230426070939 76789da1 ada%s
+D a-unccon.ads		20230426070939 0e9b276f ada.unchecked_conversion%s
+D exceptions.ads	20231116230403 2e5d5311 exceptions%s
+D system.ads		20230426070939 426dafb8 system%s
+D s-exctab.ads		20230426070939 91bef6ef system.exception_table%s
+D s-stalib.ads		20230426070939 1c9580f6 system.standard_library%s
+G a e
+X 3 exceptions.ads
+1K9*Exceptions 6l5 6e15
+2X4*Unexpected_Flow_Failure
+3X4*DIF_Registration_Failure
+4X4*RINA_Control_Failure
+5X4*Flow_Alloc_Failure
+

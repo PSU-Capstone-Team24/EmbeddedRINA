@@ -1,0 +1,190 @@
+V "GNAT Lib v13"
+A -Og
+A -gnatA
+A -ffunction-sections
+A -fdata-sections
+A -g
+A -gnatwa
+A -gnatw.X
+A -gnatVa
+A -gnaty3
+A -gnatya
+A -gnatyA
+A -gnatyB
+A -gnatyb
+A -gnatyc
+A -gnaty-
+A -gnatyd
+A -gnatye
+A -gnatyf
+A -gnatyh
+A -gnatyi
+A -gnatyI
+A -gnatyk
+A -gnatyl
+A -gnatym
+A -gnatyn
+A -gnatyO
+A -gnatyp
+A -gnatyr
+A -gnatyS
+A -gnatyt
+A -gnatyu
+A -gnatyx
+A -mtune=generic
+A -march=x86-64
+P SS ZX
+
+RN
+RV NO_IMPLEMENTATION_PRAGMAS
+
+U bindings.rlite.api%b	bindings-rlite-api.adb	6c1b1f5f NE OO PK
+Z ada.strings.text_buffers%s  a-sttebu.adb	a-sttebu.ali
+W bindings%s		bindings.ads		bindings.ali
+W bindings.rlite%s	bindings-rlite.ads	bindings-rlite.ali
+W bindings.rlite.ctrl%s	bindings-rlite-ctrl.adb	bindings-rlite-ctrl.ali
+
+U bindings.rlite.api%s	bindings-rlite-api.ads	45ce11ff EE NE OO PK
+Z ada.strings.text_buffers%s  a-sttebu.adb	a-sttebu.ali
+W bindings%s		bindings.ads		bindings.ali
+W bindings.rlite%s	bindings-rlite.ads	bindings-rlite.ali
+W bindings.rlite.msg%s	bindings-rlite-msg.ads	bindings-rlite-msg.ali
+W bindings.rlite.msg.flow%s  bindings-rlite-msg-flow.adb  bindings-rlite-msg-flow.ali
+W gnat%s		gnat.ads		gnat.ali
+W gnat.os_lib%s		g-os_lib.ads		g-os_lib.ali
+W interfaces%s		interfac.ads		interfac.ali
+W names%s		names.adb		names.ali
+
+D ada.ads		20230426070939 76789da1 ada%s
+D a-charac.ads		20230426070939 2d3ec45b ada.characters%s
+D a-chlat1.ads		20230426070939 e0d72e76 ada.characters.latin_1%s
+D a-except.ads		20230426070939 2a7d8d70 ada.exceptions%s
+D a-stream.ads		20230426070939 119b8fb3 ada.streams%s
+D a-string.ads		20230426070939 90ac6797 ada.strings%s
+D a-strbou.ads		20230426070939 1b38415e ada.strings.bounded%s
+D a-strmap.ads		20230426070939 ed8acfdb ada.strings.maps%s
+D a-strsea.ads		20230426070939 2d394feb ada.strings.search%s
+D a-strsup.ads		20230426070939 8a2a893f ada.strings.superbounded%s
+D a-sttebu.ads		20230426070939 f1ad67a2 ada.strings.text_buffers%s
+D a-stuten.ads		20230426070939 c6ced0ae ada.strings.utf_encoding%s
+D a-tags.ads		20230426070939 9eaa38c6 ada.tags%s
+D a-unccon.ads		20230426070939 0e9b276f ada.unchecked_conversion%s
+D a-uncdea.ads		20230426070939 c3a8ac65 ada.unchecked_deallocation%s
+D bindings.ads		20231023224136 6c899da8 bindings%s
+D bindings-rlite.ads	20231023224136 d0bd31fc bindings.rlite%s
+D bindings-rlite-api.ads  20231116230403 f1c1104e bindings.rlite.api%s
+D bindings-rlite-api.adb  20231116230403 4c118fe6 bindings.rlite.api%b
+D bindings-rlite-common.ads  20231116230403 ab59339d bindings.rlite.common%s
+D bindings-rlite-ctrl.ads  20231116230403 d1cb80f7 bindings.rlite.ctrl%s
+D bindings-rlite-list.ads  20231116230403 e090d857 bindings.rlite.list%s
+D bindings-rlite-msg.ads  20231116230403 9d37b3cd bindings.rlite.msg%s
+D bindings-rlite-msg-flow.ads  20231116230403 1e067aef bindings.rlite.msg.flow%s
+D bindings-rlite-utils.ads  20231116230403 22065319 bindings.rlite.utils%s
+D buffers.ads		20231116230403 dc32eae0 buffers%s
+D gnat.ads		20230426070939 b5988c27 gnat%s
+D g-os_lib.ads		20230426070939 0db74523 gnat.os_lib%s
+D interfac.ads		20230426070939 15f799c2 interfaces%s
+D i-c.ads		20230426070939 5c5a6c17 interfaces.c%s
+D i-cstrin.ads		20230426070939 f40c8db4 interfaces.c.strings%s
+D names.ads		20231116230403 62f49643 names%s
+D system.ads		20230426070939 426dafb8 system%s
+D s-exctab.ads		20230426070939 91bef6ef system.exception_table%s
+D s-os_lib.ads		20230426070939 a2467c22 system.os_lib%s
+D s-parame.ads		20230426070939 d494a4a6 system.parameters%s
+D s-putima.ads		20230426070939 17291fe4 system.put_images%s
+D s-retsta.ads		20230426070939 0f6b06cb system.return_stack%s
+D s-secsta.ads		20230426070939 578279f5 system.secondary_stack%s
+D s-soflin.ads		20230426070939 df77073e system.soft_links%s
+D s-stache.ads		20230426070939 0b81c1fe system.stack_checking%s
+D s-stalib.ads		20230426070939 1c9580f6 system.standard_library%s
+D s-stoele.ads		20230426070939 ab5468e4 system.storage_elements%s
+D s-stoele.adb		20230426070939 8f5a9db6 system.storage_elements%b
+D s-stratt.ads		20230426070939 f7dfd786 system.stream_attributes%s
+D s-string.ads		20230426070939 582aac7d system.strings%s
+D s-traent.ads		20230426070939 c81cbf8c system.traceback_entries%s
+D s-unstyp.ads		20230426070939 fa2a7f59 system.unsigned_types%s
+G a e
+G c Z s b [rina_open bindings__rlite__api 30 13 none]
+G c Z s b [rina_close bindings__rlite__api 35 14 none]
+G c Z s b [rina_register bindings__rlite__api 44 13 none]
+G c Z s b [rina_unregister bindings__rlite__api 54 13 none]
+G c Z s b [rina_flow_accept bindings__rlite__api 67 13 none]
+G c Z s b [rina_flow_alloc bindings__rlite__api 82 13 none]
+G c Z s b [rina_flow_alloc_wait bindings__rlite__api 94 13 none]
+G r c none [rina_register bindings__rlite__api 44 13 none] [rina_register_common bindings__rlite__ctrl 38 13 none]
+G r c none [rina_unregister bindings__rlite__api 54 13 none] [rina_register_common bindings__rlite__ctrl 38 13 none]
+G r c none [rina_flow_accept bindings__rlite__api 67 13 none] [rina_flow_accept bindings__rlite__ctrl 59 13 none]
+G r c none [rina_flow_alloc bindings__rlite__api 82 13 none] [rina_flow_alloc bindings__rlite__ctrl 66 13 none]
+G r c none [rina_flow_alloc_wait bindings__rlite__api 94 13 none] [rina_flow_alloc_wait bindings__rlite__ctrl 75 13 none]
+X 7 a-strbou.ads
+76R12*Bounded_String<10|62R9> 18|45r18[32|13] 46r20[32|13] 56r18[32|13] 57r20[32|13]
+. 69r22[32|13] 83r24[32|13] 84r24[32|13] 85r24[32|13] 19|23r18[32|13] 24r20[32|13]
+. 31r18[32|13] 32r20[32|13] 41r21[32|13] 50r24[32|13] 51r24[32|13] 52r24[32|13]
+X 16 bindings.ads
+1K9*Bindings 3e13 18|14r6 15r8 17r9 99r5 19|5r6 7r14 10r25 68r5
+X 17 bindings-rlite.ads
+1K18*Rlite 16|1k9 17|3e19 18|14r15 15r17 17r18 99r14 19|5r15 7r23 10r34 68r14
+X 18 bindings-rlite-api.ads
+17K24*API 17|1k18 18|99l20 99e23 19|7b29 68l20 68t23
+18K12*OS=18:28 30r30 35r30 44r33 47r31 55r12 59r13 68r22 72r16 88r14 95r24
+. 96r14 19|12r30 14r14 14r48 17r30 19r7 22r33 25r31 30r35 34r13 40r22 44r13
+. 55r14 62r24 63r14
+21i4*RINA_F_NOWAIT{integer}
+22i4*RINA_F_NORESP{integer}
+30V13*RINA_Open{35|201I9} 19|12b13 15l8 15t17
+35U14*RINA_Close 35>25 19|17b14 20l8 20t18
+35i25 fd{35|201I9} 19|17b25 19r17
+44V13*RINA_Register{35|201I9} 44>28 45>7 46>7 47>7 19|22b13 28l8 28t21
+44i28 fd{35|201I9} 19|22b28 27r41
+45r7 dif_name{7|76R12[32|13]} 19|23b7 27r45
+46r7 local_appl{7|76R12[32|13]} 19|24b7 27r55
+47i7 flags{integer} 19|25b7 27r67
+54V13*RINA_Unregister{35|201I9} 55>7 56>7 57>7 58>7 19|30b13 37l8 37t23
+55i7 fd{35|201I9} 19|30b30 36r41
+56r7 dif_name{7|76R12[32|13]} 19|31b7 36r45
+57r7 local_appl{7|76R12[32|13]} 19|32b7 36r55
+58i7 flags{integer} 19|33b7 36r67
+67V13*RINA_Flow_Accept{35|201I9} 68>7 69>7 70>7 71>7 19|39b13 47l8 47t24
+68i7 fd{35|201I9} 19|40b7 46r36
+69r7 remote_appl{7|76R12[32|13]} 19|41b7 46r40
+70r7 spec{24|17R9} 19|42b7 46r53
+71i7 flags{integer} 19|43b7 46r59
+82V13*RINA_Flow_Alloc{35|201I9} 83>7 84>7 85>7 86>7 87>7 19|49b13 59l8 59t23
+83r7 dif_name{7|76R12[32|13]} 19|50b7 57r35
+84r7 local_appl{7|76R12[32|13]} 19|51b7 57r45
+85r7 remote_appl{7|76R12[32|13]} 19|52b7 57r57
+86r7 flowspec{24|17R9} 19|53b7 58r7
+87m7 flags{29|80M9} 19|54b7 58r17
+94V13*RINA_Flow_Alloc_Wait{35|201I9} 95>7 19|61b13 66l8 66t28
+95i7 wfd{35|201I9} 19|62b7 65r40
+X 19 bindings-rlite-api.adb
+10K12 Ctrl=10:40 27r14 36r14 46r14 57r14 65r14
+X 21 bindings-rlite-ctrl.ads
+22K24*Ctrl 19|5w21 10r40 21|81e24
+38V13*RINA_Register_Common{35|201I9} 19|27s19 36s19
+59V13*RINA_Flow_Accept{35|201I9} 19|46s19
+66V13*RINA_Flow_Alloc{35|201I9} 19|57s19
+75V13*RINA_Flow_Alloc_Wait{35|201I9} 19|65s19
+X 23 bindings-rlite-msg.ads
+13K24*Msg 18|14r21 15r23 70r22 23|180e23
+X 24 bindings-rlite-msg-flow.ads
+10K28*Flow 18|14w25 70r26 86r24 19|42r22 53r24 24|109e28
+17R9*RINA_Flow_Spec 18|70r31 86r29 19|42r27 53r29 24|35e14
+X 27 gnat.ads
+37K9*GNAT 18|5r6 18r23 27|60e9
+X 28 g-os_lib.ads
+51K14*OS_Lib=51:36 18|5w11 18r28
+X 29 interfac.ads
+38K9*Interfaces 18|8w6 9r8 29|232e15
+80M9*Unsigned_32 18|87r24 19|54r24
+X 32 names.ads
+12K9*Names 18|11w6 12r7 32|22e10
+13K13*Name_String[7|58] 18|12r13
+X 35 s-os_lib.ads
+201I9*File_Descriptor<integer> 18|30r33 35r33 44r36 47r34 55r15 59r16 68r25
+. 72r19 88r17 95r27 96r17 19|12r33 17r33 22r36 25r34 30r38 34r16 40r25 44r16
+. 55r17 62r27 63r17
+220U14*Close 19|19s10
+296n18*Binary{296E9} 19|14r51
+592V13*Open_Read_Write{201I9} 19|14s17
+

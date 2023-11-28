@@ -257,8 +257,6 @@ package body Bindings.Rlite.Ctrl is
 
    end RINA_Flow_Alloc;
 
-
-
    function RINA_Flow_Alloc_Wait(
       wfd            : OS.File_Descriptor;
       port_id        : Unsigned_16

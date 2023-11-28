@@ -1,0 +1,1 @@
+test_server.adb:15:06: warning: unit "Debug" is not referenced [-gnatwu]

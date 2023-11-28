@@ -1,0 +1,1 @@
+embedded_rina_bin.adb:23:13: warning: function "To_Str" is not referenced [-gnatwu]

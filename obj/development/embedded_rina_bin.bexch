@@ -1,0 +1,30 @@
+[GENERATED OBJECT FILE]
+b__embedded_rina_bin.o
+[PROJECT FILES]
+/home/robbamyers/EmbeddedRINA/embedded_rina_bin.gpr
+20231023224136 3508b55500e669b96c20af39de390541
+/home/robbamyers/EmbeddedRINA/config/embedded_rina_bin_config.gpr
+20231003173257 5dc31534127daaa037519a7dbb1d4854
+[BOUND OBJECT FILES]
+/home/robbamyers/EmbeddedRINA/obj/development/bindings.o
+/home/robbamyers/EmbeddedRINA/obj/development/bindings-rlite.o
+/home/robbamyers/EmbeddedRINA/obj/development/bindings-rlite-common.o
+/home/robbamyers/EmbeddedRINA/obj/development/bindings-rlite-kernel_msg.o
+/home/robbamyers/EmbeddedRINA/obj/development/bindings-rlite-utils.o
+/home/robbamyers/EmbeddedRINA/obj/development/debug.o
+/home/robbamyers/EmbeddedRINA/obj/development/bindings-rlite-ctrl.o
+/home/robbamyers/EmbeddedRINA/obj/development/bindings-rlite-api.o
+/home/robbamyers/EmbeddedRINA/obj/development/exceptions.o
+/home/robbamyers/EmbeddedRINA/obj/development/embedded_rina_bin.o
+[GENERATED SOURCE FILES]
+b__embedded_rina_bin.ads
+b__embedded_rina_bin.adb
+b__embedded_rina_bin.ali
+[RESULTING OPTIONS]
+-L/home/robbamyers/EmbeddedRINA/obj/development/
+-L/home/robbamyers/EmbeddedRINA/obj/development/
+-L/home/robbamyers/.config/alire/cache/dependencies/gnat_native_13.1.0_fdf29084/lib/gcc/x86_64-pc-linux-gnu/13.1.0/adalib/
+-static
+-static-libgcc
+/home/robbamyers/.config/alire/cache/dependencies/gnat_native_13.1.0_fdf29084/lib/gcc/x86_64-pc-linux-gnu/13.1.0/adalib/libgnat.a
+-ldl
