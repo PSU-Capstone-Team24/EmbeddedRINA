@@ -2,11 +2,13 @@
 pragma Style_Checks (Off);
 
 with Interfaces; use Interfaces;
+with Ada.Containers.Doubly_Linked_Lists;
 
 with Bindings.Rlite.API;
 with Bindings.Rlite.Common;
 with Bindings.Rlite.Utils;
 with Bindings.Rlite.List;
+   use Bindings.Rlite.List;
 with System;
 with GNAT.OS_Lib;
    use GNAT.OS_Lib;
@@ -28,6 +30,14 @@ package Bindings.Rlite.Ctrl is
    package Common renames Bindings.Rlite.Common;
    package Utils renames Bindings.Rlite.Utils;
    package List renames Bindings.Rlite.List;
+   type Sa_Pending_Item is record
+      Handle : Integer;
+      Req    : Rl_Msg_T := RLITE_KER_FA_REQ_ARRIVED;
+   end record;
+   package dll is new Ada.Containers.Doubly_Linked_Lists
+     (Element_Type => Sa_Pending_Item);
+   -- Static variable for sa_pending instantiation
+   sa_pending : dll;
 
    function RINA_Register_Common (Fd : OS.File_Descriptor;
    Dif_Name : Bounded_String;
@@ -75,6 +85,12 @@ package Bindings.Rlite.Ctrl is
       wfd            : OS.File_Descriptor;
       port_id        : Unsigned_16
    )return OS.File_Descriptor;
+
+   function RINA_Flow_Respond(
+      fd : OS.File_Descriptor;
+      handle : Integer;
+      response : Integer
+   ) return OS.File_Descriptor;
 
 
 end Bindings.Rlite.Ctrl;

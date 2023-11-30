@@ -65,4 +65,13 @@ package body Bindings.Rlite.API is
       return Ctrl.RINA_Flow_Alloc_Wait(wfd, 0);
    end RINA_Flow_Alloc_Wait;
 
+   function RINA_FLow_Respond(
+      fd       : OS.File_Descriptor;
+      handle   : Integer;
+      response : Integer
+   ) return OS.File_Descriptor is
+   begin
+      return Ctrl.RINA_Flow_Respond(fd, handle, response);
+   end RINA_FLow_Respond;
+   
 end Bindings.Rlite.API;

@@ -95,5 +95,11 @@ package Bindings.Rlite.API is
       wfd            : OS.File_Descriptor 
    )  return OS.File_Descriptor;
 
+   function RINA_FLow_Respond(
+      fd       : OS.File_Descriptor;
+      handle   : Integer;
+      response : Integer
+   ) return OS.File_Descriptor;
+
 
 end Bindings.Rlite.API;

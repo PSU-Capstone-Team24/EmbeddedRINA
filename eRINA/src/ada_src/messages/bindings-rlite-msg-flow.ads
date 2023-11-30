@@ -122,10 +122,4 @@ package Bindings.Rlite.Msg.Flow is
    overriding
    function Serialize (Self : in Request_Arrived) return Byte_Buffer;
 
-   type Sa_Pending_Item is record
-      handle : Integer;
-      req : Flow.Request_Arrived;
-      node : List.List_Head;
-   end record;
-
 end Bindings.Rlite.Msg.Flow;
