@@ -1,6 +1,4 @@
 pragma Style_Checks (Off);
-with Ada.Containers.Doubly_Linked_Lists;
-with Bindings.Rlite.Msg.SaPending; use Bindings.Rlite.Msg.SaPending;
 
 package Bindings.Rlite.List is
 

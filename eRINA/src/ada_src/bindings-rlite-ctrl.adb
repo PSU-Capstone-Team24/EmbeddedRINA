@@ -10,15 +10,8 @@ with Names;
 with Exceptions;
 
 with Bindings.Rlite.Msg.Register;
-with Bindings.Rlite.Msg.Flow;
-with Bindings.Rlite.Msg.SaPending;
-with Bindings.Rlite.List;
 
 package body Bindings.Rlite.Ctrl is
-
-   package dll is new Ada.Containers.Doubly_Linked_Lists
-     (Element_Type => Sa_Pending_Item);
-   
    procedure Rl_Write_Msg
      (Rfd : OS.File_Descriptor;
       Msg : Byte_Buffer;
@@ -276,18 +269,18 @@ function RINA_Flow_Respond(
    handle   : Integer;
    response : Integer
 ) return OS.File_Descriptor is
-   spi    : Bindings.Rlite.Msg.SaPending.Sa_Pending_Item;  -- Assuming pointers are used
-   cur    : Bindings.Rlite.Msg.SaPending.Sa_Pending_Item;
+   spi    : Sa_Pending_Item;
+   cur    : Sa_Pending_Item;
    req    : Flow.Request;
    resp   : Flow.Response;
    ffd    : OS.File_Descriptor := -1;
    ret    : Integer;
-   cursor : dll.Cursor := sa_pending.First;
+   cursor : Sig_Action_List.Cursor := Sa_Pending.First;
 begin
-   while sa_pending.Has_Element(cursor) loop
-      if(sa_pending.Element(cursor).Handle = handle) then
-         sa_pending.Delete(cursor);
-         cursor := sa_pending.Next(cursor);
+   while Sig_Action_List.Has_Element(cursor) loop
+      if(Sig_Action_List.Element(cursor).Handle = handle) then
+         Sig_Action_List.Delete(Sa_Pending, cursor);
+         cursor := Sig_Action_List.Next(cursor);
       end if;
    end loop;
    return ffd;

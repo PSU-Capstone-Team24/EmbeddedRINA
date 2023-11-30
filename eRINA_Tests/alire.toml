@@ -13,3 +13,6 @@ erina = "~0.1.0-dev"
 
 [[pins]]
 erina = { path = "../eRINA" }
+
+[build-switches]
+"*".style_checks = "No"

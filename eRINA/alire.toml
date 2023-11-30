@@ -7,3 +7,6 @@ maintainers = ["Mason Ticehurst <mft5293@psu.edu>"]
 maintainers-logins = ["masonticehurst"]
 
 executables = ["eRINA"]
+
+[build-switches]
+"*".style_checks = "No"
