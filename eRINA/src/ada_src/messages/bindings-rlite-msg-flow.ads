@@ -49,6 +49,8 @@ package Bindings.Rlite.Msg.Flow is
       Local_Port     : Rl_Port_T;
       Local_Cep      : Rlm_Cepid_T;
       Uid            : Unsigned_32;
+      Kevent_Id      : Unsigned_32;
+      Ipcp_Id        : Rl_Ipcp_Id_T;
 
       --  A value associated to the requesting application.
       --  It may be used by the uipcp e.g. for consistent load balancing

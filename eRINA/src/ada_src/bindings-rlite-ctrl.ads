@@ -33,7 +33,7 @@ package Bindings.Rlite.Ctrl is
 
    type Sa_Pending_Item is record
       Handle : Integer;
-      Req    : Rl_Msg_T := RLITE_KER_FA_REQ_ARRIVED;
+      Req    : Flow.Request;
    end record;
 
    package Sig_Action_List is new Ada.Containers.Doubly_Linked_Lists

@@ -279,10 +279,25 @@ function RINA_Flow_Respond(
 begin
    while Sig_Action_List.Has_Element(cursor) loop
       if(Sig_Action_List.Element(cursor).Handle = handle) then
+         spi := Sig_Action_List.Element(cursor);
          Sig_Action_List.Delete(Sa_Pending, cursor);
          cursor := Sig_Action_List.Next(cursor);
       end if;
    end loop;
+   if spi.Handle /= -1 then --This logic should hold provided handle is not -1, unsure of potential values
+      Debug.Print ("RINA_Flow_Respond", "Could not find sa_pending_item that matches handle value " & Integer'Image(handle), Debug.Error);
+      return OS.Invalid_FD;
+   end if;
+
+   req := spi.Req;
+
+   -- equivalent of rl_fa_resp_fill
+   resp.Hdr.msg_type := RLITE_KER_FA_RESP;
+   resp.Hdr.event_id := 1;
+   resp.Kevent_Id := req.Kevent_Id;
+   resp.Ipcp_Id := req.Ipcp_Id;
+   resp.upper_ipcp_id := 16#FFFF#;
+
    return ffd;
 end RINA_Flow_Respond;
 
