@@ -271,11 +271,12 @@ function RINA_Flow_Respond(
 ) return OS.File_Descriptor is
    spi    : Sa_Pending_Item;
    cur    : Sa_Pending_Item;
-   req    : Flow.Request;
+   req    : Flow.Request_Arrived;
    resp   : Flow.Response;
    ffd    : OS.File_Descriptor := -1;
    ret    : Integer;
    cursor : Sig_Action_List.Cursor := Sa_Pending.First;
+   Buffer : Byte_Buffer(1 .. 4096) := (others => 0);
 begin
    while Sig_Action_List.Has_Element(cursor) loop
       if(Sig_Action_List.Element(cursor).Handle = handle) then
@@ -297,9 +298,45 @@ begin
    resp.Kevent_Id := req.Kevent_Id;
    resp.Ipcp_Id := req.Ipcp_Id;
    resp.upper_ipcp_id := 16#FFFF#;
+   resp.Port_Id := req.Port_Id;
+   resp.Response := Interfaces.Unsigned_8(response);
 
+   -- TODO: Add rl_msg_free
+
+   declare
+         Buffer : constant Byte_Buffer := Flow.Serialize (resp);
+   begin
+         Rl_Write_Msg (fd, Buffer, 0);
+   end;
+
+   if (response = 0) then
+      ffd := -1;
+   end if;
    return ffd;
 end RINA_Flow_Respond;
+
+   function Open_Port_Common(
+      port_id : Rl_Port_T;
+      mode    : Unsigned_32;
+      ipcp_id : Rl_Ipcp_Id_T
+   ) return OS.File_Descriptor is
+      info    : Common.Rl_Ioctl_Info;
+      fd      : OS.File_Descriptor;
+      ret     : Integer;
+   begin
+   
+      fd := OS.Open_Read_Write("/dev/rlite", OS.Binary);
+      if fd < 0 then
+            Debug.Print ("Open_Port_Common", "Could not open a file descriptor", Debug.Error);
+            return OS.Invalid_FD;
+      end if;
+
+      info.port_id := port_id;
+      info.ipcp_id := ipcp_id;
+      info.mode := mode;
+
+      -- ret = ioctl <--- we will need import ioctl from c bindings
+   end Open_Port_Common;
 
 
 end Bindings.Rlite.Ctrl;

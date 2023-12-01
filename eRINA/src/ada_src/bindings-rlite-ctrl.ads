@@ -33,7 +33,7 @@ package Bindings.Rlite.Ctrl is
 
    type Sa_Pending_Item is record
       Handle : Integer;
-      Req    : Flow.Request;
+      Req    : Flow.Request_Arrived;
    end record;
 
    package Sig_Action_List is new Ada.Containers.Doubly_Linked_Lists
@@ -90,6 +90,12 @@ package Bindings.Rlite.Ctrl is
       fd : OS.File_Descriptor;
       handle : Integer;
       response : Integer
+   ) return OS.File_Descriptor;
+
+   function Open_Port_Common(
+      port_id : Rl_Port_T;
+      mode    : Unsigned_32;
+      ipcp_id : Rl_Ipcp_Id_T
    ) return OS.File_Descriptor;
 
    private
