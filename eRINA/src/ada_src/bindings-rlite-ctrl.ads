@@ -31,9 +31,17 @@ package Bindings.Rlite.Ctrl is
    package Utils renames Bindings.Rlite.Utils;
    package List renames Bindings.Rlite.List;
 
-   type Sa_Pending_Item is record
-      Handle : Integer;
+   type Sa_Pending_Item_Base is record
+      Handle : OS.File_Descriptor;
       Req    : Flow.Request_Arrived;
+   end record;
+
+   package Sig_Action_List_Base is new Ada.Containers.Doubly_Linked_Lists
+     (Element_Type => Sa_Pending_Item_Base);
+
+   type Sa_Pending_Item is record
+      Sa_Pending : Sa_Pending_Item_Base;
+      Node : Sig_Action_List_Base.List;
    end record;
 
    package Sig_Action_List is new Ada.Containers.Doubly_Linked_Lists
@@ -70,7 +78,7 @@ package Bindings.Rlite.Ctrl is
       remote_appl : in out Bounded_String;
       spec        : Flow.RINA_Flow_Spec;
       flags       : Integer
-   ) return Boolean;
+   ) return OS.File_Descriptor;
 
    function RINA_Flow_Alloc(
       dif_name       : Bounded_String;
@@ -88,7 +96,7 @@ package Bindings.Rlite.Ctrl is
 
    function RINA_Flow_Respond(
       fd : OS.File_Descriptor;
-      handle : Integer;
+      handle : OS.File_Descriptor;
       response : Integer
    ) return OS.File_Descriptor;
 
@@ -98,7 +106,13 @@ package Bindings.Rlite.Ctrl is
       ipcp_id : Rl_Ipcp_Id_T
    ) return OS.File_Descriptor;
 
+   function Rl_Open_Appl_Port(
+      port_id : Rl_Port_T
+   ) return OS.File_Descriptor;
+   pragma Import(C, Rl_Open_Appl_Port, "rl_open_appl_port");
+
    private
       Sa_Pending : Sig_Action_List.List;
-      
+      Sa_Handle : Integer := 0;
+      Sa_Pending_Len : Natural := 0;
 end Bindings.Rlite.Ctrl;

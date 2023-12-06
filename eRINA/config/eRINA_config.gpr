@@ -41,6 +41,7 @@ abstract project eRINA_Config is
            ,"-gnatyt" -- Check token spacing
            ,"-gnatyu" -- Check unnecessary blank lines
            ,"-gnatyx" -- Check extra parentheses
+           ,"-w" -- Temp disable warnings
           );
 
    type Build_Profile_Kind is ("release", "validation", "development");

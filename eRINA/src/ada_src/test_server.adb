@@ -3,8 +3,10 @@ pragma Style_Checks (Off);
 
 --  Ada
 with Ada.Text_IO;
-   
+with Ada.Strings;
+
 --  Rlite Bindings
+with Bindings.Rlite.Ctrl;
 with Bindings.Rlite.API;
    use Bindings.Rlite.API;
 
@@ -13,14 +15,17 @@ with Bindings.Rlite.Msg.Flow;
 
 with Names;
    use Names.Name_String;
-
+   
 with Exceptions;
+
+with Buffers;
+   use Buffers;
 
 with GNAT.OS_Lib;
    use GNAT.OS_Lib;
 
 with Debug;
-
+   
 procedure Test_Server is
    package Text_IO renames Ada.Text_IO;
 
@@ -36,6 +41,9 @@ procedure Test_Server is
 
    Spec : Flow.RINA_Flow_Spec;
    Incoming_APN : Bounded_String := To_Bounded_String("");
+
+   Appl_Data_Msg : Bounded_String := To_Bounded_String("Application Data Packet #");
+   Counter_Msg : Integer := 0;
 begin
    Text_IO.Put_Line ("Starting RINA server application....");
    RINA_Dev_FD := RINA_Open;
@@ -71,13 +79,40 @@ begin
 
    loop
       declare
-         Flow_Incoming : Boolean := False;
+         Flow_Incoming : File_Descriptor := Invalid_FD;
+         Flow_Respond : File_Descriptor := Invalid_FD;
       begin
+         --  Block here and wait for an incoming flow...
          Flow_Incoming := RINA_Flow_Accept (RINA_Dev_FD, Incoming_APN, Spec, RINA_F_NORESP);
 
-         if Flow_Incoming then
-            Debug.Print("Test_Server", "Received incoming flow request from " & To_String (Incoming_APN), Debug.Info);
+         --  Check if flow has a valid IPC path through a file descriptor
+         if Flow_Incoming /= Invalid_FD then
+            Debug.Print("Test_Server", "Received incoming flow request from: " & To_String (Incoming_APN), Debug.Info);
          end if;
+
+         --  Accept incoming flow
+         Flow_Respond := RINA_Flow_Respond (RINA_Dev_FD, Flow_Incoming, 0);
+         Debug.Print("Test_Server", "Accepting flow request from: " & To_String (Incoming_APN), Debug.Info);
+
+         if Flow_Respond = Invalid_FD then
+            Debug.Print("Test_Server", "Invalid flow response?", Debug.Error);
+         end if;
+
+            loop
+               Counter_Msg := Counter_Msg + 1;
+               Appl_Data_Msg := Overwrite (Appl_Data_Msg, 26, Integer'Image(Counter_Msg), Ada.Strings.Right);
+
+               declare
+                  Buf : Byte_Buffer := Names.To_Packed_Buffer (Appl_Data_Msg);
+                  Written : Integer := 0;
+               begin
+                  Written := Write (Flow_Respond, Buf'Address, Buf'Size / 8);
+                  Debug.Print("Test_Server", "Sent message: " & To_String (Appl_Data_Msg), Debug.Info);
+               end;
+               
+               --  Wait 0.5 second before sending the next message
+               delay 0.5;
+            end loop;
       end;
    end loop;
 

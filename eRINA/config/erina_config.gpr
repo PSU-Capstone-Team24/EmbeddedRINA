@@ -18,6 +18,7 @@ abstract project Erina_Config is
            ,"-gnatwa" -- Enable all warnings
            ,"-gnatw.X" -- Disable warnings for No_Exception_Propagation
            ,"-gnatVa" -- All validity checks
+           ,"-w" -- Temp disable warnings
           );
 
    type Build_Profile_Kind is ("release", "validation", "development");

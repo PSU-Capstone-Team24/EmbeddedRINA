@@ -157,12 +157,13 @@ package body Bindings.Rlite.Ctrl is
       Remote_Appl : in out Bounded_String;
       Spec        : Flow.RINA_Flow_Spec;
       Flags       : Integer
-   ) return Boolean is
+   ) return OS.File_Descriptor is
       Resp : Flow.Response;
       Req  : Flow.Request_Arrived;
+      Spi  : Sa_Pending_Item;
       Buffer : Byte_Buffer(1 .. 4096) := (others => 0);
-      Bits_Other_Than_NoResp : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NORESP);
-      Bits_Same_As_NoResp : constant Unsigned_32 := Unsigned_32 (flags) and Unsigned_32 (Bindings.Rlite.Api.RINA_F_NORESP);
+      Bits_Other_Than_NoResp : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (API.RINA_F_NORESP);
+      Has_NoResp_Flag : constant Unsigned_32 := Unsigned_32 (flags) and Unsigned_32 (API.RINA_F_NORESP);
    begin
       if Spec.Version /= Flow.RINA_FLOW_SPEC_VERSION then
          Debug.Print("RINA_Flow_Accept", "FlowSpec version does not match constant RINA_FLOW_SPEC_VERSION", Debug.Error);
@@ -178,7 +179,7 @@ package body Bindings.Rlite.Ctrl is
       --  Message read in from FD was not a flow request, we can
       --  stop our processing logic here and throw this message out
       if Req.Hdr.Msg_Type /= RLITE_KER_FA_REQ_ARRIVED then
-         return False;
+         return OS.Invalid_FD;
       end if;
 
       --  Update Remote_Appl to what was received from flow allocation request msg
@@ -193,13 +194,27 @@ package body Bindings.Rlite.Ctrl is
       Resp.Port_Id := Req.Port_Id;
       Resp.Response := 1;
 
+      if Has_NoResp_Flag = Unsigned_32 (API.RINA_F_NORESP) then
+         Spi.Sa_Pending.Req := Req;
+         Spi.Sa_Pending.Handle := OS.File_Descriptor(Sa_Handle + 1);
+         
+         --  Prevent overflow
+         if Sa_Handle < 0 then
+            Sa_Handle := 0;
+         end if;
+
+         Sig_Action_List.Append(Sa_Pending, Spi);
+         Sa_Pending_Len := Sa_Pending_Len + 1;
+
+         return Spi.Sa_Pending.Handle;
+      end if;
+
       declare
          Buffer : constant Byte_Buffer := Flow.Serialize (Resp);
       begin
          Rl_Write_Msg (Fd, Buffer, 0);
       end;
-
-      return True;
+      
    end RINA_Flow_Accept;
 
    function RINA_Flow_Alloc(
@@ -266,29 +281,40 @@ package body Bindings.Rlite.Ctrl is
 
 function RINA_Flow_Respond(
    fd       : OS.File_Descriptor;
-   handle   : Integer;
+   handle   : OS.File_Descriptor;
    response : Integer
 ) return OS.File_Descriptor is
-   spi    : Sa_Pending_Item;
-   cur    : Sa_Pending_Item;
+   spi    : Sa_Pending_Item_Base;
    req    : Flow.Request_Arrived;
    resp   : Flow.Response;
-   ffd    : OS.File_Descriptor := -1;
+   ffd    : OS.File_Descriptor := OS.Invalid_FD;
    ret    : Integer;
    cursor : Sig_Action_List.Cursor := Sa_Pending.First;
    Buffer : Byte_Buffer(1 .. 4096) := (others => 0);
 begin
+   --  List of pending signal actions, contains a nested doubly linked list...
    while Sig_Action_List.Has_Element(cursor) loop
-      if(Sig_Action_List.Element(cursor).Handle = handle) then
-         spi := Sig_Action_List.Element(cursor);
-         Sig_Action_List.Delete(Sa_Pending, cursor);
-         cursor := Sig_Action_List.Next(cursor);
+      if(Sig_Action_List.Element(cursor).Sa_Pending.Handle = handle) then
+         spi := Sig_Action_List.Element(cursor).Sa_Pending;
+
+         declare
+            node : Sig_Action_List_Base.List := Sig_Action_List.Element(cursor).Node;
+         begin
+            Sig_Action_List_Base.Delete_First(node);
+         end;
+
+         Sa_Pending_Len := Sa_Pending_Len - 1;
+         exit;
       end if;
+
+      cursor := Sig_Action_List.Next(cursor);
    end loop;
-   if spi.Handle /= -1 then --This logic should hold provided handle is not -1, unsure of potential values
-      Debug.Print ("RINA_Flow_Respond", "Could not find sa_pending_item that matches handle value " & Integer'Image(handle), Debug.Error);
-      return OS.Invalid_FD;
-   end if;
+
+
+   --  if spi.Handle /= -1 then --This logic should hold provided handle is not -1, unsure of potential values
+   --     Debug.Print ("RINA_Flow_Respond", "Could not find sa_pending_item that matches handle value " & Integer'Image(handle), Debug.Error);
+   --     return OS.Invalid_FD;
+   --  end if;
 
    req := spi.Req;
 
@@ -299,7 +325,7 @@ begin
    resp.Ipcp_Id := req.Ipcp_Id;
    resp.upper_ipcp_id := 16#FFFF#;
    resp.Port_Id := req.Port_Id;
-   resp.Response := Interfaces.Unsigned_8(response);
+   resp.Response := Unsigned_8(response);
 
    -- TODO: Add rl_msg_free
 
@@ -309,9 +335,13 @@ begin
          Rl_Write_Msg (fd, Buffer, 0);
    end;
 
-   if (response = 0) then
-      ffd := -1;
+   if response >= 0 then
+      ffd := Rl_Open_Appl_Port(resp.Port_Id);
+   else
+      --  Negative response, just return 0.
+      ffd := 0;
    end if;
+
    return ffd;
 end RINA_Flow_Respond;
 

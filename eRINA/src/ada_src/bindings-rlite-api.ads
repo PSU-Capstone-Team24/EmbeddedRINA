@@ -69,7 +69,7 @@ package Bindings.Rlite.API is
       remote_appl  : in out Bounded_String;
       spec         : Msg.Flow.RINA_Flow_Spec;
       flags        : Integer
-      ) return Boolean;
+      ) return OS.File_Descriptor;
 
 
    --  Issue a flow allocation request towards the destination application called
@@ -95,9 +95,9 @@ package Bindings.Rlite.API is
       wfd            : OS.File_Descriptor 
    )  return OS.File_Descriptor;
 
-   function RINA_FLow_Respond(
+   function RINA_Flow_Respond(
       fd       : OS.File_Descriptor;
-      handle   : Integer;
+      handle   : OS.File_Descriptor;
       response : Integer
    ) return OS.File_Descriptor;
 
