@@ -18,7 +18,7 @@ package body Test_RINA_Open is
    Test_Suite : aliased AUnit.Test_Suites.Test_Suite;
 
    function Suite return AUnit.Test_Suites.Access_Test_Suite is
-      Name : constant String := "RINA_Open";
+      Name : constant String := "TC-001 ";
    begin
       Test_Suite.Add_Test (Caller.Create
          (Name & " - Can only open rLite FD", Test_Open'Access));
@@ -31,7 +31,6 @@ package body Test_RINA_Open is
       Rlite_Fd : File_Descriptor := Invalid_FD;
    begin
       Rlite_Fd := RINA_Open;
-      Fd := Open_Read_Write ("/dev/rlite", Binary);
       Assert(Rlite_Fd /= Fd, "Invalid file descriptor returned");
    end Test_Open;
 

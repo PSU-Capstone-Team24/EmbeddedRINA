@@ -18,6 +18,6 @@ abstract project Erina_Config is
           );
 
    type Build_Profile_Kind is ("release", "validation", "development");
-   Build_Profile : Build_Profile_Kind := "development";
+   Build_Profile : Build_Profile_Kind := "release";
 
 end Erina_Config;
