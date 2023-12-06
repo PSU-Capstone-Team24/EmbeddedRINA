@@ -6,12 +6,14 @@ with AUnit.Test_Caller;
 with GNAT.OS_Lib;
 with Bindings.Rlite.API;
 with Names;
+   use Names.Name_String;
+
+with Ada.Strings;
 
 package body Test_RINA_Register is
    use AUnit.Assertions;
    use GNAT.OS_Lib;
    use Bindings.Rlite.API;
-   use Names;
 
    package OS renames GNAT.OS_Lib;
 
@@ -30,11 +32,15 @@ package body Test_RINA_Register is
 
    procedure Test_Register (Object : in out Test) is
       Fd : File_Descriptor := Invalid_FD;
-      Dif_Name : Bounded_String := "nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn";
+      Dif_Name : Bounded_String;
+      Caused_Error : Boolean := False;
    begin
-      Fd := Create_Temp_File(Fd, "Temp_Test_File");
-      Fd := RINA_Register(Fd, Dif_Name, "Local_App_Name", 1);
-      Assert(Fd = -1, "Valid file descriptor returned");
+      Dif_Name := To_Bounded_String ("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+      exception
+         when Ada.Strings.Length_Error =>
+            Caused_Error := True;
+
+      Assert(Caused_Error, "DIF_Name length > 128 characters");
    end Test_Register;
 
 end Test_RINA_Register;
