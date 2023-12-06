@@ -21,16 +21,17 @@ package body Test_RINA_Open is
       Name : constant String := "TC-001 ";
    begin
       Test_Suite.Add_Test (Caller.Create
-         (Name & "Valid rLite File Descriptor", Test_Open'Access));
+         (Name & " - Can only open rLite FD", Test_Open'Access));
       
       return Test_Suite'Access;
    end Suite;
 
    procedure Test_Open (Object : in out Test) is
       Fd : File_Descriptor := Invalid_FD;
+      Rlite_Fd : File_Descriptor := Invalid_FD;
    begin
-      Fd := RINA_Open;
-      Assert(Fd /= Invalid_FD, "Invalid file descriptor returned");
+      Rlite_Fd := RINA_Open;
+      Assert(Rlite_Fd /= Fd, "Invalid file descriptor returned");
    end Test_Open;
 
 end Test_RINA_Open;
