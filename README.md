@@ -9,6 +9,9 @@ RINA (Recursive InterNetwork Architecture) is an innovative networking architect
 eRINA aims to take the fundamental principles of RINA and implement them as a software stack solution in Ada, specifically designed for embedded platforms. This means that eRINA provides a robust and efficient networking solution for resource-constrained devices, allowing them to benefit from the advantages of RINA's clean, lightweight, and scalable design.
 
 ## RINA Resources
+[ETSI GR NGP 009 :: Next Generation Protocols (NGP)](https://www.etsi.org/deliver/etsi_gr/NGP/001_099/009/01.01.01_60/gr_ngp009v010101p.pdf) - An example of a non-IP network protocol architecture based on RINA design principles.
+
+[Patterns in Network Architecture (John Day)](https://www.oreilly.com/library/view/patterns-in-network/9780132252423/) - The principles behind RINA were first presented by John Day in his 2008 book "Patterns in Network Architecture: A return to Fundamentals".
 
 ## Testing Setup
 1. Install rlite package on system
