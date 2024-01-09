@@ -1,5 +1,5 @@
 with "config/eRINA_config.gpr";
-project eRINA is
+project eRINA_Linux is
 
    -- Specify we want to compile some C code as well
    for Languages use ("ada", "c");
@@ -31,4 +31,4 @@ project eRINA is
       for Object_Dir use "obj";
    end Erina;
 
-end eRINA;
+end eRINA_Linux;

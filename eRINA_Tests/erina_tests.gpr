@@ -1,5 +1,5 @@
 with "config/erina_tests_config.gpr";
-with "../eRINA/erina.gpr";
+with "../eRINA_Linux/erina_linux.gpr";
 
 project Erina_Tests is
    for Source_Dirs use ("src/", "config/");
@@ -10,6 +10,10 @@ project Erina_Tests is
    for Exec_Dir use "bin";
 
    for Main use ("erina_tests.adb");
+   
+   package Linker is
+      for Default_Switches ("Ada") use ("-lrina-api");
+   end Linker;
 
    package Compiler is
       for Default_Switches ("Ada") use Erina_Tests_Config.Ada_Compiler_Switches;

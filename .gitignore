@@ -1,9 +1,13 @@
-/eRINA/obj/
-/eRINA/bin/
-/eRINA/alire/
+/eRINA_STM32F7/obj/
+/eRINA_STM32F7/bin/
+/eRINA_STM32F7/alire/
+/eRINA_Linux/obj/
+/eRINA_Linux/bin/
+/eRINA_Linux/alire/
 /eRINA_Tests/obj/
 /eRINA_Tests/bin/
 /eRINA_Tests/alire/
 obj/development/
 bin/
-eRINA/config/
+eRINA_Linux/config/
+eRINA_STM32F7/config/

@@ -1,4 +1,4 @@
-name = "erina"
+name = "erina_linux"
 description = "Embedded RINA (Recursive InterNetwork Architecture) Stack in Ada"
 version = "0.1.0-dev"
 
@@ -6,7 +6,7 @@ authors = ["Mason Ticehurst"]
 maintainers = ["Mason Ticehurst <mft5293@psu.edu>"]
 maintainers-logins = ["masonticehurst"]
 
-executables = ["eRINA"]
+executables = ["eRINA_Linux"]
 
 [build-switches]
 "*".style_checks = "No"

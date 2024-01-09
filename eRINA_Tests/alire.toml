@@ -7,12 +7,13 @@ maintainers = ["Mason Ticehurst <masonticehurst@me.com>"]
 maintainers-logins = ["masonticehurst"]
 
 executables = ["erina_tests"]
+
 [[depends-on]]
 aunit = "^23.0.0"
-erina = "~0.1.0-dev"
+erina_linux = "~0.1.0-dev"
 
 [[pins]]
-erina = { path = "../eRINA" }
+erina_linux = { path = "../eRINA_Linux" }
 
 [build-switches]
 "*".style_checks = "No"
