@@ -13,6 +13,8 @@ eRINA aims to take the fundamental principles of RINA and implement them as a so
 
 [Patterns in Network Architecture (John Day)](https://www.oreilly.com/library/view/patterns-in-network/9780132252423/) - The principles behind RINA were first presented by John Day in his 2008 book "Patterns in Network Architecture: A return to Fundamentals".
 
+[Error and Flow Control Protocol (EFCP) Design and Implementation](https://ieeexplore.ieee.org/document/8685905) - A Data Transfer Protocol for the Recursive InterNetwork Architecture
+
 ## Testing Setup
 1. Install rlite package on system
 2. Ensure `modprobe rlite` and `modprobe rlite-normal` are run to load those kernel modules
