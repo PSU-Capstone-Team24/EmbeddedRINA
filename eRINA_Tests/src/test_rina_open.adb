@@ -22,9 +22,9 @@ package body Test_RINA_Open is
       Name_002 : constant String := "TC-002";
    begin
       Test_Suite.Add_Test (Caller.Create
-         (Name_001 & " - Can only open rLite FD", Test_Open'Access));
+         (Name_001 & " Can only open rLite FD", Test_Open'Access));
       Test_Suite.Add_Test (Caller.Create
-         (Name_002 & " - Cannot open invalid FD", Test_Open_Failure'Access));
+         (Name_002 & " Cannot open invalid FD", Test_Open_Failure'Access));
 
       return Test_Suite'Access;
    end Suite;

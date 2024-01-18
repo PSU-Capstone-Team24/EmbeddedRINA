@@ -10,5 +10,6 @@ package Test_RINA_Register is
 private
    type Test is new AUnit.Test_Fixtures.Test_Fixture with null record;
 
-   procedure Test_Register (Object : in out Test);
+   procedure Test_Register_DIF_Length (Object : in out Test);
+   procedure Test_Register_DIF_Empty (Object : in out Test);
 end Test_RINA_Register;
