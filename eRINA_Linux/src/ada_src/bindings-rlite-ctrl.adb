@@ -114,6 +114,10 @@ package body Bindings.Rlite.Ctrl is
       No_Wait : constant Unsigned_32 := Unsigned_32 (flags) and Unsigned_32 (API.RINA_F_NOWAIT);
       req : Register.Request;
    begin
+      -- Ensure DIF name is not empty, if so return invalid
+      if Used_Size (dif_name) <= 0 then
+         return wfd;
+      end if;
 
       if Bits_Other_Than_NoWait /= 0 then
          --  Flag has bits other than RINA_F_NOWAIT set, return invalid file descriptor
