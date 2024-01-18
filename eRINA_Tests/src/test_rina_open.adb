@@ -18,20 +18,30 @@ package body Test_RINA_Open is
    Test_Suite : aliased AUnit.Test_Suites.Test_Suite;
 
    function Suite return AUnit.Test_Suites.Access_Test_Suite is
-      Name : constant String := "TC-001 ";
+      Name_001 : constant String := "TC-001";
+      Name_002 : constant String := "TC-002";
    begin
       Test_Suite.Add_Test (Caller.Create
-         (Name & " - Can only open rLite FD", Test_Open'Access));
-      
+         (Name_001 & " - Can only open rLite FD", Test_Open'Access));
+      Test_Suite.Add_Test (Caller.Create
+         (Name_002 & " - Cannot open invalid FD", Test_Open_Failure'Access));
+
       return Test_Suite'Access;
    end Suite;
 
    procedure Test_Open (Object : in out Test) is
-      Fd : File_Descriptor := Invalid_FD;
+      Fd : constant File_Descriptor := Invalid_FD;
       Rlite_Fd : File_Descriptor := Invalid_FD;
    begin
       Rlite_Fd := RINA_Open;
       Assert(Rlite_Fd /= Fd, "Invalid file descriptor returned");
    end Test_Open;
+
+   procedure Test_Open_Failure (Object : in out Test) is
+      Fd : File_Descriptor := Invalid_FD;
+   begin
+      Fd := OS.Open_Read_Write ("/dev/this_should_fail", OS.Binary);
+      Assert(Fd = Invalid_FD, "Device opened that should not be reachable");
+   end Test_Open_Failure;
 
 end Test_RINA_Open;
