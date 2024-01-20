@@ -1,4 +1,4 @@
-name: Ada (GNAT)
+name: Linux Build
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - '**.adb'
       - '**.ads'
       - '**.gpr'
+      - '**.yml'
   pull_request:
 
 jobs:
@@ -14,6 +15,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+    
+    - uses: alire-project/setup-alire@v2
 
     - name: Set up GNAT toolchain
       run: >
@@ -27,7 +30,7 @@ jobs:
         sudo make install depmod
 
     - name: Build
-      run: gprbuild eRINA_Linux/erina_linux.gpr -j0 -p
+      run: cd eRINA_Linux && alr build
     
     - name: Slack Notification Success
       if: success()
