@@ -1,11 +1,12 @@
-with "config/eRINA_config.gpr";
+with "config/erina_linux_config.gpr";
+
 project eRINA_Linux is
 
    -- Specify we want to compile some C code as well
    for Languages use ("ada", "c");
 
    for Source_Dirs use ("src/ada_src/", "src/ada_src/messages/", "config/", "src/c_src/");
-   for Object_Dir use "obj/" & eRINA_Config.Build_Profile;
+   for Object_Dir use "obj/" & eRINA_Linux_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
    for Main use ("test_server.adb", "test_client.adb");
@@ -15,7 +16,7 @@ project eRINA_Linux is
    end Linker;
 
    package Compiler is
-      for Default_Switches ("Ada") use eRINA_Config.Ada_Compiler_Switches;
+      for Default_Switches ("Ada") use eRINA_Linux_Config.Ada_Compiler_Switches;
    end Compiler;
 
    package Binder is

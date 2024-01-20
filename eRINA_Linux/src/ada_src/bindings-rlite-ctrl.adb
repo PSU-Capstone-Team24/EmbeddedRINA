@@ -115,7 +115,7 @@ package body Bindings.Rlite.Ctrl is
       req : Register.Request;
    begin
       -- Ensure DIF name is not empty, if so return invalid
-      if Used_Size (dif_name) <= 0 then
+      if Used_Size (dif_name) = 0 then
          return wfd;
       end if;
 
@@ -217,6 +217,7 @@ package body Bindings.Rlite.Ctrl is
          Buffer : constant Byte_Buffer := Flow.Serialize (Resp);
       begin
          Rl_Write_Msg (Fd, Buffer, 0);
+         return Fd;
       end;
       
    end RINA_Flow_Accept;
@@ -356,7 +357,6 @@ end RINA_Flow_Respond;
    ) return OS.File_Descriptor is
       info    : Common.Rl_Ioctl_Info;
       fd      : OS.File_Descriptor;
-      ret     : Integer;
    begin
    
       fd := OS.Open_Read_Write("/dev/rlite", OS.Binary);
@@ -370,6 +370,7 @@ end RINA_Flow_Respond;
       info.mode := mode;
 
       -- ret = ioctl <--- we will need import ioctl from c bindings
+      return OS.Invalid_FD;
    end Open_Port_Common;
 
 
