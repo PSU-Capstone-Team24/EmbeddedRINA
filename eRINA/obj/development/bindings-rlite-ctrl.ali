@@ -1,0 +1,363 @@
+V "GNAT Lib v10"
+A -Og
+A -gnatA
+A -ffunction-sections
+A -fdata-sections
+A -g
+A -gnatwa
+A -gnatw.X
+A -gnatVa
+A -gnaty3
+A -gnatya
+A -gnatyA
+A -gnatyB
+A -gnatyb
+A -gnatyc
+A -gnaty-
+A -gnatyd
+A -gnatye
+A -gnatyf
+A -gnatyh
+A -gnatyi
+A -gnatyI
+A -gnatyk
+A -gnatyl
+A -gnatym
+A -gnatyn
+A -gnatyO
+A -gnatyp
+A -gnatyr
+A -gnatyS
+A -gnatyt
+A -gnatyu
+A -gnatyx
+A -mtune=generic
+A -march=x86-64
+P SS ZX
+
+RN
+RV NO_EXCEPTIONS
+RV NO_SECONDARY_STACK
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_DEFAULT_INITIALIZATION
+RV NO_DYNAMIC_SIZED_OBJECTS
+RV NO_IMPLEMENTATION_ATTRIBUTES
+RV NO_IMPLEMENTATION_PRAGMAS
+RV SPARK_05
+
+U bindings.rlite.ctrl%b	bindings-rlite-ctrl.adb	c6e7753a NE OO PK
+Z ada.exceptions%s	a-except.adb		a-except.ali
+Z ada.tags%s		a-tags.adb		a-tags.ali
+W bindings%s		bindings.ads		bindings.ali
+W bindings.rlite%s	bindings-rlite.ads	bindings-rlite.ali
+W bindings.rlite.msg%s	bindings-rlite-msg.adb	bindings-rlite-msg.ali
+W bindings.rlite.msg.register%s  bindings-rlite-msg-register.adb  bindings-rlite-msg-register.ali
+W debug%s		debug.adb		debug.ali
+W exceptions%s		exceptions.ads		exceptions.ali
+Z interfaces%s		interfac.ads		interfac.ali
+W names%s		names.adb		names.ali
+Z system%s		system.ads		system.ali
+Z system.img_int%s	s-imgint.adb		s-imgint.ali
+Z system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+
+U bindings.rlite.ctrl%s	bindings-rlite-ctrl.ads	2a25a427 EE NE OO PK
+W bindings%s		bindings.ads		bindings.ali
+W bindings.rlite%s	bindings-rlite.ads	bindings-rlite.ali
+W bindings.rlite.api%s	bindings-rlite-api.adb	bindings-rlite-api.ali
+W bindings.rlite.common%s  bindings-rlite-common.ads  bindings-rlite-common.ali
+W bindings.rlite.list%s	bindings-rlite-list.ads	bindings-rlite-list.ali
+W bindings.rlite.msg%s	bindings-rlite-msg.adb	bindings-rlite-msg.ali
+W bindings.rlite.msg.flow%s  bindings-rlite-msg-flow.adb  bindings-rlite-msg-flow.ali
+W bindings.rlite.utils%s  bindings-rlite-utils.ads  bindings-rlite-utils.ali
+W buffers%s		buffers.adb		buffers.ali
+W gnat%s		gnat.ads		gnat.ali
+W gnat.os_lib%s		g-os_lib.ads		g-os_lib.ali
+W interfaces%s		interfac.ads		interfac.ali
+W names%s		names.adb		names.ali
+W system%s		system.ads		system.ali
+
+D ada.ads		20230707070819 76789da1 ada%s
+D a-charac.ads		20230707070819 2d3ec45b ada.characters%s
+D a-chlat1.ads		20230707070819 66457d31 ada.characters.latin_1%s
+D a-except.ads		20230707070819 a7106115 ada.exceptions%s
+D a-stream.ads		20230707070819 119b8fb3 ada.streams%s
+D a-string.ads		20230707070819 90ac6797 ada.strings%s
+D a-strbou.ads		20230707070819 84c37afd ada.strings.bounded%s
+D a-strmap.ads		20230707070819 e8bb714a ada.strings.maps%s
+D a-strsup.ads		20230707070819 a27dcb33 ada.strings.superbounded%s
+D a-tags.ads		20230707070819 491b781d ada.tags%s
+D a-unccon.ads		20230707070819 0e9b276f ada.unchecked_conversion%s
+D a-uncdea.ads		20230707070819 eff36322 ada.unchecked_deallocation%s
+D bindings.ads		20240120203522 6c899da8 bindings%s
+D bindings-rlite.ads	20240120203522 d0bd31fc bindings.rlite%s
+D bindings-rlite-api.ads  20240120203522 0a3a6723 bindings.rlite.api%s
+D bindings-rlite-common.ads  20240120203522 ab59339d bindings.rlite.common%s
+D bindings-rlite-ctrl.ads  20240120203522 56c82842 bindings.rlite.ctrl%s
+D bindings-rlite-ctrl.adb  20240120203522 338afd5d bindings.rlite.ctrl%b
+D bindings-rlite-list.ads  20240120203522 e090d857 bindings.rlite.list%s
+D bindings-rlite-msg.ads  20240120203522 d31a5b69 bindings.rlite.msg%s
+D bindings-rlite-msg-flow.ads  20240120203522 a4bf7177 bindings.rlite.msg.flow%s
+D bindings-rlite-msg-register.ads  20240120203522 cfd13f10 bindings.rlite.msg.register%s
+D bindings-rlite-utils.ads  20240120203522 22065319 bindings.rlite.utils%s
+D buffers.ads		20240120203522 18d97e12 buffers%s
+D debug.ads		20240120203522 3eb29bba debug%s
+D exceptions.ads	20240120203522 303292cc exceptions%s
+D gnat.ads		20230707070819 b5988c27 gnat%s
+D g-os_lib.ads		20230707070819 0db74523 gnat.os_lib%s
+D interfac.ads		20230707070819 5ab55268 interfaces%s
+D i-c.ads		20230707070819 5421119b interfaces.c%s
+D i-cstrin.ads		20230707070819 341d0ddf interfaces.c.strings%s
+D names.ads		20240120203522 62f49643 names%s
+D system.ads		20230707070819 4635ec04 system%s
+D s-exctab.ads		20230707070819 54135002 system.exception_table%s
+D s-imgint.ads		20230707070819 02dbe0c2 system.img_int%s
+D s-os_lib.ads		20230707070819 5797958e system.os_lib%s
+D s-parame.ads		20230707070819 48ec542b system.parameters%s
+D s-secsta.ads		20230707070819 20bbe636 system.secondary_stack%s
+D s-soflin.ads		20230707070819 a7318a92 system.soft_links%s
+D s-stache.ads		20230707070819 a37c21ec system.stack_checking%s
+D s-stalib.ads		20230707070819 09bd3940 system.standard_library%s
+D s-stoele.ads		20230707070819 2dc34a04 system.storage_elements%s
+D s-stratt.ads		20230707070819 aedef97e system.stream_attributes%s
+D s-string.ads		20230707070819 8fe54fb7 system.strings%s
+D s-ststop.ads		20230707070819 5fbf1b38 system.strings.stream_ops%s
+D s-traent.ads		20230707070819 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20230707070819 34867c83 system.unsigned_types%s
+G a e
+G c Z s b [rina_register_common bindings__rlite__ctrl 32 13 none]
+G c Z s b [rl_read_msg bindings__rlite__ctrl 39 13 none]
+G c Z s b [rl_write_msg bindings__rlite__ctrl 45 14 none]
+G c Z s s [rl_msg_free bindings__rlite__ctrl 52 14 none]
+G c Z s b [rina_flow_accept bindings__rlite__ctrl 58 13 none]
+G c Z s b [rina_flow_alloc bindings__rlite__ctrl 65 13 none]
+G c Z s b [rina_flow_alloc_wait bindings__rlite__ctrl 74 13 none]
+G c Z b b [rina_register_wait bindings__rlite__ctrl 59 13 none]
+G r s request [rina_register_common bindings__rlite__ctrl 32 13 none] [requestIP bindings__rlite__msg__register 10 9 none]
+G r c none [rina_register_common bindings__rlite__ctrl 32 13 none] [print debug 9 14 none]
+G r c none [rina_register_common bindings__rlite__ctrl 32 13 none] [rina_open bindings__rlite__api 30 13 none]
+G r c none [rina_register_common bindings__rlite__ctrl 32 13 none] [serialize bindings__rlite__msg__register 21 13 none]
+G r c none [rina_register_common bindings__rlite__ctrl 32 13 none] [put_bytes buffers 10 15 none]
+G r s response [rina_register_common bindings__rlite__ctrl 32 13 none] [responseIP bindings__rlite__msg__register 24 9 none]
+G r s move [rina_register_common bindings__rlite__ctrl 32 13 none] [moveIP bindings__rlite__msg__register 40 9 none]
+G r c none [rina_register_common bindings__rlite__ctrl 32 13 none] [deserialize bindings__rlite__msg__register 34 14 none]
+G r c none [rina_register_common bindings__rlite__ctrl 32 13 none] [rina_close bindings__rlite__api 35 14 none]
+G r c none [rina_register_common bindings__rlite__ctrl 32 13 none] [serialize bindings__rlite__msg__register 50 13 none]
+G r c none [rl_write_msg bindings__rlite__ctrl 45 14 none] [put_bytes buffers 10 15 none]
+G r c none [rl_write_msg bindings__rlite__ctrl 45 14 none] [print debug 9 14 none]
+G r s response [rina_flow_accept bindings__rlite__ctrl 58 13 none] [responseIP bindings__rlite__msg__flow 83 9 none]
+G r s request_arrived [rina_flow_accept bindings__rlite__ctrl 58 13 none] [request_arrivedIP bindings__rlite__msg__flow 109 9 none]
+G r c none [rina_flow_accept bindings__rlite__ctrl 58 13 none] [print debug 9 14 none]
+G r c none [rina_flow_accept bindings__rlite__ctrl 58 13 none] [deserialize bindings__rlite__msg__flow 120 14 none]
+G r c none [rina_flow_accept bindings__rlite__ctrl 58 13 none] [serialize bindings__rlite__msg__flow 105 13 none]
+G r c none [rina_flow_accept bindings__rlite__ctrl 58 13 none] [put_bytes buffers 10 15 none]
+G r s request [rina_flow_alloc bindings__rlite__ctrl 65 13 none] [requestIP bindings__rlite__msg__flow 43 9 none]
+G r c none [rina_flow_alloc bindings__rlite__ctrl 65 13 none] [print debug 9 14 none]
+G r c none [rina_flow_alloc bindings__rlite__ctrl 65 13 none] [rina_open bindings__rlite__api 30 13 none]
+G r c none [rina_flow_alloc bindings__rlite__ctrl 65 13 none] [serialize bindings__rlite__msg__flow 66 13 none]
+G r c none [rina_flow_alloc bindings__rlite__ctrl 65 13 none] [put_bytes buffers 10 15 none]
+G r s response [rina_register_wait bindings__rlite__ctrl 59 13 none] [responseIP bindings__rlite__msg__register 24 9 none]
+G r s move [rina_register_wait bindings__rlite__ctrl 59 13 none] [moveIP bindings__rlite__msg__register 40 9 none]
+G r c none [rina_register_wait bindings__rlite__ctrl 59 13 none] [deserialize bindings__rlite__msg__register 34 14 none]
+G r c none [rina_register_wait bindings__rlite__ctrl 59 13 none] [print debug 9 14 none]
+G r c none [rina_register_wait bindings__rlite__ctrl 59 13 none] [rina_close bindings__rlite__api 35 14 none]
+G r c none [rina_register_wait bindings__rlite__ctrl 59 13 none] [serialize bindings__rlite__msg__register 50 13 none]
+G r c none [rina_register_wait bindings__rlite__ctrl 59 13 none] [put_bytes buffers 10 15 none]
+X 7 a-strbou.ads
+58R12*Bounded_String<9|47R9> 17|33r15[32|13] 34r17[32|13] 60r28[32|13] 66r24[32|13]
+. 67r24[32|13] 68r24[32|13] 18|107r18[32|13] 108r20[32|13] 158r28[32|13]
+. 207r24[32|13] 208r24[32|13] 209r24[32|13]
+X 13 bindings.ads
+1K9*Bindings 3e13 17|6r6 7r6 8r6 9r6 19r6 20r7 22r9 27r24 28r27 29r26 30r25
+. 80r5 18|12r6 14r14 165r97 166r90 218r83 272r5
+X 14 bindings-rlite.ads
+1K18*Rlite 13|1k9 14|3e19 17|6r15 7r15 8r15 9r15 19r15 20r16 22r18 27r33
+. 28r36 29r35 30r34 80r14 18|12r15 14r23 165r106 166r99 218r92 272r14
+X 15 bindings-rlite-api.ads
+17K24*API 99e23 17|6w21 27r39 18|165r112 166r105 218r98
+21i4*RINA_F_NOWAIT{integer} 18|114r101 115r82 218r102
+22i4*RINA_F_NORESP{integer} 18|165r116 166r109
+30V13*RINA_Open{36|192I9} 18|126s18 243s18
+35U14*RINA_Close 18|83s14 101s11
+X 16 bindings-rlite-common.ads
+8K24*Common 28e26 17|7w21 28r42
+X 17 bindings-rlite-ctrl.ads
+22K24*Ctrl 14|1k18 17|80l20 80e24 18|14b29 272l20 272t24
+24K12*OS=24:28 32r40 36r29 40r13 46r13 59r21 72r13 75r24 77r12 18|17r13 27r14
+. 48r13 55r21 59r38 60r13 60r40 72r17 78r17 106r40 110r32 112r13 112r35 122r17
+. 131r17 157r21 213r13 215r18 223r17 229r17 247r17 263r24 265r12
+27K12*API=27:39 18|83r10 101r7 114r97 115r78 126r14 243r14
+28K12*Common=28:42
+29K12*Utils=29:41
+30K12*List=30:40
+32V13*RINA_Register_Common{36|192I9} 32>35 33>4 34>4 35>4 36>4 18|106b13
+. 154l8 154t28
+32i35 Fd{36|192I9} 18|106b35 144r24 153r34
+33r4 Dif_Name{7|58R12[32|13]} 18|107b7 139r28
+34r4 Local_Appl{7|58R12[32|13]} 18|108b7 138r28
+35i4 Flags{integer} 18|109b7 114r69 115r54
+36m4 Reg{29|63M9} 18|110b7 137r28
+39V13*Rl_Read_Msg{24|8A10} 40>7 41>7 18|47b13 57l8 57t19
+40i7 Rfd{36|192I9} 18|48b7 55r30
+41i7 Quiet{integer} 18|49b7
+45U14*Rl_Write_Msg 46>7 47>7 48>7 18|16b14 44l8 44t20 97s10 144s10 200s10
+. 253s10
+46i7 Rfd{36|192I9} 18|17b7 27r24
+47a7 Msg{24|8A10} 18|18b7 21r37 27r29 30r18 32r74
+48i7 Quiet{integer} 18|19b7
+52U14*Rl_Msg_Free 53>8 54>8 55>8 56b<c,rl_msg_free>22
+53m8 numtables{33|67M9}
+54m8 num_entries{29|74M9}
+55m8 msg{33|67M9}
+58V13*RINA_Flow_Accept{boolean} 59>7 60=7 61>7 62>7 18|156b13 204l8 204t24
+59i7 fd{36|192I9} 18|157b7 177r30 200r24
+60r7 remote_appl{7|58R12[32|13]} 18|158b7 186m7
+61r7 spec{21|17R9} 18|159b7 168r10
+62i7 flags{integer} 18|160b7 165r69 166r66
+65V13*RINA_Flow_Alloc{36|192I9} 66>7 67>7 68>7 69>7 70>7 71>7 18|206b13 258l8
+. 258t23
+66r7 dif_name{7|58R12[32|13]} 18|207b7 235r28
+67r7 local_appl{7|58R12[32|13]} 18|208b7 237r28
+68r7 remote_appl{7|58R12[32|13]} 18|209b7 238r28
+69r7 flowspec{21|17R9} 18|210b7 226r10
+70m7 flags{29|74M9} 18|211b7 218r56
+71m7 upper_ipcp_id{20|23M9} 18|212b7 236r28
+74V13*RINA_Flow_Alloc_Wait{36|192I9} 75>7 76>7 18|262b13 268l8 268t28
+75i7 wfd{36|192I9} 18|263b7 267r14
+76m7 port_id{29|66M9} 18|264b7
+X 18 bindings-rlite-ctrl.adb
+21i7 Ser_Len{natural} 27r42
+25i7 Ret{integer} 27m7 31r69 35r10 40r10
+51i7 Bytes_Read{integer} 55m7
+52a7 Buffer{24|8A10} 55m35 55r35 56r14
+59V13 RINA_Register_Wait{36|192I9} 59b13 59>33 60>7 104l8 104t26 153s14
+59i33 Fd{36|192I9} 66r35 92r40 103r14
+60i7 Wfd{36|192I9} 83r26 97r24 101r23
+61a7 Buffer{24|8A10}
+62i7 Bytes_Read{integer}
+63r7 Resp{22|24R9} 66m29 66r29 70r10 76r10 82r10 91r28
+64r7 Move{22|40R9} 89m7 90m7 91m7 92m7 95r63
+95a10 Buffer{24|8A10} 97r29
+112i7 wfd{36|192I9} 126m7 128r10 149r17 153r38
+114m7 Bits_Other_Than_NoWait{29|74M9} 119r10
+115m7 No_Wait{29|74M9} 147r10
+116r7 req{22|10R9} 135m7 136m7 137m7 138m7 139m7 142r63
+142a10 Buffer{24|8A10} 144r28
+162r7 Resp{21|83R9} 189m7 190m7 191m7 192m7 193m7 194m7 195m7 198r59
+163r7 Req{21|109R9} 177m25 177r25 181r10 186r22 191r25 192r23 194r23
+164a7 Buffer{24|8A10}
+165m7 Bits_Other_Than_NoResp{29|74M9} 172r10
+166m7 Bits_Same_As_NoResp{29|74M9}
+198a10 Buffer{24|8A10} 200r28
+214r7 req{21|43R9} 233m7 234m7 235m7 236m7 237m7 238m7 241m7 251r50
+215i7 wfd{36|192I9} 243m7 245r10 253r24 256r14
+215i12 ret{36|192I9}
+216V16*Get_Pid{29|74M9} 241s28
+218m7 Bits_Other_Than_NoWait{29|74M9} 220r10
+251a10 Buffer{24|8A10} 253r29
+X 19 bindings-rlite-list.ads
+3K24*List 17|9w21 30r40 19|13e24
+X 20 bindings-rlite-msg.ads
+17K24*Msg 17|19r21 20r22 18|12r21 20|207e23
+23M9*Rl_Ipcp_Id_T<29|66M9> 17|71r24 18|212r24
+24M9*Rl_Port_T<29|66M9>
+39m4*RINA_REG_EVENT_ID{29|74M9} 18|76r31 136r28
+42m4*RINA_FA_EVENT_ID{29|74M9} 18|234r28
+45E9*Rl_Msg_T 18|32r55 20|57e68
+46n22*RLITE_KER_APPL_REGISTER{45E9} 18|135r28
+46n47*RLITE_KER_APPL_REGISTER_RESP{45E9} 18|70r31
+46n77*RLITE_KER_FA_REQ{45E9} 18|233r28
+47n49*RLITE_KER_FA_RESP{45E9} 18|189r28
+47n68*RLITE_KER_FA_REQ_ARRIVED{45E9} 18|181r30
+53n52*RLITE_KER_APPL_MOVE{45E9} 18|89r28
+65e7*Msg_Type{45E9} 18|70r19 89m16 135m15 181r18 189m16 233m15
+66m7*Event_Id{29|74M9} 18|76r19 90m16 136m15 190m16 234m15
+89r7*Hdr{63R9} 18|70r15 76r15 89m12 90m12 135m11 136m11 181r14 189m12 190m12
+. 233m11 234m11
+X 21 bindings-rlite-msg-flow.ads
+10K28*Flow 17|19w25 61r21 69r24 18|159r21 162r14 163r14 168r26 177r7 198r43
+. 210r24 214r18 226r30 251r34 21|131e28
+12m4*RINA_FLOW_SPEC_VERSION{29|74M9} 18|168r31 226r35
+17R9*RINA_Flow_Spec 17|61r26 69r29 18|159r26 210r29 21|35e14
+19m7*Version{29|74M9} 18|168r15 226r19
+43R9*Request<20|88R9> 18|214r23 21|60e14
+48m7*Upper_Ipcp_Id{20|23M9} 18|236m11
+55m7*Cookie{29|74M9} 18|241m11
+57r7*Local_Appl{7|58R12[32|13]} 18|237m11
+58r7*Remote_Appl{7|58R12[32|13]} 18|238m11
+59r7*Dif_Name{7|58R12[32|13]} 18|235m11
+66V13*Serialize{24|8A10}<20|93p13> 18|251s39
+83R9*Response<20|88R9> 18|162r19 21|99e14
+84m7*Kevent_Id{29|74M9} 18|191m12
+88m7*Ipcp_Id{20|23M9} 18|192m12
+92m7*Upper_Ipcp_Id{20|23M9} 18|193m12
+93m7*Port_Id{20|24M9} 18|194m12
+94m7*Response{29|63M9} 18|195m12
+105V13*Serialize{24|8A10}<20|93p13> 18|198s48
+109R9*Request_Arrived<20|88R9> 18|163r19 21|117e14
+110m7*Kevent_Id{29|74M9} 18|191r29
+111m7*Port_Id{20|24M9} 18|194r27
+112m7*Ipcp_Id{20|23M9} 18|192r27
+115r7*Remote_Appl{7|58R12[32|13]} 18|186r26
+120U14*Deserialize<20|94p14> 18|177s12
+X 22 bindings-rlite-msg-register.ads
+7K28*Register 18|12w25 63r14 64r14 66r7 95r43 116r13 142r43 22|52e32
+10R9*Request<20|88R9> 18|116r22 22|14e14
+11m7*Reg{29|63M9} 18|137m11
+12r7*Appl_Name{7|58R12[32|13]} 18|138m11
+13r7*Dif_Name{7|58R12[32|13]} 18|139m11
+21V13*Serialize{24|8A10}<20|93p13> 18|142s52
+24R9*Response<20|88R9> 18|63r23 22|30e14
+25m7*Ipcp_Id{20|23M9} 18|91r33
+27m7*Response{29|63M9} 18|82r15
+34U14*Deserialize<20|94p14> 18|66s16
+40R9*Move<20|88R9> 18|64r23 22|43e14
+41m7*Ipcp_Id{20|23M9} 18|91m12
+42i7*Fd{29|52I9} 18|92m12
+50V13*Serialize{24|8A10}<20|93p13> 18|95s52
+X 23 bindings-rlite-utils.ads
+4K24*Utils 17|8w21 29r41 23|7e25
+X 24 buffers.ads
+6K9*Buffers 17|14w6 15r7 24|18e12
+7M10*Byte<29|63M9>
+8A10*Byte_Buffer(7M10)<integer> 17|42r13 47r13 18|18r13 50r13 52r16 61r16
+. 95r28 142r28 164r16 198r28 251r19
+10U15*Put_Bytes 18|30s7
+X 25 debug.ads
+6K9*Debug 18|5w6 31r7 31r75 32r7 32r90 36r10 36r71 41r10 41r74 71r10 71r80
+. 77r10 77r76 121r10 121r89 130r10 130r93 169r10 169r109 173r10 173r57 222r10
+. 222r86 228r10 228r109 246r10 246r99 25|10e10
+7n25*Info{7E9} 18|31r81 32r96
+7n31*Warning{7E9} 18|41r80
+7n40*Error{7E9} 18|36r77 71r86 77r82 121r95 130r99 169r115 173r63 222r92
+. 228r115 246r105
+9U14*Print 18|31s13 32s13 36s16 41s16 71s16 77s16 121s16 130s16 169s16 173s16
+. 222s16 228s16 246s16
+X 26 exceptions.ads
+1K9*Exceptions 18|10w6 84r16 26|8e15
+3X4*DIF_Registration_Failure 18|84r27
+X 27 gnat.ads
+34K9*GNAT 17|11r6 12r8 24r23 27|57e9
+X 28 g-os_lib.ads
+51K14*OS_Lib=51:36 17|11w11 12r13 24r28
+X 29 interfac.ads
+38K9*Interfaces 17|4w6 4r22 29|184e15
+52I9*Integer_32<integer> 18|92r28
+63M9*Unsigned_8 17|36r10 18|110r13
+66M9*Unsigned_16 17|76r24 18|264r24
+74M9*Unsigned_32 17|54r22 70r24 18|114r41 114r56 114r84 115r26 115r41 115r65
+. 165r41 165r56 165r84 166r38 166r53 166r77 211r24 216r31 218r41 218r70
+X 32 names.ads
+12K9*Names 17|17w6 17r17 18|7w6 8r7 32|22e10
+13K13*Name_String[7|52] 17|17r23
+X 33 system.ads
+37K9*System 17|10w6 53r20 55r14 33|156e11
+67M9*Address 17|53r27 55r21
+X 36 s-os_lib.ads
+192I9*File_Descriptor<integer> 17|32r43 36r32 40r16 46r16 59r24 72r16 75r27
+. 77r15 18|17r16 48r16 59r41 60r16 60r43 106r43 110r35 112r16 157r24 213r16
+. 215r21 263r27 265r15
+200i4*Invalid_FD{192I9} 18|72r20 78r20 112r38 122r20 128r16 131r20 223r20
+. 229r20 245r16 247r20
+590V13*Read{integer} 18|55s24
+660V13*Write{integer} 18|27s17
+

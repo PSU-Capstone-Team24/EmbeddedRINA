@@ -12,4 +12,8 @@ private
 
    procedure Test_Register_DIF_Length (Object : in out Test);
    procedure Test_Register_DIF_Empty (Object : in out Test);
+   procedure Test_Register_Not_Exist_IPCP (Object : in out Test);
+   procedure Test_Register_Application_Length (Object : in out Test);
+   procedure Test_Register_Application_Empty (Object : in out Test);
+
 end Test_RINA_Register;

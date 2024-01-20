@@ -1,0 +1,104 @@
+V "GNAT Lib v10"
+A -Og
+A -gnatA
+A -ffunction-sections
+A -fdata-sections
+A -g
+A -gnatwa
+A -gnatw.X
+A -gnatVa
+A -gnaty3
+A -gnatya
+A -gnatyA
+A -gnatyB
+A -gnatyb
+A -gnatyc
+A -gnaty-
+A -gnatyd
+A -gnatye
+A -gnatyf
+A -gnatyh
+A -gnatyi
+A -gnatyI
+A -gnatyk
+A -gnatyl
+A -gnatym
+A -gnatyn
+A -gnatyO
+A -gnatyp
+A -gnatyr
+A -gnatyS
+A -gnatyt
+A -gnatyu
+A -gnatyx
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+RV NO_IO
+RV NO_DYNAMIC_SIZED_OBJECTS
+RV NO_IMPLEMENTATION_PRAGMAS
+
+U debug%b		debug.adb		e7cbf0cd NE OO PK
+W ada%s			ada.ads			ada.ali
+W ada.characters%s	a-charac.ads		a-charac.ali
+W ada.characters.latin_1%s  a-chlat1.ads	a-chlat1.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+Z interfaces%s		interfac.ads		interfac.ali
+
+U debug%s		debug.ads		3eb29bba EE NE OO PK
+
+D ada.ads		20230707070819 76789da1 ada%s
+D a-charac.ads		20230707070819 2d3ec45b ada.characters%s
+D a-chlat1.ads		20230707070819 66457d31 ada.characters.latin_1%s
+D a-except.ads		20230707070819 a7106115 ada.exceptions%s
+D a-ioexce.ads		20230707070819 e4a01f64 ada.io_exceptions%s
+D a-stream.ads		20230707070819 119b8fb3 ada.streams%s
+D a-tags.ads		20230707070819 491b781d ada.tags%s
+D a-textio.ads		20230707070819 aef4d56d ada.text_io%s
+D a-unccon.ads		20230707070819 0e9b276f ada.unchecked_conversion%s
+D debug.ads		20240120203522 3eb29bba debug%s
+D debug.adb		20240120203522 11c8c32b debug%b
+D interfac.ads		20230707070819 5ab55268 interfaces%s
+D i-cstrea.ads		20230707070819 e53d8b8e interfaces.c_streams%s
+D system.ads		20230707070819 4635ec04 system%s
+D s-crtl.ads		20230707070819 0ebbdb71 system.crtl%s
+D s-exctab.ads		20230707070819 54135002 system.exception_table%s
+D s-ficobl.ads		20230707070819 078245e4 system.file_control_block%s
+D s-parame.ads		20230707070819 48ec542b system.parameters%s
+D s-secsta.ads		20230707070819 20bbe636 system.secondary_stack%s
+D s-soflin.ads		20230707070819 a7318a92 system.soft_links%s
+D s-stache.ads		20230707070819 a37c21ec system.stack_checking%s
+D s-stalib.ads		20230707070819 09bd3940 system.standard_library%s
+D s-stoele.ads		20230707070819 2dc34a04 system.storage_elements%s
+D s-traent.ads		20230707070819 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20230707070819 34867c83 system.unsigned_types%s
+D s-wchcon.ads		20230707070819 1b7d22d2 system.wch_con%s
+G a e
+G c Z s b [print debug 9 14 none]
+X 1 ada.ads
+16K9*Ada 20e8 11|4r6 5r6 13r10 13r27 14r10 15r10 15r27 18r26 18r43 19r29
+. 19r46 20r27 20r44 23r10 24r10 24r32
+X 2 a-charac.ads
+16K13*Characters 18e19 11|5r10 13r31 15r31 18r47 19r50 20r48 24r36
+X 3 a-chlat1.ads
+18K24*Latin_1 296e27 11|5w21 13r42 15r42 18r58 19r61 20r59 24r47
+53e4*ESC{character} 11|13r50 15r50 18r66 19r69 20r67 24r55
+X 8 a-textio.ads
+57K13*Text_IO 727e16 11|4w10 13r14 14r14 15r14 18r30 19r33 20r31 23r14 24r14
+465U14*Put 11|13s22 14s22 15s22 18s38 19s41 20s39 23s22
+508U14*Put_Line 11|24s22
+X 10 debug.ads
+6K9*Debug 10l5 10e10 11|7b14 29l5 29t10
+7E9*Debug_Level 7e46 9r60 11|8r60
+7n25*Info{7E9} 11|18r18
+7n31*Warning{7E9} 11|19r18
+7n40*Error{7E9} 11|20r18
+9U14*Print 9>21 9>38 9>52 11|8b14 27l8 27t13
+9a21 Caller{string} 11|8b21 14r33
+9a38 Msg{string} 11|8b38 23r27
+9e52 Level{7E9} 11|8b52 17r15
+X 11 debug.adb
+9b7 DEBUG{boolean} 11r10
+

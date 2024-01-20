@@ -1,0 +1,228 @@
+V "GNAT Lib v10"
+A -Og
+A -gnatA
+A -ffunction-sections
+A -fdata-sections
+A -g
+A -gnatwa
+A -gnatw.X
+A -gnatVa
+A -gnaty3
+A -gnatya
+A -gnatyA
+A -gnatyB
+A -gnatyb
+A -gnatyc
+A -gnaty-
+A -gnatyd
+A -gnatye
+A -gnatyf
+A -gnatyh
+A -gnatyi
+A -gnatyI
+A -gnatyk
+A -gnatyl
+A -gnatym
+A -gnatyn
+A -gnatyO
+A -gnatyp
+A -gnatyr
+A -gnatyS
+A -gnatyt
+A -gnatyu
+A -gnatyx
+A -mtune=generic
+A -march=x86-64
+P SS ZX
+
+RN
+RV NO_DISPATCHING_CALLS
+RV NO_EXCEPTIONS
+RV NO_IMPLICIT_CONDITIONALS
+RV NO_SECONDARY_STACK
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_UNCHECKED_CONVERSION
+RV NO_DYNAMIC_SIZED_OBJECTS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_ELABORATION_CODE
+RV SPARK_05
+
+U bindings.rlite.msg.register%b  bindings-rlite-msg-register.adb  0ae8ef7f OO PK
+Z ada.exceptions%s	a-except.adb		a-except.ali
+Z ada.tags%s		a-tags.adb		a-tags.ali
+W bindings.rlite.msg%s	bindings-rlite-msg.adb	bindings-rlite-msg.ali
+W exceptions%s		exceptions.ads		exceptions.ali
+Z interfaces%s		interfac.ads		interfac.ali
+W names%s		names.adb		names.ali
+Z system%s		system.ads		system.ali
+Z system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+
+U bindings.rlite.msg.register%s  bindings-rlite-msg-register.ads  cfd13f10 EE OO PF PK
+Z ada.exceptions%s	a-except.adb		a-except.ali
+Z ada.streams%s		a-stream.adb		a-stream.ali
+Z ada.tags%s		a-tags.adb		a-tags.ali
+W bindings%s		bindings.ads		bindings.ali
+W bindings.rlite%s	bindings-rlite.ads	bindings-rlite.ali
+W bindings.rlite.msg%s	bindings-rlite-msg.adb	bindings-rlite-msg.ali
+Z system%s		system.ads		system.ali
+Z system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+Z system.stream_attributes%s  s-stratt.adb	s-stratt.ali
+Z system.strings.stream_ops%s  s-ststop.adb	s-ststop.ali
+
+D ada.ads		20230707070819 76789da1 ada%s
+D a-charac.ads		20230707070819 2d3ec45b ada.characters%s
+D a-chlat1.ads		20230707070819 66457d31 ada.characters.latin_1%s
+D a-except.ads		20230707070819 a7106115 ada.exceptions%s
+D a-stream.ads		20230707070819 119b8fb3 ada.streams%s
+D a-string.ads		20230707070819 90ac6797 ada.strings%s
+D a-strbou.ads		20230707070819 84c37afd ada.strings.bounded%s
+D a-strmap.ads		20230707070819 e8bb714a ada.strings.maps%s
+D a-strsup.ads		20230707070819 a27dcb33 ada.strings.superbounded%s
+D a-tags.ads		20230707070819 491b781d ada.tags%s
+D a-unccon.ads		20230707070819 0e9b276f ada.unchecked_conversion%s
+D a-uncdea.ads		20230707070819 eff36322 ada.unchecked_deallocation%s
+D bindings.ads		20240120203522 6c899da8 bindings%s
+D bindings-rlite.ads	20240120203522 d0bd31fc bindings.rlite%s
+D bindings-rlite-msg.ads  20240120203522 d31a5b69 bindings.rlite.msg%s
+D bindings-rlite-msg-register.ads  20240120203522 cfd13f10 bindings.rlite.msg.register%s
+D bindings-rlite-msg-register.adb  20240120203522 97ffd4e0 bindings.rlite.msg.register%b
+D buffers.ads		20240120203522 18d97e12 buffers%s
+D exceptions.ads	20240120203522 303292cc exceptions%s
+D gnat.ads		20230707070819 b5988c27 gnat%s
+D g-os_lib.ads		20230707070819 0db74523 gnat.os_lib%s
+D interfac.ads		20230707070819 5ab55268 interfaces%s
+D names.ads		20240120203522 62f49643 names%s
+D system.ads		20230707070819 4635ec04 system%s
+D s-exctab.ads		20230707070819 54135002 system.exception_table%s
+D s-os_lib.ads		20230707070819 5797958e system.os_lib%s
+D s-parame.ads		20230707070819 48ec542b system.parameters%s
+D s-secsta.ads		20230707070819 20bbe636 system.secondary_stack%s
+D s-soflin.ads		20230707070819 a7318a92 system.soft_links%s
+D s-stache.ads		20230707070819 a37c21ec system.stack_checking%s
+D s-stalib.ads		20230707070819 09bd3940 system.standard_library%s
+D s-stoele.ads		20230707070819 2dc34a04 system.storage_elements%s
+D s-stoele.adb		20230707070819 ed88f8fb system.storage_elements%b
+D s-stratt.ads		20230707070819 aedef97e system.stream_attributes%s
+D s-string.ads		20230707070819 8fe54fb7 system.strings%s
+D s-ststop.ads		20230707070819 5fbf1b38 system.strings.stream_ops%s
+D s-traent.ads		20230707070819 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20230707070819 34867c83 system.unsigned_types%s
+G a e
+G c Z s b [deserialize bindings__rlite__msg__register 18 14 none]
+G c Z s b [serialize bindings__rlite__msg__register 21 13 none]
+G c Z s b [deserialize bindings__rlite__msg__register 34 14 none]
+G c Z s b [serialize bindings__rlite__msg__register 37 13 none]
+G c Z s b [deserialize bindings__rlite__msg__register 47 14 none]
+G c Z s b [serialize bindings__rlite__msg__register 50 13 none]
+G c Z s s [requestDA bindings__rlite__msg__register 10 9 none]
+G c Z s s [requestDF bindings__rlite__msg__register 10 9 none]
+G c Z s s [requestIP bindings__rlite__msg__register 10 9 none]
+G c Z s s [responseDA bindings__rlite__msg__register 24 9 none]
+G c Z s s [responseDF bindings__rlite__msg__register 24 9 none]
+G c Z s s [responseIP bindings__rlite__msg__register 24 9 none]
+G c Z s s [moveDA bindings__rlite__msg__register 40 9 none]
+G c Z s s [moveDF bindings__rlite__msg__register 40 9 none]
+G c Z s s [moveIP bindings__rlite__msg__register 40 9 none]
+G r c none [serialize bindings__rlite__msg__register 21 13 none] [used_size names 18 14 none]
+G r c none [serialize bindings__rlite__msg__register 21 13 none] [to_packed_buffer names 21 14 none]
+G r c none [deserialize bindings__rlite__msg__register 34 14 none] [read_next_msg bindings__rlite__msg 96 13 none]
+G r c none [deserialize bindings__rlite__msg__register 34 14 none] [buffer_to_rl_msg_hdr bindings__rlite__msg 71 13 none]
+G r c none [deserialize bindings__rlite__msg__register 34 14 none] [buffer_reverse buffers 17 14 none]
+G r c none [deserialize bindings__rlite__msg__register 34 14 none] [buffer_to_unsigned_16 bindings__rlite__msg 79 13 none]
+G r c none [deserialize bindings__rlite__msg__register 34 14 none] [buffer_to_string buffers 16 14 none]
+G r s rl_msg_base [requestIP bindings__rlite__msg__register 10 9 none] [rl_msg_baseIP bindings__rlite__msg 88 9 none]
+G r s rl_msg_base [responseIP bindings__rlite__msg__register 24 9 none] [rl_msg_baseIP bindings__rlite__msg 88 9 none]
+G r s rl_msg_base [moveIP bindings__rlite__msg__register 40 9 none] [rl_msg_baseIP bindings__rlite__msg 88 9 none]
+X 7 a-strbou.ads
+58R12*Bounded_String<9|47R9> 16|12r24[23|13] 13r24[23|13] 29r21[23|13]
+72V16*To_Bounded_String{58R12[23|13]} 17|82s28[23|13]
+X 13 bindings.ads
+1K9*Bindings 3e13 16|4r6 5r7 7r9 52r5 17|9r14 117r5
+X 14 bindings-rlite.ads
+1K18*Rlite 13|1k9 14|3e19 16|4r15 5r16 7r18 52r14 17|9r23 117r14
+X 15 bindings-rlite-msg.ads
+17K24*Msg 14|1k18 15|207e23 16|4w21 5r22 7r24 52r20 17|9r29 117r20
+20K12*OS=20:28 16|18r55 34r56 47r52 17|11r55 49r56 93r52
+23M9*Rl_Ipcp_Id_T<22|66M9> 16|25r21 41r21 17|64r25
+46n47*RLITE_KER_APPL_REGISTER_RESP{45E9} 17|58r31
+63R9*Rl_Msg_Hdr 67e14 17|51r49 55r54
+65e7*Msg_Type{45E9} 17|58r19
+71V13*Buffer_To_Rl_Msg_Hdr[11|20]{63R9} 17|55s19
+79V13*Buffer_To_Unsigned_16[11|20]{22|66M9} 17|64s39 76s48
+88H9*Rl_Msg_Base 90e14 16|10r24 24r25 40r21
+89r7*Hdr{63R9} 17|18r55 19m46 55m12 58r15 99r55 100m46
+96V13*Read_Next_Msg{18|8A10} 17|50s42
+X 16 bindings-rlite-msg-register.ads
+7K28*Register 15|17k24 16|52l24 52e32 17|9b33 117l24 117t32
+10R9*Request<15|88R9> 14e14 15r16 18P14 18r41 21P13 21r34 17|11r41 16r34
+11m7*Reg{22|63M9} 17|21r55 22m46
+12r7*Appl_Name{7|58R12[23|13]} 17|28r77 33r71
+13r7*Dif_Name{7|58R12[23|13]} 17|36r76 41r71
+18U14*Deserialize<15|94p14> 18=27 18>50 17|11b14 14l8 14t19
+18r27 Self{10R9} 17|11b27
+18i50 fd{26|192I9} 17|11b50
+21V13*Serialize{18|8A10}<15|93p13> 21>24 17|16b13 47l8 47t17
+21r24 Self{10R9} 17|16b24 18r50 19r41 21r50 22r41 28r72 33r66 36r71 41r66
+24R9*Response<15|88R9> 30e14 31r16 34P14 34r41 37P13 37r34 17|49r41 86r34
+25m7*Ipcp_Id{15|23M9} 17|64m12
+26m7*Reg{22|63M9} 17|67m12
+27m7*Response{22|63M9} 17|68m12
+28m7*Pad1{22|74M9} 17|71m12
+29r7*Appl_Name{7|58R12[23|13]} 17|82m15
+34U14*Deserialize<15|94p14> 34=27 34>51 17|49b14 84l8 84t19
+34r27 Self{24R9} 17|49b27 55m7 58r10 64m7 67m7 68m7 71m7 82m10
+34i51 fd{26|192I9} 17|49b51 50r56
+37V13*Serialize{18|8A10}<15|93p13> 37>24 17|86b13 91l8 91t17
+37r24 Self{24R9} 17|86b24
+40R9*Move<15|88R9> 43e14 44r16 47P14 47r41 50P13 50r34 17|93r41 98r34
+41m7*Ipcp_Id{15|23M9} 17|102r55 103m46
+42i7*Fd{22|52I9} 17|108r55 109m49
+47U14*Deserialize<15|94p14> 47=27 47>47 17|93b14 96l8 96t19
+47r27 Self{40R9} 17|93b27
+47i47 fd{26|192I9} 17|93b47
+50V13*Serialize{18|8A10}<15|93p13> 50>24 17|98b13 115l8 115t17
+50r24 Self{40R9} 17|98b24 99r50 100r41 102r50 103r41 108r50 109r44
+X 17 bindings-rlite-msg-register.adb
+18a7 Hdr_Ptr{18|8A10} 44r48
+21a7 Reg_Ptr{18|8A10} 44r58
+25a7 Pad1{18|8A10} 44r68
+28m7 Appl_Name_Size{22|66M9} 30r54 31r44
+30a7 Appl_Name_Size_Ptr{18|8A10} 44r75
+33a7 Appl_Name_Ptr{18|8A10} 44r96
+36m7 Dif_Name_Size{22|66M9} 38r53 39r44
+38a7 Dif_Name_Size_Ptr{18|8A10} 44r112
+41a7 Dif_Name_Ptr{18|8A10} 44r132
+44a7 Serialized_Msg=44:130{18|8A10} 46r14
+50a7 Buffer{18|8A10} 51r42 51r76 55r41
+51a7 Msg_Data{18|8A10} 64r78 64r88 64r106 67r37 67r47 68r37 68r47 76r71 76r81
+. 76r103 79r54 79r64 79r87
+76m10 Name_Length{22|66M9} 79r118
+79a10 Name{string} 82r47
+87a7 t{18|8A10} 90r14
+99a7 Hdr_Ptr{18|8A10} 112r48
+102a7 Ipcp_Id_Ptr{18|8A10} 112r58
+106a7 Pad1{18|8A10} 112r72
+108a7 Fd_Ptr{18|8A10} 112r79
+112a7 Serialized_Msg=112:77{18|8A10} 114r14
+X 18 buffers.ads
+7M10*Byte<22|63M9>
+8A10*Byte_Buffer(7M10)<integer> 16|21r50 37r51 50r47 17|16r50 18r33 21r33
+. 25r33 30r37 33r33 38r36 41r33 44r33 50r27 51r27 86r51 87r20 98r47 99r33
+. 102r33 106r33 108r33 112r33
+16V14*Buffer_To_String{string} 17|79s36
+17V14*Buffer_Reverse{8A10} 17|64s62
+X 19 exceptions.ads
+1K9*Exceptions 17|7w6 13r13 89r13 95r13 19|8e15
+7X4*Not_Implemented_Exception 17|13r24 89r24 95r24
+X 22 interfac.ads
+52I9*Integer_32<integer> 16|42r21
+63M9*Unsigned_8 16|11r24 26r21 27r21 17|67r25 68r25
+66M9*Unsigned_16 17|28r33 28r48 36r32 36r47 76r33
+74M9*Unsigned_32 16|28r21
+X 23 names.ads
+12K9*Names 17|4w6 5r7 23|22e10
+18V14*Used_Size{natural} 17|28s61 36s60
+21V14*To_Packed_Buffer{18|8A10} 17|33s48 41s48
+X 26 s-os_lib.ads
+192I9*File_Descriptor<integer> 16|18r58 34r59 47r55 17|11r58 49r59 93r55
+

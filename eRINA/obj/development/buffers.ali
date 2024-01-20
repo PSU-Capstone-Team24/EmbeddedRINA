@@ -1,0 +1,127 @@
+V "GNAT Lib v10"
+A -Og
+A -gnatA
+A -ffunction-sections
+A -fdata-sections
+A -g
+A -gnatwa
+A -gnatw.X
+A -gnatVa
+A -gnaty3
+A -gnatya
+A -gnatyA
+A -gnatyB
+A -gnatyb
+A -gnatyc
+A -gnaty-
+A -gnatyd
+A -gnatye
+A -gnatyf
+A -gnatyh
+A -gnatyi
+A -gnatyI
+A -gnatyk
+A -gnatyl
+A -gnatym
+A -gnatyn
+A -gnatyO
+A -gnatyp
+A -gnatyr
+A -gnatyS
+A -gnatyt
+A -gnatyu
+A -gnatyx
+A -mtune=generic
+A -march=x86-64
+P SS ZX
+
+RN
+RV NO_EXCEPTIONS
+RV NO_IO
+RV NO_IMPLICIT_CONDITIONALS
+RV NO_SECONDARY_STACK
+RV NO_STANDARD_STORAGE_POOLS
+RV NO_DYNAMIC_SIZED_OBJECTS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV NO_OBSOLESCENT_FEATURES
+RV SPARK_05
+
+U buffers%b		buffers.adb		c5e5bdb1 NE OO PK
+W ada%s			ada.ads			ada.ali
+Z ada.tags%s		a-tags.adb		a-tags.ali
+W ada.text_io%s		a-textio.adb		a-textio.ali
+W exceptions%s		exceptions.ads		exceptions.ali
+Z system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+
+U buffers%s		buffers.ads		426c2c7a BN EE NE OO PK
+W interfaces%s		interfac.ads		interfac.ali
+
+D ada.ads		20230707070819 76789da1 ada%s
+D a-except.ads		20230707070819 a7106115 ada.exceptions%s
+D a-ioexce.ads		20230707070819 e4a01f64 ada.io_exceptions%s
+D a-stream.ads		20230707070819 119b8fb3 ada.streams%s
+D a-tags.ads		20230707070819 491b781d ada.tags%s
+D a-textio.ads		20230707070819 aef4d56d ada.text_io%s
+D a-unccon.ads		20230707070819 0e9b276f ada.unchecked_conversion%s
+D buffers.ads		20240120203522 18d97e12 buffers%s
+D buffers.adb		20240120203522 43fa8402 buffers%b
+D exceptions.ads	20240120203522 303292cc exceptions%s
+D interfac.ads		20230707070819 5ab55268 interfaces%s
+D i-cstrea.ads		20230707070819 e53d8b8e interfaces.c_streams%s
+D system.ads		20230707070819 4635ec04 system%s
+D s-crtl.ads		20230707070819 0ebbdb71 system.crtl%s
+D s-exctab.ads		20230707070819 54135002 system.exception_table%s
+D s-ficobl.ads		20230707070819 078245e4 system.file_control_block%s
+D s-parame.ads		20230707070819 48ec542b system.parameters%s
+D s-secsta.ads		20230707070819 20bbe636 system.secondary_stack%s
+D s-soflin.ads		20230707070819 a7318a92 system.soft_links%s
+D s-stache.ads		20230707070819 a37c21ec system.stack_checking%s
+D s-stalib.ads		20230707070819 09bd3940 system.standard_library%s
+D s-stoele.ads		20230707070819 2dc34a04 system.storage_elements%s
+D s-traent.ads		20230707070819 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20230707070819 34867c83 system.unsigned_types%s
+D s-wchcon.ads		20230707070819 1b7d22d2 system.wch_con%s
+G a e
+G c Z s b [put_bytes buffers 10 15 none]
+G c Z s b [buffer_to_string buffers 16 14 none]
+G c Z s b [buffer_reverse buffers 17 14 none]
+G c Z s s [byte_bufferIP buffers 8 10 none]
+X 1 ada.ads
+16K9*Ada 20e8 9|4r6 32r7 33r7 36r10 39r7
+X 6 a-textio.ads
+57K13*Text_IO 727e16 9|4w10 32r11 33r11 36r14 39r11
+264U14*New_Line 9|32s19 39s19
+465U14*Put 9|33s19 36s22
+X 8 buffers.ads
+6K9*Buffers 18l5 18e12 9|7b14 75l5 75t12
+7M10*Byte<11|63M9> 8r53 9|10r28 12r24 13r25
+8A10*Byte_Buffer(7M10)<integer> 10r34 14r34 16r41 17r42 17r62 9|9r33 42r33
+. 48r40 65r41 65r61 66r23
+10U15*Put_Bytes 10>26 9|9b14 40l8 40t17
+10a26 Input{8A10} 9|9b25 35r19
+13+14 T 14r60 9|42r59
+14u15*Push_Bytes 14>27 14>47 9|42b14 46l8 46t18
+14a27 Self{8A10} 9|42b26
+14*47 To_Push{13+14} 9|42b46
+16V14*Buffer_To_String{string} 16>32 9|48b13 63l8 63t24
+16a32 Buffer{8A10} 9|48b31 50r28 52r16 53r21 53r56 56r34
+17V14*Buffer_Reverse{8A10} 17>30 9|65b13 73l8 73t22
+17a30 Buffer{8A10} 9|65b29 66r35 66r51 68r24 68r40 69r30 69r37 69r55
+X 9 buffers.adb
+10V16 ToHex{string} 10b16 10>22 30l11 30t16 36s27
+10m22 Val{8|7M10} 12r34 13r34
+11a10 Str{string} 26m10 27m10 29r17
+12m10 First_Digit{8|7M10} 16r13 17m13 17r28 26r34
+13m10 Second_Digit{8|7M10} 21r13 22m13 22r29 27r34
+35m11 Byte=35:19{8|7M10} 36r34
+50a7 Result{string} 53m10 60m7 60r14 62r14
+52i11 I{integer} 53r17 53r63 56r41
+66a7 Return_Buffer{8|8A10} 69m10 72r14
+68i11 I{integer} 69r24 69r51
+X 10 exceptions.ads
+1K9*Exceptions 9|5w6 45r13 10|8e15
+7X4*Not_Implemented_Exception 9|45r24
+X 11 interfac.ads
+38K9*Interfaces 8|4w6 4r22 11|184e15
+63M9*Unsigned_8 8|7r22
+
