@@ -20,4 +20,5 @@ version = "0.1.0-dev"
 ada_enet = "0.1.0-dev"
 stm32_gui = "0.1.0-dev"
 stm32f746disco = "0.1.0-dev"
-
+[[pins]]
+gnat_arm_elf = { version='12.2.1' }

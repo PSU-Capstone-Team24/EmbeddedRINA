@@ -12,6 +12,7 @@ with Exceptions;
 with Bindings.Rlite.Msg.Register;
 
 package body Bindings.Rlite.Ctrl is
+
    procedure Rl_Write_Msg
      (Rfd : OS.File_Descriptor;
       Msg : Byte_Buffer;
@@ -32,12 +33,14 @@ package body Bindings.Rlite.Ctrl is
 
       --  Check for failure conditions
       if Ret < 0 then
-         Debug.Print ("Rl_Write_Msg", "Disk full condition? Ret < 0", Debug.Error);
+         Debug.Print ("Rl_Write_Msg", "Message malformed or write failure", Debug.Error);
+         raise Exceptions.DIF_Registration_Failure;
       end if;
 
       --  Check that we were actually able to write something
       if Ret = 0 then
          Debug.Print ("Rl_Write_Msg", "0 bytes written during OS.Write", Debug.Warning);
+         raise Exceptions.DIF_Registration_Failure;
       end if;
 
    end Rl_Write_Msg;
@@ -63,7 +66,7 @@ package body Bindings.Rlite.Ctrl is
       Move : Register.Move;
    begin
       Register.Deserialize (Resp, Fd);
-      
+
       --  Malformed or received wrong msg_type/event_id, throw exception? idk maybe
       --  Assert msg_type = RLITE_KER_APPL_REGISTER_RESP = 0x0005
       if Resp.Hdr.Msg_Type /= RLITE_KER_APPL_REGISTER_RESP then
