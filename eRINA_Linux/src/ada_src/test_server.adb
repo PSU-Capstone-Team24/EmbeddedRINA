@@ -6,7 +6,6 @@ with Ada.Text_IO;
 with Ada.Strings;
 
 --  Rlite Bindings
-with Bindings.Rlite.Ctrl;
 with Bindings.Rlite.API;
    use Bindings.Rlite.API;
 
@@ -31,7 +30,7 @@ procedure Test_Server is
 
    --  Placeholders for file descriptor values, assume invalid (< 0)
    RINA_Dev_FD : File_Descriptor;
-   Register_Success : File_Descriptor;
+   Register_Success : File_Descriptor := Invalid_FD;
 
    Application_Name : String(1 .. 128) := (others => ASCII.NUL);
    Application_Name_Last : Integer;
@@ -61,21 +60,29 @@ begin
    Ada.Text_IO.Put ("You typed in the string: ");
    Ada.Text_IO.Put_Line (Application_Name);
 
-   Ada.Text_IO.Put ("Enter name of DIF to register '" & Application_Name & "' to: ");
-   Ada.Text_IO.Get_Line (DIF_Name, DIF_Name_Last);
+   while Register_Success = Invalid_FD loop
+      Ada.Text_IO.Put ("Enter name of DIF to register '" & Application_Name & "' to: ");
+      Ada.Text_IO.Get_Line (DIF_Name, DIF_Name_Last);
 
-   Ada.Text_IO.Put ("You typed in the string: ");
-   Ada.Text_IO.Put_Line (DIF_Name);
+      Ada.Text_IO.Put ("You typed in the string: ");
+      Ada.Text_IO.Put_Line (DIF_Name);
 
-   Register_Success := RINA_Register (RINA_Dev_FD, To_Bounded_String (DIF_Name), To_Bounded_String (Application_Name), 0);
-   
-   if Register_Success = Invalid_FD then
-      Text_IO.Put_Line ("Error registering application " & Application_Name & " to " & DIF_Name);
-      RINA_Close (RINA_Dev_FD);
-      raise Exceptions.DIF_Registration_Failure;
-   else
-      Text_IO.Put_Line ("Successfully registered application " & Application_Name & " to " & DIF_Name);
-   end if;
+      begin
+         Register_Success := RINA_Register (RINA_Dev_FD, To_Bounded_String (DIF_Name), To_Bounded_String (Application_Name), 0);
+      exception
+         when Exceptions.DIF_Registration_Failure =>
+            Register_Success := Invalid_FD;
+      end;
+
+      if Register_Success = Invalid_FD then
+         Text_IO.Put_Line ("Error registering application " & Application_Name & " to " & DIF_Name);
+
+         --  Reset DIF name so user has another chance to enter a valid one
+         DIF_Name := (others => ASCII.NUL);
+      else
+         Text_IO.Put_Line ("Successfully registered application " & Application_Name & " to " & DIF_Name);
+      end if;
+   end loop;
 
    loop
       declare
@@ -107,7 +114,7 @@ begin
                   Written : Integer := 0;
                begin
                   Written := Write (Flow_Respond, Buf'Address, Buf'Size / 8);
-                  Debug.Print("Test_Server", "Sent message: " & To_String (Appl_Data_Msg), Debug.Info);
+                  Debug.Print("Test_Server", "Sent message: " & To_String (Appl_Data_Msg) & " Bytes: " & Integer'Image (Written), Debug.Info);
                end;
                
                --  Wait 0.5 second before sending the next message
@@ -115,5 +122,6 @@ begin
             end loop;
       end;
    end loop;
-
+   
+   RINA_Close(RINA_Dev_FD);
 end Test_Server;
