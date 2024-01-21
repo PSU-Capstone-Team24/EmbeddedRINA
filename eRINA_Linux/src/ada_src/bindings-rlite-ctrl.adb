@@ -234,7 +234,7 @@ package body Bindings.Rlite.Ctrl is
       upper_ipcp_id  : Rl_Ipcp_Id_T
    ) return OS.File_Descriptor is
       req      : Flow.Request;
-      wfd, ret : OS.File_Descriptor;
+      wfd      : OS.File_Descriptor;
       function Get_Pid return Unsigned_32
          with Import, Convention => C, External_Name => "getpid";
       Bits_Other_Than_NoWait : constant Unsigned_32 := flags and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NOWAIT);
