@@ -11,6 +11,9 @@ with Interfaces;
 with Names;
   use Names.Name_String;
 
+with Bindings.Rlite.Msg.IPCP;
+   use Bindings.Rlite.Msg.IPCP;
+
 with Bindings.Rlite.Msg.Flow;
    use Bindings.Rlite.Msg;
 
@@ -30,13 +33,20 @@ package Bindings.Rlite.API is
    function RINA_Open return OS.File_Descriptor;
    
    --  Closes a RINA file descriptor
-   -- This exists just for sematic purposes, is redundant with OS.Close
+   --  This exists just for sematic purposes, is redundant with OS.Close
    --  int rina_close (void)
-   procedure RINA_Close(fd : OS.File_Descriptor);
+   procedure RINA_Close (fd : OS.File_Descriptor);
 
-  --  Register the application name local_appl to a DIF in the system.
-  --  After a successful registration, flow allocation requests can be received
-  --  on fd.
+   --  Creates a new IPCP and creates a DIF of type DIF_Type with name DIF_Name
+   function RINA_Create_IPCP (
+      Name : Bounded_String;
+      DIF_Type : DIF_Types;
+      DIF_Name : Bounded_String
+   ) return Rl_IPCP_Id_T;
+
+   --  Register the application name local_appl to a DIF in the system.
+   --  After a successful registration, flow allocation requests can be received
+   --  on fd.
    --  int rina_register(int fd,
    --                    const char *dif_name,
    --                    const char *local_appl
@@ -44,7 +54,8 @@ package Bindings.Rlite.API is
    function RINA_Register (fd : OS.File_Descriptor;
       dif_name : Bounded_String;
       local_appl : Bounded_String;
-      flags : Integer) return OS.File_Descriptor;
+      flags : Integer
+   ) return OS.File_Descriptor;
 
    --  Unregister the application name @local_appl from the DIF where it was registered
    --  The @dif_name argument must match the one passed to rina_register().

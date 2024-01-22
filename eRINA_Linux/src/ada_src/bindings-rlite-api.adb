@@ -19,6 +19,14 @@ package body Bindings.Rlite.API is
       OS.Close (fd);
    end RINA_Close;
    
+   function RINA_Create_IPCP (
+      Name : Bounded_String;
+      DIF_Type : DIF_Types;
+      DIF_Name : Bounded_String) return Rl_IPCP_Id_T is
+   begin
+      return Ctrl.RINA_Create_IPCP (Name, DIF_Type, DIF_Name);
+   end RINA_Create_IPCP;
+
    function RINA_Register (fd : OS.File_Descriptor;
       dif_name : Bounded_String;
       local_appl : Bounded_String;

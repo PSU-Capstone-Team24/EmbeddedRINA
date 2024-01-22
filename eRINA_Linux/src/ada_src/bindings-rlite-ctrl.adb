@@ -58,6 +58,15 @@ package body Bindings.Rlite.Ctrl is
       return Buffer;
    end Rl_Read_Msg;
 
+   function RINA_Create_IPCP (
+      Name : Bounded_String;
+      DIF_Type : Bindings.Rlite.Msg.IPCP.DIF_Types;
+      DIF_Name : Bounded_String) return Rl_IPCP_Id_T is
+   begin
+      --  TODO: Write logic
+      return Rl_Ipcp_Id_T'(0);
+   end RINA_Create_IPCP;
+
    function RINA_Register_Wait (Fd : OS.File_Descriptor;
       Wfd : OS.File_Descriptor) return OS.File_Descriptor is
       Buffer : Byte_Buffer(1 .. 4096) := (others => 0);

@@ -1,7 +1,8 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
-with Interfaces; use Interfaces;
+with Interfaces;
+  use Interfaces;
 with Ada.Containers.Doubly_Linked_Lists;
 
 with Bindings.Rlite.API;
@@ -9,15 +10,18 @@ with Bindings.Rlite.Common;
 with Bindings.Rlite.Utils;
 with Bindings.Rlite.List;
    use Bindings.Rlite.List;
+
 with System;
 with GNAT.OS_Lib;
    use GNAT.OS_Lib;
 
 with Buffers;
   use Buffers;
-  
-with Names; use Names.Name_String;
 
+with Names;
+  use Names.Name_String;
+
+with Bindings.Rlite.Msg.IPCP;
 with Bindings.Rlite.Msg.Flow;
   use Bindings.Rlite.Msg;
 
@@ -51,7 +55,14 @@ package Bindings.Rlite.Ctrl is
    Dif_Name : Bounded_String;
    Local_Appl : Bounded_String;
    Flags : Integer;
-   Reg : Unsigned_8) return OS.File_Descriptor;
+   Reg : Unsigned_8
+   ) return OS.File_Descriptor;
+
+   function RINA_Create_IPCP (
+      Name : Bounded_String;
+      DIF_Type : Bindings.Rlite.Msg.IPCP.DIF_Types;
+      DIF_Name : Bounded_String
+   ) return Rl_IPCP_Id_T;
 
    -- struct rl_msg_base *rl_read_next_msg(int rfd, int quiet)
    function Rl_Read_Msg (
