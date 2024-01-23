@@ -3,6 +3,7 @@ pragma Style_Checks (Off);
 
 --  Bindings
 with Bindings.Rlite.Ctrl;
+with Exceptions;
 
 package body Bindings.Rlite.API is
 
@@ -25,6 +26,14 @@ package body Bindings.Rlite.API is
       DIF_Type : DIF_Types;
       DIF_Name : String) return Rl_IPCP_Id_T is
    begin
+      if Name'Length > Max_Length then
+         raise Exceptions.Bounded_Length_Expcetion;
+      end if;
+
+      if DIF_Name'Length > Max_Length then
+         raise Exceptions.Bounded_Length_Expcetion;
+      end if;
+
       return Ctrl.RINA_Create_IPCP (Fd, To_Bounded_String (Name), DIF_Type, To_Bounded_String (DIF_Name));
    end RINA_Create_IPCP;
 
@@ -33,6 +42,14 @@ package body Bindings.Rlite.API is
       Local_Appl : String;
       Flags : Integer) return OS.File_Descriptor is
    begin
+      if DIF_Name'Length > Max_Length then
+         raise Exceptions.Bounded_Length_Expcetion;
+      end if;
+
+      if Local_Appl'Length > Max_Length then
+         raise Exceptions.Bounded_Length_Expcetion;
+      end if;
+
       return Ctrl.RINA_Register_Common (Fd, To_Bounded_String (DIF_Name), To_Bounded_String (Local_Appl), Flags, 1);
    end RINA_Register;
 
@@ -42,6 +59,14 @@ package body Bindings.Rlite.API is
       Flags : Integer
    ) return OS.File_Descriptor is
    begin
+      if DIF_Name'Length > Max_Length then
+         raise Exceptions.Bounded_Length_Expcetion;
+      end if;
+
+      if Local_Appl'Length > Max_Length then
+         raise Exceptions.Bounded_Length_Expcetion;
+      end if;
+
       return Ctrl.RINA_Register_Common (Fd, To_Bounded_String (DIF_Name), To_Bounded_String (Local_Appl), Flags, 0);
    end RINA_Unregister;
 
@@ -56,15 +81,14 @@ package body Bindings.Rlite.API is
    end RINA_Flow_Accept;
 
    function RINA_Flow_Alloc(
-      DIF_Name       : Bounded_String;
-      Local_Appl     : Bounded_String;
-      Remote_Appl    : Bounded_String;
+      DIF_Name       : String;
+      Local_Appl     : String;
+      Remote_Appl    : String;
       Flowspec       : Flow.RINA_Flow_Spec;
       Flags          : Unsigned_32
    )  return OS.File_Descriptor is
    begin
-      return Ctrl.RINA_Flow_Alloc(DIF_Name, Local_Appl, Remote_Appl,
-      Flowspec, Flags, 16#FFFF#);
+      return Ctrl.RINA_Flow_Alloc(To_Bounded_String (DIF_Name), To_Bounded_String (Local_Appl), To_Bounded_String (Remote_Appl), Flowspec, Flags, 16#FFFF#);
    end RINA_Flow_Alloc;
 
    function RINA_Flow_Alloc_Wait(

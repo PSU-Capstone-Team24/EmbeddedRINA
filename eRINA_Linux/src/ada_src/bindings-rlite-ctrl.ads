@@ -7,7 +7,6 @@ with Ada.Containers.Doubly_Linked_Lists;
 
 with Bindings.Rlite.API;
 with Bindings.Rlite.Common;
-with Bindings.Rlite.Utils;
 with Bindings.Rlite.List;
    use Bindings.Rlite.List;
 
@@ -32,7 +31,6 @@ package Bindings.Rlite.Ctrl is
    --  RLite Binding Packages
    package API renames Bindings.Rlite.API;
    package Common renames Bindings.Rlite.Common;
-   package Utils renames Bindings.Rlite.Utils;
    package List renames Bindings.Rlite.List;
 
    type Sa_Pending_Item_Base is record

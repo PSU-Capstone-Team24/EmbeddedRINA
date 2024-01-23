@@ -92,9 +92,9 @@ package Bindings.Rlite.API is
    --                      const char *remote_appl,
    --                      const struct rina_flow_spec *flowspec, unsigned int flags);
    function RINA_Flow_Alloc(
-      Dif_Name       : Bounded_String;
-      Local_Appl     : Bounded_String;
-      Remote_Appl    : Bounded_String;
+      Dif_Name       : String;
+      Local_Appl     : String;
+      Remote_Appl    : String;
       Flowspec       : Flow.RINA_Flow_Spec;
       Flags          : Unsigned_32
    )  return OS.File_Descriptor;
