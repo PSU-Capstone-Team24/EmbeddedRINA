@@ -9,6 +9,9 @@ with Ada.Strings;
 with Bindings.Rlite.API;
    use Bindings.Rlite.API;
 
+with Bindings.Rlite.Msg.IPCP;
+   use Bindings.Rlite.Msg.IPCP;
+
 with Bindings.Rlite.Msg.Flow;
    use Bindings.Rlite.Msg;
 
@@ -43,6 +46,12 @@ procedure Test_Server is
 
    Appl_Data_Msg : Bounded_String := To_Bounded_String("Application Data Packet #");
    Counter_Msg : Integer := 0;
+   
+   --  Strings used to create the initial IPCP
+   IPCP_Name : constant String := "test.IPCP";
+   IPCP_DIF_Name : constant String := "test.DIF";
+
+   Ipcp_Ret : Rl_Ipcp_Id_T;
 begin
    Text_IO.Put_Line ("Starting RINA server application....");
    RINA_Dev_FD := RINA_Open;
@@ -53,6 +62,10 @@ begin
    else
       Text_IO.Put_Line ("Successfully opened RINA control device (File Desc: " & File_Descriptor'Image (RINA_Dev_FD) & ")");
    end if;
+
+   Ipcp_Ret := RINA_Create_IPCP (RINA_Dev_FD, IPCP_Name, Normal, IPCP_DIF_Name);
+
+   Ada.Text_IO.Put_Line ("Created IPCP '" & IPCP_Name & "' with DIF '" & IPCP_DIF_Name & "' of type Normal - IPCP_ID = " & Rl_Ipcp_Id_T'Image (Ipcp_Ret));
 
    Ada.Text_IO.Put ("Enter name of server application to register: ");
    Ada.Text_IO.Get_Line (Application_Name, Application_Name_Last);
@@ -68,7 +81,7 @@ begin
       Ada.Text_IO.Put_Line (DIF_Name);
 
       begin
-         Register_Success := RINA_Register (RINA_Dev_FD, To_Bounded_String (DIF_Name), To_Bounded_String (Application_Name), 0);
+         Register_Success := RINA_Register (RINA_Dev_FD, DIF_Name, Application_Name, 0);
       exception
          when Exceptions.DIF_Registration_Failure =>
             Register_Success := Invalid_FD;
@@ -123,5 +136,6 @@ begin
       end;
    end loop;
    
-   RINA_Close(RINA_Dev_FD);
+   --  TODO: Some key combo to exit the above loop and close out any open FDs?
+   --  RINA_Close(RINA_Dev_FD);
 end Test_Server;
