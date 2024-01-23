@@ -10,6 +10,7 @@ with Names;
 with Exceptions;
 
 with Bindings.Rlite.Msg.Register;
+with Bindings.Rlite.Msg.IPCP;
 
 package body Bindings.Rlite.Ctrl is
 
@@ -58,13 +59,47 @@ package body Bindings.Rlite.Ctrl is
       return Buffer;
    end Rl_Read_Msg;
 
+   --  TODO: Check special case where IPCP already exists
+   --  i.e. Probe for IPCP first, if exists, return that IPCP_ID
+   --  otherwise, create it. This way no exceptions thrown on deserialize later...
    function RINA_Create_IPCP (
+      Fd : OS.File_Descriptor;
       Name : Bounded_String;
       DIF_Type : Bindings.Rlite.Msg.IPCP.DIF_Types;
-      DIF_Name : Bounded_String) return Rl_IPCP_Id_T is
+      DIF_Name : Bounded_String
+   ) return Rl_IPCP_Id_T is
+      Request : IPCP.Create;
+      Response : IPCP.Create_Response;
    begin
-      --  TODO: Write logic
-      return Rl_Ipcp_Id_T'(0);
+      Request.Hdr.Msg_Type := RLITE_KER_IPCP_CREATE;
+      Request.Hdr.Event_Id := 1;
+      Request.Ipcp_Name    := Name;
+      Request.DIF_Type     := DIF_Type;
+      Request.DIF_Name     := DIF_Name;
+
+      declare
+         Buffer : constant Byte_Buffer := IPCP.Serialize (Request);
+      begin
+         Rl_Write_Msg (Fd, Buffer, 0);
+      end;
+      
+      --  Wait for a response from rLite
+      IPCP.Deserialize (Response, Fd);
+
+      --  Malformed or received wrong msg_type/event_id, throw exception?
+      --  Assert msg_type = RLITE_KER_IPCP_CREATE_RESP
+      if Response.Hdr.Msg_Type /= RLITE_KER_IPCP_CREATE_RESP then
+         Debug.Print("RINA_Create_IPCP", "Deserialized wrong message type?", Debug.Error);
+         raise Exceptions.IPCP_Creation_Exception;
+      end if;
+
+      --  Assert event_id = RINA_REG_EVENT_ID = 0x7A6B
+      if Response.Hdr.Event_Id /= Request.Hdr.Event_Id then
+         Debug.Print("RINA_Create_IPCP", "Deserialized wrong event_id?", Debug.Error);
+         raise Exceptions.IPCP_Creation_Exception;
+      end if;
+
+      return Response.Ipcp_Id;
    end RINA_Create_IPCP;
 
    function RINA_Register_Wait (Fd : OS.File_Descriptor;
@@ -114,21 +149,21 @@ package body Bindings.Rlite.Ctrl is
       return fd;
    end RINA_Register_Wait;
 
-   function RINA_Register_Common (fd : OS.File_Descriptor;
-      dif_name : Bounded_String;
-      local_appl : Bounded_String;
-      flags : Integer;
-      reg : Unsigned_8) return OS.File_Descriptor is
+   function RINA_Register_Common (Fd : OS.File_Descriptor;
+      DIF_Name : Bounded_String;
+      Local_Appl : Bounded_String;
+      Flags : Integer;
+      Reg : Unsigned_8) return OS.File_Descriptor is
 
-      wfd : OS.File_Descriptor := OS.Invalid_FD;
+      Wfd : OS.File_Descriptor := OS.Invalid_FD;
 
       Bits_Other_Than_NoWait : constant Unsigned_32 := Unsigned_32 (flags) and not Unsigned_32 (API.RINA_F_NOWAIT);
       No_Wait : constant Unsigned_32 := Unsigned_32 (flags) and Unsigned_32 (API.RINA_F_NOWAIT);
-      req : Register.Request;
+      Request : Register.Request;
    begin
       -- Ensure DIF name is not empty, if so return invalid
-      if Used_Size (dif_name) = 0 then
-         return wfd;
+      if Used_Size (DIF_Name) = 0 then
+         return Wfd;
       end if;
 
       if Bits_Other_Than_NoWait /= 0 then
@@ -138,34 +173,34 @@ package body Bindings.Rlite.Ctrl is
       end if;
 
       --  Open dedicated file descriptor to perform the operation and wait for response
-      wfd := API.RINA_Open;
+      Wfd := API.RINA_Open;
 
-      if wfd = Invalid_FD then
+      if Wfd = Invalid_FD then
          --  Invalid control device file descriptor
          Debug.Print ("RINA_Register_Common", "File descriptor to RINA control device < 0", Debug.Error);
          return OS.Invalid_FD;
       end if;
 
       --  Setup request message
-      req.Hdr.Msg_Type  := RLITE_KER_APPL_REGISTER;
-      req.Hdr.Event_Id  := RINA_REG_EVENT_ID;
-      req.Reg           := reg;
-      req.Appl_Name     := local_appl;
-      req.Dif_Name      := dif_name;
+      Request.Hdr.Msg_Type  := RLITE_KER_APPL_REGISTER;
+      Request.Hdr.Event_Id  := RINA_REG_EVENT_ID;
+      Request.Reg           := reg;
+      Request.Appl_Name     := local_appl;
+      Request.Dif_Name      := dif_name;
 
       declare
-         Buffer : constant Byte_Buffer := Register.Serialize (req);
+         Buffer : constant Byte_Buffer := Register.Serialize (Request);
       begin
-         Rl_Write_Msg (fd, Buffer, 0);
+         Rl_Write_Msg (Fd, Buffer, 0);
       end;
 
       if No_Wait > 0 then
          --  Return the file descriptor to wait on
-         return wfd;
+         return Wfd;
       end if;
 
       --  Wait for the operation to complete right now
-      return RINA_Register_Wait (fd, wfd);
+      return RINA_Register_Wait (Fd, Wfd);
    end RINA_Register_Common;
 
    function RINA_Flow_Accept(
