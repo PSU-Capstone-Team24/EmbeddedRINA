@@ -1,9 +1,6 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
-with Bindings.Rlite.Msg;
-  use Bindings.Rlite.Msg;
-
 package Bindings.Rlite.Msg.IPCP is
 
    type DIF_Types is (Normal, Ethernet);
@@ -21,5 +18,16 @@ package Bindings.Rlite.Msg.IPCP is
 
    overriding
    function Serialize (Self : in Create) return Byte_Buffer;
+
+   type Create_Response is new Rl_Msg_Base with record 
+      Ipcp_Id : Rl_Ipcp_Id_T;
+   end record;
+   pragma Pack(Create_Response);
+
+   overriding
+   procedure Deserialize (Self : in out Create_Response; fd : OS.File_Descriptor);
+
+   overriding
+   function Serialize (Self : in Create_Response) return Byte_Buffer;
 
 end Bindings.Rlite.Msg.IPCP;
