@@ -26,11 +26,11 @@ package body Bindings.Rlite.API is
       DIF_Type : DIF_Types;
       DIF_Name : String) return Rl_IPCP_Id_T is
    begin
-      if Name'Length > Max_Length then
+      if Name'Length > Max_Length or Name'Length = 0 then
          raise Exceptions.Bounded_Length_Expcetion;
       end if;
 
-      if DIF_Name'Length > Max_Length then
+      if DIF_Name'Length > Max_Length or DIF_Name'Length = 0 then
          raise Exceptions.Bounded_Length_Expcetion;
       end if;
 
@@ -42,11 +42,11 @@ package body Bindings.Rlite.API is
       Local_Appl : String;
       Flags : Integer) return OS.File_Descriptor is
    begin
-      if DIF_Name'Length > Max_Length then
+      if DIF_Name'Length > Max_Length or DIF_Name'Length = 0 then
          raise Exceptions.Bounded_Length_Expcetion;
       end if;
 
-      if Local_Appl'Length > Max_Length then
+      if Local_Appl'Length > Max_Length or Local_Appl'Length = 0 then
          raise Exceptions.Bounded_Length_Expcetion;
       end if;
 
@@ -59,11 +59,11 @@ package body Bindings.Rlite.API is
       Flags : Integer
    ) return OS.File_Descriptor is
    begin
-      if DIF_Name'Length > Max_Length then
+      if DIF_Name'Length > Max_Length or DIF_Name'Length = 0 then
          raise Exceptions.Bounded_Length_Expcetion;
       end if;
 
-      if Local_Appl'Length > Max_Length then
+      if Local_Appl'Length > Max_Length or Local_Appl'Length = 0 then
          raise Exceptions.Bounded_Length_Expcetion;
       end if;
 
@@ -88,6 +88,18 @@ package body Bindings.Rlite.API is
       Flags          : Unsigned_32
    )  return OS.File_Descriptor is
    begin
+      if DIF_Name'Length > Max_Length or DIF_Name'Length = 0 then
+         raise Exceptions.Bounded_Length_Expcetion;
+      end if;
+
+      if Local_Appl'Length > Max_Length or Local_Appl'Length = 0 then
+         raise Exceptions.Bounded_Length_Expcetion;
+      end if;
+
+      if Remote_Appl'Length > Max_Length or Remote_Appl'Length = 0 then
+         raise Exceptions.Bounded_Length_Expcetion;
+      end if;
+
       return Ctrl.RINA_Flow_Alloc(To_Bounded_String (DIF_Name), To_Bounded_String (Local_Appl), To_Bounded_String (Remote_Appl), Flowspec, Flags, 16#FFFF#);
    end RINA_Flow_Alloc;
 
