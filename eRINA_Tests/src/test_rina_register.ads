@@ -12,4 +12,7 @@ private
 
    procedure Test_Register_DIF_Length (Object : in out Test);
    procedure Test_Register_DIF_Empty (Object : in out Test);
+   procedure Test_Register_DIF_Already_Registered (Object : in out Test);
+   procedure Test_Register_DIF_Register_New (Object : in out Test);
+   procedure Test_Register_DIF_Invalid_File_Descriptor (Object : in out Test);
 end Test_RINA_Register;
