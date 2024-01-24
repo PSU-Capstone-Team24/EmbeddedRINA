@@ -25,6 +25,8 @@ package body Test_RINA_Register is
       Name_003 : constant String := "TC-003";
       Name_004 : constant String := "TC-004";
       Name_008 : constant String := "TC-008";
+      Name_009 : constant String := "TC-009";
+      Name_010 : constant String := "TC-010";
    begin
       Test_Suite.Add_Test (Caller.Create
          (Name_003 & " Fails when DIF name too long", Test_Register_DIF_Length'Access));
@@ -32,6 +34,11 @@ package body Test_RINA_Register is
          (Name_004 & " Fails when DIF name is empty", Test_Register_DIF_Empty'Access));
       Test_Suite.Add_Test (Caller.Create
          (Name_008 & " Fails when DIF name is already registered", Test_Register_DIF_Already_Registered'Access));
+      Test_Suite.Add_Test (Caller.Create
+         (Name_009 & " Succeeds when DIF name is not already registered", Test_Register_DIF_Register_New'Access));
+      Test_Suite.Add_Test (Caller.Create
+         (Name_010 & " Fails when invalid file descriptor passed", Test_Register_DIF_Register_New'Access));
+         
 
       return Test_Suite'Access;
    end Suite;
@@ -73,14 +80,23 @@ package body Test_RINA_Register is
       exception
          when Exceptions.DIF_Registration_Failure =>
             Caused_Error := True;   
-      Assert(Caused_Error, ("App_Name already registered"));
+      Assert(Caused_Error, "App_Name already registered");
    end Test_Register_DIF_Already_Registered;
 
    procedure Test_Register_DIF_Register_New (Object : in out Test) is
+      DIF_Name : Bounded_String := To_Bounded_String ("Test DIF");
+      App_Name : Bounded_String := To_Bounded_String ("Test App");
+      Register_Result : File_Descriptor := Invalid_FD;
+      RINA_Dev_FD : File_Descriptor := RINA_Open;
+      Caused_Error : Boolean := False;
    begin
-      null;
+      Register_Result := RINA_Register (RINA_Dev_FD, DIF_Name, App_Name, 0);
+      exception
+         when Exceptions.DIF_Registration_Failure =>
+            Caused_Error := True;
+      Assert(Caused_Error, "Issue registering application name to DIF");
    end Test_Register_DIF_Register_New;
-
+      
    procedure Test_Register_DIF_Invalid_File_Descriptor (Object : in out Test) is
    begin
       null;
