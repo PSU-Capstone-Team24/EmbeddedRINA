@@ -11,9 +11,6 @@ with Bindings.Rlite.API;
 with Bindings.Rlite.Msg.Flow;
    use Bindings.Rlite.Msg;
 
-with Names;
-   use Names.Name_String;
-
 with Exceptions;
 with Debug;
 
@@ -69,7 +66,7 @@ begin
       QoS_Parameters : Flow.RINA_Flow_Spec;
    begin
       Ada.Text_IO.Put_Line ("Attempting to allocate a flow...");
-      Alloc_Success := RINA_Flow_Alloc (To_Bounded_String(DIF_Name), To_Bounded_String (Client_Name), To_Bounded_String (Server_Name), QoS_Parameters, 0);
+      Alloc_Success := RINA_Flow_Alloc (DIF_Name, Client_Name, Server_Name, QoS_Parameters, 0);
    end;
 
    if Alloc_Success = Invalid_FD then

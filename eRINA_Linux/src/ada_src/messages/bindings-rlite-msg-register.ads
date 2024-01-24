@@ -1,9 +1,6 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
-with Bindings.Rlite.Msg;
-  use Bindings.Rlite.Msg;
-
 package Bindings.Rlite.Msg.Register is
    
    -- (Application --> Kernel) to register a name.

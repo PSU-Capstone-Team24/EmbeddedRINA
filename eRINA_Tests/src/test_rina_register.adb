@@ -5,11 +5,7 @@ with AUnit.Assertions;
 with AUnit.Test_Caller;
 with GNAT.OS_Lib;
 with Bindings.Rlite.API;
-with Names;
-   use Names.Name_String;
-
-with Ada.Strings;
-with Debug;
+with Exceptions;
 
 package body Test_RINA_Register is
    use AUnit.Assertions;
@@ -33,24 +29,26 @@ package body Test_RINA_Register is
    end Suite;
 
    procedure Test_Register_DIF_Length (Object : in out Test) is
-      Fd : File_Descriptor := Invalid_FD;
-      Dif_Name : Bounded_String;
+      RINA_Dev_FD : constant File_Descriptor := RINA_Open;
+      Dif_Name : constant String := "this___is___a___really___long___dif___name___that___should___fail___because___it___is___over___128___characters___long___________";
+      Register_Success : File_Descriptor := Invalid_FD;
       Caused_Error : Boolean := False;
    begin
-      Dif_Name := To_Bounded_String ("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+      
+      Register_Success := RINA_Register (RINA_Dev_FD, DIF_Name, Dif_Name, 0);
       exception
-         when Ada.Strings.Length_Error =>
+         when Exceptions.Bounded_Length_Expcetion =>
             Caused_Error := True;
 
-      Assert(Caused_Error, "DIF_Name length > 128 characters");
+      Assert(Caused_Error and Register_Success = Invalid_FD, "DIF_Name allowed to register with length > 128 characters");
    end Test_Register_DIF_Length;
 
    procedure Test_Register_DIF_Empty (Object : in out Test) is
-      DIF_Name : Bounded_String := To_Bounded_String ("");
+      RINA_Dev_FD : constant File_Descriptor := RINA_Open;
+      DIF_Name : constant String := "";
       Register_Success : File_Descriptor := Invalid_FD;
-      RINA_Dev_FD : File_Descriptor := RINA_Open;
    begin
-      Register_Success := RINA_Register (RINA_Dev_FD, DIF_Name, To_Bounded_String ("TestApplicationName"), 0);
+      Register_Success := RINA_Register (RINA_Dev_FD, DIF_Name, "TestApplicationName", 0);
       
       Assert(Register_Success = Invalid_FD, "DIF_Name blank");
    end Test_Register_DIF_Empty;
