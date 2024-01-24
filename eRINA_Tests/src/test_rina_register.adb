@@ -53,4 +53,49 @@ package body Test_RINA_Register is
       Assert(Register_Success = Invalid_FD, "DIF_Name blank");
    end Test_Register_DIF_Empty;
 
+   procedure Test_Register_DIF_Already_Registered (Object : in out Test) is
+      DIF_Name : String := "Test DIF";
+      App_Name : String := "Test App";
+      Register_Result : File_Descriptor := Invalid_FD;
+      RINA_Dev_FD : File_Descriptor := RINA_Open;
+      Caused_Error : Boolean := False;
+   begin
+      -- First success registration
+      Register_Result := RINA_Register (RINA_Dev_FD, DIF_Name, App_Name, 0);
+      -- Second registration failure
+      Register_Result := RINA_Register (RINA_Dev_FD, DIF_Name, App_Name, 0);
+      exception
+         when Exceptions.DIF_Registration_Failure =>
+            Caused_Error := True;   
+      Assert(Caused_Error, "App_Name already registered");
+   end Test_Register_DIF_Already_Registered;
+
+   procedure Test_Register_DIF_Register_New (Object : in out Test) is
+      DIF_Name : String := "Test DIF";
+      App_Name : String := "Test App";
+      Register_Result : File_Descriptor := Invalid_FD;
+      RINA_Dev_FD : File_Descriptor := RINA_Open;
+      Caused_Error : Boolean := False;
+   begin
+      Register_Result := RINA_Register (RINA_Dev_FD, DIF_Name, App_Name, 0);
+      exception
+         when Exceptions.DIF_Registration_Failure =>
+            Caused_Error := True;
+      Assert(Caused_Error, "Issue registering application name to DIF");
+   end Test_Register_DIF_Register_New;
+      
+   procedure Test_Register_DIF_Invalid_File_Descriptor (Object : in out Test) is
+   DIF_Name : String := "Test DIF";
+      App_Name : String := "Test App";
+      Register_Result : File_Descriptor := Invalid_FD;
+      RINA_Dev_FD : File_Descriptor := -1;
+      Caused_Error : Boolean := False;
+   begin
+      Register_Result := RINA_Register (RINA_Dev_FD, DIF_Name, App_Name, 0);
+      exception
+         when Exceptions.DIF_Registration_Failure =>
+            Caused_Error := True;
+      Assert(Caused_Error, "Invalid file descriptor passed to RINA_Register");
+   end Test_Register_DIF_Invalid_File_Descriptor;
+
 end Test_RINA_Register;
