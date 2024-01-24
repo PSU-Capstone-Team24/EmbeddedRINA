@@ -19,6 +19,9 @@ package body Test_RINA_Register is
    function Suite return AUnit.Test_Suites.Access_Test_Suite is
       Name_003 : constant String := "TC-003";
       Name_004 : constant String := "TC-004";
+      Name_008 : constant String := "TC-008";
+      Name_009 : constant String := "TC-009";
+      Name_010 : constant String := "TC-010";
    begin
       Test_Suite.Add_Test (Caller.Create
          (Name_003 & " Fails when DIF name too long", Test_Register_DIF_Length'Access));
