@@ -11,6 +11,9 @@ with Interfaces;
 with Names;
   use Names.Name_String;
 
+with Bindings.Rlite.Msg.IPCP;
+   use Bindings.Rlite.Msg.IPCP;
+
 with Bindings.Rlite.Msg.Flow;
    use Bindings.Rlite.Msg;
 
@@ -30,21 +33,30 @@ package Bindings.Rlite.API is
    function RINA_Open return OS.File_Descriptor;
    
    --  Closes a RINA file descriptor
-   -- This exists just for sematic purposes, is redundant with OS.Close
+   --  This exists just for sematic purposes, is redundant with OS.Close
    --  int rina_close (void)
-   procedure RINA_Close(fd : OS.File_Descriptor);
+   procedure RINA_Close (fd : OS.File_Descriptor);
 
-  --  Register the application name local_appl to a DIF in the system.
-  --  After a successful registration, flow allocation requests can be received
-  --  on fd.
+   --  Creates a new IPCP and creates a DIF of type DIF_Type with name DIF_Name
+   function RINA_Create_IPCP (
+      Fd : OS.File_Descriptor;
+      Name : String;
+      DIF_Type : DIF_Types;
+      DIF_Name : String
+   ) return Rl_IPCP_Id_T;
+
+   --  Register the application name local_appl to a DIF in the system.
+   --  After a successful registration, flow allocation requests can be received
+   --  on fd.
    --  int rina_register(int fd,
    --                    const char *dif_name,
    --                    const char *local_appl
    --                    int flags)
    function RINA_Register (fd : OS.File_Descriptor;
-      dif_name : Bounded_String;
-      local_appl : Bounded_String;
-      flags : Integer) return OS.File_Descriptor;
+      dif_name : String;
+      local_appl : String;
+      flags : Integer
+   ) return OS.File_Descriptor;
 
    --  Unregister the application name @local_appl from the DIF where it was registered
    --  The @dif_name argument must match the one passed to rina_register().
@@ -52,10 +64,10 @@ package Bindings.Rlite.API is
    --  int rina_unregister(int fd, const char *dif_name, const char *local_appl,
    --                      int flags);
    function RINA_Unregister (
-      fd : OS.File_Descriptor;
-      dif_name : Bounded_String;
-      local_appl : Bounded_String;
-      flags : Integer
+      Fd : OS.File_Descriptor;
+      Dif_Name : String;
+      Local_Appl : String;
+      Flags : Integer
    ) return OS.File_Descriptor;
 
    --  Accept an incoming flow request arrived on @fd. If @flags does not contain
@@ -65,10 +77,10 @@ package Bindings.Rlite.API is
    --  int rina_flow_accept(int fd, char **remote_appl, struct rina_flow_spec *spec,
    --                       unsigned int flags);
    function RINA_Flow_Accept (
-      fd           : OS.File_Descriptor;
-      remote_appl  : in out Bounded_String;
-      spec         : Msg.Flow.RINA_Flow_Spec;
-      flags        : Integer
+      Fd           : OS.File_Descriptor;
+      Remote_Appl  : in out Bounded_String;
+      Spec         : Msg.Flow.RINA_Flow_Spec;
+      Flags        : Integer
       ) return OS.File_Descriptor;
 
 
@@ -80,11 +92,11 @@ package Bindings.Rlite.API is
    --                      const char *remote_appl,
    --                      const struct rina_flow_spec *flowspec, unsigned int flags);
    function RINA_Flow_Alloc(
-      dif_name       : Bounded_String;
-      local_appl     : Bounded_String;
-      remote_appl    : Bounded_String;
-      flowspec       : Flow.RINA_Flow_Spec;
-      flags          : Unsigned_32
+      Dif_Name       : String;
+      Local_Appl     : String;
+      Remote_Appl    : String;
+      Flowspec       : Flow.RINA_Flow_Spec;
+      Flags          : Unsigned_32
    )  return OS.File_Descriptor;
 
    --  Wait for the completion of a flow allocation procedure previously initiated
@@ -92,13 +104,13 @@ package Bindings.Rlite.API is
    --  file descriptor must match the one returned by rina_flow_alloc().
    --  int rina_flow_alloc_wait(int wfd);
    function RINA_Flow_Alloc_Wait(
-      wfd            : OS.File_Descriptor 
+      Wfd            : OS.File_Descriptor 
    )  return OS.File_Descriptor;
 
    function RINA_Flow_Respond(
-      fd       : OS.File_Descriptor;
-      handle   : OS.File_Descriptor;
-      response : Integer
+      Fd       : OS.File_Descriptor;
+      Handle   : OS.File_Descriptor;
+      Response : Integer
    ) return OS.File_Descriptor;
 
 
