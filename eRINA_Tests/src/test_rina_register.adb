@@ -37,7 +37,7 @@ package body Test_RINA_Register is
       Test_Suite.Add_Test (Caller.Create
          (Name_009 & " Succeeds when DIF name is not already registered", Test_Register_DIF_Register_New'Access));
       Test_Suite.Add_Test (Caller.Create
-         (Name_010 & " Fails when invalid file descriptor passed", Test_Register_DIF_Register_New'Access));
+         (Name_010 & " Fails when invalid file descriptor passed", Test_Register_DIF_Invalid_File_Descriptor'Access));
          
 
       return Test_Suite'Access;
@@ -98,8 +98,17 @@ package body Test_RINA_Register is
    end Test_Register_DIF_Register_New;
       
    procedure Test_Register_DIF_Invalid_File_Descriptor (Object : in out Test) is
+   DIF_Name : Bounded_String := To_Bounded_String ("Test DIF");
+      App_Name : Bounded_String := To_Bounded_String ("Test App");
+      Register_Result : File_Descriptor := Invalid_FD;
+      RINA_Dev_FD : File_Descriptor := -1;
+      Caused_Error : Boolean := False;
    begin
-      null;
+      Register_Result := RINA_Register (RINA_Dev_FD, DIF_Name, App_Name, 0);
+      exception
+         when Exceptions.DIF_Registration_Failure =>
+            Caused_Error := True;
+      Assert(Caused_Error, "Invalid file descriptor passed to RINA_Register");
    end Test_Register_DIF_Invalid_File_Descriptor;
 
 end Test_RINA_Register;
