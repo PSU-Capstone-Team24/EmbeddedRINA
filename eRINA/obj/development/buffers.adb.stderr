@@ -1,2 +1,0 @@
-buffers.adb:42:26: warning: formal parameter "Self" is not referenced
-buffers.adb:42:46: warning: formal parameter "To_Push" is not referenced
