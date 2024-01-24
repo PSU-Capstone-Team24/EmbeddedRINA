@@ -27,6 +27,12 @@ package body Test_RINA_Register is
          (Name_003 & " Fails when DIF name too long", Test_Register_DIF_Length'Access));
       Test_Suite.Add_Test (Caller.Create
          (Name_004 & " Fails when DIF name is empty", Test_Register_DIF_Empty'Access));
+      Test_Suite.Add_Test (Caller.Create
+         (Name_008 & " Fails when DIF name is already registered", Test_Register_DIF_Already_Registered'Access));
+      Test_Suite.Add_Test (Caller.Create
+         (Name_009 & " Succeeds when DIF name is not already registered", Test_Register_DIF_Register_New'Access));
+      Test_Suite.Add_Test (Caller.Create
+         (Name_010 & " Fails when invalid file descriptor passed", Test_Register_DIF_Invalid_File_Descriptor'Access));
 
       return Test_Suite'Access;
    end Suite;
