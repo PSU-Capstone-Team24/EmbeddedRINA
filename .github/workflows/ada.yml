@@ -18,7 +18,7 @@ jobs:
     
     - uses: alire-project/setup-alire@v2
 
-    - name: Set up GNAT toolchain
+    - name: Install Dependencies
       run: >
         sudo apt-get update &&
         sudo apt-get install gcc g++ libprotobuf-dev protobuf-compiler cmake linux-headers-$(uname -r) python-is-python3 swig wpasupplicant hostapd &&
@@ -31,6 +31,17 @@ jobs:
     - name: Build
       run: cd eRINA_Linux && alr build
     
+    - name: Run UIPCPS
+      run: >
+        sudo modprobe rlite && 
+        sudo modprobe rlite-normal &&
+        sudo rlite-uipcps &
+
+    - name: Execute Tests
+      run: >
+        cd ../eRINA_Tests/
+        sudo ./bin/erina_tests
+      
     - name: Slack Notification Success
       if: success()
       uses: rtCamp/action-slack-notify@v2
