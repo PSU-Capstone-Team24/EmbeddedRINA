@@ -39,7 +39,7 @@ jobs:
 
     - name: Execute Tests
       run: >
-        cd ../eRINA_Tests/
+        cd ../eRINA_Tests/ &&
         sudo ./bin/erina_tests
       
     - name: Slack Notification Success
