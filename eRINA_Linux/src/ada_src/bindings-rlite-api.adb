@@ -3,6 +3,8 @@ pragma Style_Checks (Off);
 
 --  Bindings
 with Bindings.Rlite.Ctrl;
+
+--  Exceptions
 with Exceptions;
 
 package body Bindings.Rlite.API is
@@ -36,6 +38,26 @@ package body Bindings.Rlite.API is
 
       return Ctrl.RINA_Create_IPCP (Fd, To_Bounded_String (Name), DIF_Type, To_Bounded_String (DIF_Name));
    end RINA_Create_IPCP;
+
+   -- Removes/destroys an existing IPCP by name
+   procedure RINA_Destroy_IPCP (
+      Fd : OS.File_Descriptor;
+      Name : String) is
+      Bounded_Name : constant Bounded_String := To_Bounded_String (Name);
+   begin
+      if Ctrl.IPCP_Map.Contains (Bounded_Name) then
+         RINA_Destroy_IPCP(Fd, Ctrl.IPCP_Map (Bounded_Name));
+      end if;
+   end RINA_Destroy_IPCP;
+
+   -- Removes/destroys an existing IPCP by its IPCP_Id
+   -- (This can be looked up via the IPCP hashmap in Ctrl logic)
+   procedure RINA_Destroy_IPCP (
+      Fd : OS.File_Descriptor;
+      Id : Rl_Ipcp_Id_T) is
+   begin
+      Ctrl.RINA_Destroy_IPCP (Fd, Id);
+   end RINA_Destroy_IPCP;
 
    function RINA_Register (Fd : OS.File_Descriptor;
       DIF_Name : String;
