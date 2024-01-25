@@ -98,6 +98,10 @@ package body Bindings.Rlite.Ctrl is
          Debug.Print("RINA_Create_IPCP", "Deserialized wrong event_id?", Debug.Error);
          raise Exceptions.IPCP_Creation_Exception;
       end if;
+   
+      --  Insert into IPCP name => IPCP ID map
+      --  The hashmap will simply update if this name already exists
+      IPCP_Map.Include(Name, Response.Ipcp_Id);
 
       return Response.Ipcp_Id;
    end RINA_Create_IPCP;

@@ -4,9 +4,6 @@ pragma Style_Checks (Off);
 with Bindings.Rlite.Msg;
   use Bindings.Rlite.Msg;
 
-with Bindings.Rlite.List;
-   use Bindings.Rlite;
-
 package Bindings.Rlite.Msg.Flow is
 
    RINA_FLOW_SPEC_VERSION : constant Unsigned_32 := 2;

@@ -24,4 +24,8 @@ package body Names is
 
         return Buffer;
     end To_Packed_Buffer;
+
+    function Hash(Name : in Bounded_String) return Ada.Containers.Hash_Type is begin
+       return Ada.Strings.Hash(To_String (Name));
+   end Hash;
 end Names;

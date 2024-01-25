@@ -3,7 +3,10 @@ pragma Style_Checks (Off);
 
 with Interfaces;
   use Interfaces;
+
 with Ada.Containers.Doubly_Linked_Lists;
+with Ada.Containers.Hashed_Maps;
+  use Ada.Containers;
 
 with Bindings.Rlite.API;
 with Bindings.Rlite.Common;
@@ -48,6 +51,15 @@ package Bindings.Rlite.Ctrl is
 
    package Sig_Action_List is new Ada.Containers.Doubly_Linked_Lists
      (Element_Type => Sa_Pending_Item);
+
+   package IPCP_Id_Map is new Ada.Containers.Hashed_Maps (
+      Key_Type => Bounded_String,
+      Element_Type => Rl_Ipcp_Id_T,
+      Hash => Names.Hash,
+      Equivalent_Keys => "="
+   );
+
+   IPCP_Map : IPCP_Id_Map.Map;
 
    function RINA_Register_Common (Fd : OS.File_Descriptor;
    Dif_Name : Bounded_String;
