@@ -91,7 +91,7 @@ package Bindings.Rlite.Msg is
 
    --  Abstract base serialization function, must be overridden by child messages
    function Serialize (Self : in Rl_Msg_Base) return Byte_Buffer is abstract;
-   procedure Deserialize (Self : in out Rl_Msg_Base; fd : OS.File_Descriptor) is abstract;
+   procedure Deserialize (Self : in out Rl_Msg_Base; fd : OS.File_Descriptor) is null;
 
    function Read_Next_Msg(fd : OS.File_Descriptor) return Byte_Buffer;
 
