@@ -10,10 +10,26 @@ with Names;
 with Exceptions;
 
 with Bindings.Rlite.Msg.Register;
-with Bindings.Rlite.Msg.IPCP;
 
 package body Bindings.Rlite.Ctrl is
 
+   --  I don't like this being here
+   --  we should separate the IPCP map and relevant funcs to a separate package
+   function Search_Map_By_Value
+     (Map_Var : in out Map; Value : Rl_Ipcp_Id_T) return Cursor is
+      Index : Cursor := No_Element;
+   begin
+      while Index /= No_Element loop
+         if Map_Var (Index) = Value then
+            return Index;
+         end if;
+
+         Index := Next (Index);
+      end loop;
+
+      return No_Element;
+   end Search_Map_By_Value;
+   
    procedure Rl_Write_Msg
      (Rfd : OS.File_Descriptor;
       Msg : Byte_Buffer;
@@ -105,6 +121,29 @@ package body Bindings.Rlite.Ctrl is
 
       return Response.Ipcp_Id;
    end RINA_Create_IPCP;
+
+   procedure RINA_Destroy_IPCP (
+      Fd : OS.File_Descriptor;
+      Id : Rl_Ipcp_Id_T) is
+      Request : IPCP.Destroy;
+      Index : Cursor;
+   begin
+      Request.Hdr.Msg_Type := RLITE_KER_IPCP_DESTROY;
+      Request.Hdr.Event_Id := 1;
+      Request.Ipcp_Id      := Id;
+
+      declare
+         Buffer : constant Byte_Buffer := IPCP.Serialize (Request);
+      begin
+         Rl_Write_Msg (Fd, Buffer, 0);
+      end;
+      
+      Index := Search_Map_By_Value (IPCP_Map, Id);
+
+      if Index /= No_Element then
+         IPCP_Map.Delete (Index);
+      end if;
+   end RINA_Destroy_IPCP;
 
    function RINA_Register_Wait (Fd : OS.File_Descriptor;
       Wfd : OS.File_Descriptor) return OS.File_Descriptor is

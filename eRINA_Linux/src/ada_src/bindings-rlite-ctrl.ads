@@ -59,7 +59,10 @@ package Bindings.Rlite.Ctrl is
       Equivalent_Keys => "="
    );
 
-   IPCP_Map : IPCP_Id_Map.Map;
+   use IPCP_Id_Map;
+
+   IPCP_Map : Map;
+   function Search_Map_By_Value (Map_Var : in out Map; Value : Rl_Ipcp_Id_T) return Cursor;
 
    function RINA_Register_Common (Fd : OS.File_Descriptor;
    Dif_Name : Bounded_String;
@@ -74,6 +77,10 @@ package Bindings.Rlite.Ctrl is
       DIF_Type : Bindings.Rlite.Msg.IPCP.DIF_Types;
       DIF_Name : Bounded_String
    ) return Rl_IPCP_Id_T;
+
+   procedure RINA_Destroy_IPCP (
+      Fd : OS.File_Descriptor;
+      Id : Rl_Ipcp_Id_T);
 
    -- struct rl_msg_base *rl_read_next_msg(int rfd, int quiet)
    function Rl_Read_Msg (
