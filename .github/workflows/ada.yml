@@ -29,7 +29,10 @@ jobs:
         sudo make install depmod
 
     - name: Build
-      run: cd eRINA_Linux && alr build
+      run: >
+        cd eRINA_Linux &&
+        alr build &&
+        cd ..
     
     - name: Run UIPCPS
       run: >
@@ -39,7 +42,8 @@ jobs:
 
     - name: Execute Tests
       run: >
-        cd ../eRINA_Tests/ &&
+        cd eRINA_Tests &&
+        alr build &&
         sudo ./bin/erina_tests
       
     - name: Slack Notification Success
