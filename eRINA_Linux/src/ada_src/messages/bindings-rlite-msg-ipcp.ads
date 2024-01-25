@@ -14,9 +14,6 @@ package Bindings.Rlite.Msg.IPCP is
    pragma Pack(Create);
 
    overriding
-   procedure Deserialize (Self : in out Create; fd : OS.File_Descriptor);
-
-   overriding
    function Serialize (Self : in Create) return Byte_Buffer;
 
    type Create_Response is new Rl_Msg_Base with record 
@@ -25,9 +22,17 @@ package Bindings.Rlite.Msg.IPCP is
    pragma Pack(Create_Response);
 
    overriding
-   procedure Deserialize (Self : in out Create_Response; fd : OS.File_Descriptor);
+   function Serialize (Self : in Create_Response) return Byte_Buffer;
 
    overriding
-   function Serialize (Self : in Create_Response) return Byte_Buffer;
+   procedure Deserialize (Self : in out Create_Response; Fd : OS.File_Descriptor);
+
+   type Destroy is new Rl_Msg_Base with record
+      Ipcp_Id : Rl_Ipcp_Id_T;
+   end record;
+   pragma Pack(Destroy);
+
+   overriding
+   function Serialize (Self : in Destroy) return Byte_Buffer;
 
 end Bindings.Rlite.Msg.IPCP;
