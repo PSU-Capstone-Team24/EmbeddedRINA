@@ -75,9 +75,6 @@ package body Bindings.Rlite.Ctrl is
       return Buffer;
    end Rl_Read_Msg;
 
-   --  TODO: Check special case where IPCP already exists
-   --  i.e. Probe for IPCP first, if exists, return that IPCP_ID
-   --  otherwise, create it. This way no exceptions thrown on deserialize later...
    function RINA_Create_IPCP (
       Fd : OS.File_Descriptor;
       Name : Bounded_String;
@@ -87,6 +84,12 @@ package body Bindings.Rlite.Ctrl is
       Request : IPCP.Create;
       Response : IPCP.Create_Response;
    begin
+
+      -- If we're trying to create an IPCP that already exists, return the known IPCP_Id
+      if IPCP_Map.Contains (Name) then
+         return IPCP_Map (Name);
+      end if;
+
       Request.Hdr.Msg_Type := RLITE_KER_IPCP_CREATE;
       Request.Hdr.Event_Id := 1;
       Request.Ipcp_Name    := Name;
