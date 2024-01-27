@@ -45,7 +45,7 @@ package body Test_RINA_Wait_Register_Unregister is
       Caused_Error : Boolean := False;
       Register_Wait_Result : File_Descriptor;
    begin
-      Register_Wait_Success := RINA_Register_Wait (RINA_Dev_FD, Invalid_Wait_FD);
+      Register_Wait_Success := RINA_Register_Wait (RINA_Dev_FD, Invalid_FD);
       Assert (Register_Wait_Success = -1, "rina_register_wait did not return -1 for invalid wait FD");
    end Test_Register_Wait_Invalid_Wait_FD;
 

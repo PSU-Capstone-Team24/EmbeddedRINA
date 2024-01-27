@@ -49,6 +49,9 @@ package Bindings.Rlite.Ctrl is
    package Sig_Action_List is new Ada.Containers.Doubly_Linked_Lists
      (Element_Type => Sa_Pending_Item);
 
+   function RINA_Register_Wait (Fd : OS.File_Descriptor;
+      Wfd : OS.File_Descriptor) return OS.File_Descriptor;
+
    function RINA_Register_Common (Fd : OS.File_Descriptor;
    Dif_Name : Bounded_String;
    Local_Appl : Bounded_String;
