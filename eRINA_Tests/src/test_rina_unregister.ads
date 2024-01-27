@@ -11,5 +11,6 @@ private
    type Test is new AUnit.Test_Fixtures.Test_Fixture with null record;
 
    procedure Test_Unregister_DIF_Empty (Object : in out Test);
+   procedure Test_Unregister_DIF_Name_Not_Registered (Object : in out Test);
 
 end Test_RINA_Unregister;
