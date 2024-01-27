@@ -1,12 +1,14 @@
 --  Temp disabling
 pragma Style_Checks (Off);
 
+with Ada.Strings;
+with Ada.Strings.Hash;
 with Ada.Strings.Bounded;
+
+with Ada.Containers;
+
 with Buffers;
   use Buffers;
-
-with Interfaces;
-  use Interfaces;
 
 --  Max name length to be used for DIF_Name, Appl_Name, etc
 package Names is
@@ -19,4 +21,7 @@ package Names is
 
     --  Takes a Bounded String and returns the packed buffer of all characters up to null terminator
     function To_Packed_Buffer(Input : Bounded_String) return Byte_Buffer;
+
+    -- Takes in a bounded_string and returns a unique hash code
+    function Hash(Name : in Bounded_String) return Ada.Containers.Hash_Type;
 end Names;

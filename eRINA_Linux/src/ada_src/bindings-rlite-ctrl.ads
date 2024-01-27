@@ -3,7 +3,10 @@ pragma Style_Checks (Off);
 
 with Interfaces;
   use Interfaces;
+
 with Ada.Containers.Doubly_Linked_Lists;
+with Ada.Containers.Hashed_Maps;
+  use Ada.Containers;
 
 with Bindings.Rlite.API;
 with Bindings.Rlite.Common;
@@ -49,6 +52,18 @@ package Bindings.Rlite.Ctrl is
    package Sig_Action_List is new Ada.Containers.Doubly_Linked_Lists
      (Element_Type => Sa_Pending_Item);
 
+   package IPCP_Id_Map is new Ada.Containers.Hashed_Maps (
+      Key_Type => Bounded_String,
+      Element_Type => Rl_Ipcp_Id_T,
+      Hash => Names.Hash,
+      Equivalent_Keys => "="
+   );
+
+   use IPCP_Id_Map;
+
+   IPCP_Map : Map;
+   function Search_Map_By_Value (Map_Var : in out Map; Value : Rl_Ipcp_Id_T) return Cursor;
+
    function RINA_Register_Common (Fd : OS.File_Descriptor;
    Dif_Name : Bounded_String;
    Local_Appl : Bounded_String;
@@ -62,6 +77,10 @@ package Bindings.Rlite.Ctrl is
       DIF_Type : Bindings.Rlite.Msg.IPCP.DIF_Types;
       DIF_Name : Bounded_String
    ) return Rl_IPCP_Id_T;
+
+   procedure RINA_Destroy_IPCP (
+      Fd : OS.File_Descriptor;
+      Id : Rl_Ipcp_Id_T);
 
    -- struct rl_msg_base *rl_read_next_msg(int rfd, int quiet)
    function Rl_Read_Msg (

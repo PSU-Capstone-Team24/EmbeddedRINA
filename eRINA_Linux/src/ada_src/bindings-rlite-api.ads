@@ -45,6 +45,19 @@ package Bindings.Rlite.API is
       DIF_Name : String
    ) return Rl_IPCP_Id_T;
 
+   -- Removes/destroys an existing IPCP by name
+   procedure RINA_Destroy_IPCP (
+      Fd : OS.File_Descriptor;
+      Name : String
+   );
+
+   -- Removes/destroys an existing IPCP by its IPCP_Id
+   -- (This can be looked up via the IPCP hashmap in Ctrl logic)
+   procedure RINA_Destroy_IPCP (
+      Fd : OS.File_Descriptor;
+      Id : Rl_Ipcp_Id_T
+   );
+
    --  Register the application name local_appl to a DIF in the system.
    --  After a successful registration, flow allocation requests can be received
    --  on fd.

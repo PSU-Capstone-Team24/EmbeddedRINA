@@ -18,7 +18,7 @@ package body Bindings.Rlite.Msg.IPCP is
 
       IPCP_Name_Ptr   : constant Byte_Buffer := To_Packed_Buffer (Self.Ipcp_Name);
 
-      DIF_Type : String := Ada.Characters.Handling.To_Lower (DIF_Types'Image (Self.DIF_Type));
+      DIF_Type : constant String := Ada.Characters.Handling.To_Lower (DIF_Types'Image (Self.DIF_Type));
 
       DIF_Type_Size : constant Unsigned_16 := Unsigned_16 (DIF_Type'Size / 8);
 
@@ -39,11 +39,6 @@ package body Bindings.Rlite.Msg.IPCP is
    begin
       return Serialized_Msg;
    end Serialize;
-   
-   procedure Deserialize (Self : in out Create; fd : OS.File_Descriptor) is
-   begin
-      raise Exceptions.Not_Implemented_Exception;
-   end Deserialize;
 
    function Serialize (Self : in Create_Response) return Byte_Buffer is
       t : constant Byte_Buffer(1 .. 128) := (others => 0);
@@ -52,10 +47,11 @@ package body Bindings.Rlite.Msg.IPCP is
       return t;
    end Serialize;
    
+   overriding
    procedure Deserialize (Self : in out Create_Response; Fd : OS.File_Descriptor) is
       Buffer   : constant Byte_Buffer := Read_Next_Msg (Fd);
       Msg_Data : constant Byte_Buffer := Buffer(Rl_Msg_Hdr'Size / 8 + 1 .. Buffer'Size / 8);
-      Offset   : Integer := Msg_Data'First;
+      Offset   : constant Integer := Msg_Data'First;
    begin
       --  Byte buffer must not include any tagged record parts. This assumes
       --  byte_buffer is coming from C struct read from FD and not Ada!
@@ -68,5 +64,20 @@ package body Bindings.Rlite.Msg.IPCP is
 
       Self.Ipcp_Id := Rl_Ipcp_Id_T (Buffer_To_Unsigned_16(Msg_Data(Offset .. Offset + 1)));
    end Deserialize;
+
+   overriding
+   function Serialize (Self : Destroy) return Byte_Buffer is
+      Hdr_Ptr        : constant Byte_Buffer(1 .. Self.Hdr'Size / 8)
+                        with Address => Self.Hdr'Address, Import, Volatile;
+
+      IPCP_Id        : constant Byte_Buffer(1 .. Self.Ipcp_Id'Size / 8)
+                        with Address => Self.Ipcp_Id'Address, Import, Volatile;
+
+      Pad1           : constant Byte_Buffer(1 .. 6) := (others => 0);
+
+      Serialized_Msg : constant Byte_Buffer := Hdr_Ptr & IPCP_Id & Pad1;
+   begin
+      return Serialized_Msg;
+   end Serialize;
 
 end Bindings.Rlite.Msg.IPCP;

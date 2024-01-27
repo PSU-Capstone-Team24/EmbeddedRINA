@@ -10,10 +10,26 @@ with Names;
 with Exceptions;
 
 with Bindings.Rlite.Msg.Register;
-with Bindings.Rlite.Msg.IPCP;
 
 package body Bindings.Rlite.Ctrl is
 
+   --  I don't like this being here
+   --  we should separate the IPCP map and relevant funcs to a separate package
+   function Search_Map_By_Value
+     (Map_Var : in out Map; Value : Rl_Ipcp_Id_T) return Cursor is
+      Index : Cursor := No_Element;
+   begin
+      while Index /= No_Element loop
+         if Map_Var (Index) = Value then
+            return Index;
+         end if;
+
+         Index := Next (Index);
+      end loop;
+
+      return No_Element;
+   end Search_Map_By_Value;
+   
    procedure Rl_Write_Msg
      (Rfd : OS.File_Descriptor;
       Msg : Byte_Buffer;
@@ -59,9 +75,6 @@ package body Bindings.Rlite.Ctrl is
       return Buffer;
    end Rl_Read_Msg;
 
-   --  TODO: Check special case where IPCP already exists
-   --  i.e. Probe for IPCP first, if exists, return that IPCP_ID
-   --  otherwise, create it. This way no exceptions thrown on deserialize later...
    function RINA_Create_IPCP (
       Fd : OS.File_Descriptor;
       Name : Bounded_String;
@@ -71,6 +84,12 @@ package body Bindings.Rlite.Ctrl is
       Request : IPCP.Create;
       Response : IPCP.Create_Response;
    begin
+
+      -- If we're trying to create an IPCP that already exists, return the known IPCP_Id
+      if IPCP_Map.Contains (Name) then
+         return IPCP_Map (Name);
+      end if;
+
       Request.Hdr.Msg_Type := RLITE_KER_IPCP_CREATE;
       Request.Hdr.Event_Id := 1;
       Request.Ipcp_Name    := Name;
@@ -98,9 +117,36 @@ package body Bindings.Rlite.Ctrl is
          Debug.Print("RINA_Create_IPCP", "Deserialized wrong event_id?", Debug.Error);
          raise Exceptions.IPCP_Creation_Exception;
       end if;
+   
+      --  Insert into IPCP name => IPCP ID map
+      --  The hashmap will simply update if this name already exists
+      IPCP_Map.Include(Name, Response.Ipcp_Id);
 
       return Response.Ipcp_Id;
    end RINA_Create_IPCP;
+
+   procedure RINA_Destroy_IPCP (
+      Fd : OS.File_Descriptor;
+      Id : Rl_Ipcp_Id_T) is
+      Request : IPCP.Destroy;
+      Index : Cursor;
+   begin
+      Request.Hdr.Msg_Type := RLITE_KER_IPCP_DESTROY;
+      Request.Hdr.Event_Id := 1;
+      Request.Ipcp_Id      := Id;
+
+      declare
+         Buffer : constant Byte_Buffer := IPCP.Serialize (Request);
+      begin
+         Rl_Write_Msg (Fd, Buffer, 0);
+      end;
+      
+      Index := Search_Map_By_Value (IPCP_Map, Id);
+
+      if Index /= No_Element then
+         IPCP_Map.Delete (Index);
+      end if;
+   end RINA_Destroy_IPCP;
 
    function RINA_Register_Wait (Fd : OS.File_Descriptor;
       Wfd : OS.File_Descriptor) return OS.File_Descriptor is
