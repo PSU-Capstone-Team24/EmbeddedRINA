@@ -9,6 +9,7 @@ with AUnit.Test_Suites;
 --  Test suites
 with Test_RINA_Open;
 with Test_RINA_Register;
+with Test_RINA_Unregister;
 with Test_RINA_Flow_Alloc_Wait;
 with Test_RINA_Flow_Alloc;
 
