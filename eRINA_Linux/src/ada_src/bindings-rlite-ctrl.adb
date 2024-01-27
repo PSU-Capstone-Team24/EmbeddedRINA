@@ -109,6 +109,10 @@ package body Bindings.Rlite.Ctrl is
       Resp : Register.Response;
       Move : Register.Move;
    begin
+      if Fd = Invalid_FD or Wfd = Invalid_FD then
+         raise Exceptions.DIF_Registration_Failure;
+      end if;
+
       Register.Deserialize (Resp, Fd);
 
       --  Malformed or received wrong msg_type/event_id, throw exception? idk maybe
