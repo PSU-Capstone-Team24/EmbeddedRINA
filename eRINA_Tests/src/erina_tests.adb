@@ -21,6 +21,7 @@ procedure eRINA_Tests is
    begin
       Result.Add_Test (Test_RINA_Open.Suite);
       Result.Add_Test (Test_RINA_Register.Suite);
+      Result.Add_Test (Test_RINA_Unregister.Suite);
 
       Result.Add_Test (Test_RINA_Flow_Alloc_Wait.Suite);
       Result.Add_Test (Test_RINA_Flow_Alloc.Suite);
