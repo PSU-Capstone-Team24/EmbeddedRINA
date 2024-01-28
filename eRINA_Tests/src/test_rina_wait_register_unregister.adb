@@ -29,12 +29,12 @@ package body Test_RINA_Wait_Register_Unregister is
    begin
       Test_Suite.Add_Test (Caller.Create
          (Name_032 & " Verify rina_register_wait returns -1 for invalid wait FD", Test_Register_Wait_Invalid_Wait_FD'Access));
-      --Test_Suite.Add_Test (Caller.Create
-         --(Name_033 & " Verify rina_register_wait returns -1 for invalid FD", Test_Register_Wait_Invalid_FD'Access));
-      --Test_Suite.Add_Test (Caller.Create
-         --(Name_034 & " Verify rina_register_wait returns valid FD for valid FDs", Test_Register_Wait_Valid_FD'Access));
-      --Test_Suite.Add_Test (Caller.Create
-         --(Name_035 & " Verify app name corresponds to FD in namespace directory", Test_Register_Wait_App_Name_Correspondence'Access));
+      Test_Suite.Add_Test (Caller.Create
+         (Name_033 & " Verify rina_register_wait returns -1 for invalid FD", Test_Register_Wait_Invalid_FD'Access));
+      Test_Suite.Add_Test (Caller.Create
+         (Name_034 & " Verify rina_register_wait returns valid FD for valid FDs", Test_Register_Wait_Valid_FD'Access));
+      Test_Suite.Add_Test (Caller.Create
+         (Name_035 & " Verify app name corresponds to FD in namespace directory", Test_Register_Wait_App_Name_Correspondence'Access));
 
       return Test_Suite'Access;
    end Suite;
@@ -46,28 +46,48 @@ package body Test_RINA_Wait_Register_Unregister is
       Register_Wait_Result : File_Descriptor;
    begin
       Register_Wait_Success := RINA_Register_Wait (RINA_Dev_FD, Invalid_FD);
+      exception
+         when EXCEPTIONS.DIF_REGISTRATION_FAILURE =>
+            Caused_Error := True;
       Assert (Register_Wait_Success = -1, "rina_register_wait did not return -1 for invalid wait FD");
    end Test_Register_Wait_Invalid_Wait_FD;
 
    -- Test Case 033: rina_register_wait Returns -1 for Invalid File Descriptor
    procedure Test_Register_Wait_Invalid_FD (Object : in out Test) is
       Register_Wait_Success : File_Descriptor := Invalid_FD;
-   begin   
+      Caused_Error : Boolean := False;
+   begin
+      Register_Wait_Success := RINA_Register_Wait (Invalid_FD, RINA_Dev_FD);
+   exception
+      when EXCEPTIONS.DIF_REGISTRATION_FAILURE =>
+         Caused_Error := True;
       Assert (Register_Wait_Success = -1, "rina_register_wait did not return -1 for invalid FD");
    end Test_Register_Wait_Invalid_FD;
 
    -- Test Case 034: rina_register_wait Returns Valid FD for Valid FDs
-   procedure Test_Register_Wait_Valid_FD (Object : in out Test) is  
+   procedure Test_Register_Wait_Valid_FD (Object : in out Test) is
+      Valid_Wait_FD : File_Descriptor := RINA_Open; 
       Register_Wait_Success : File_Descriptor := Invalid_FD;
-   begin   
-      Assert (Register_Wait_Success /= -1, "rina_register_wait did not return a valid FD for valid FDs");
+      Caused_Error : Boolean := False;
+   begin
+      Register_Wait_Success := RINA_Register_Wait (RINA_Dev_FD, Valid_Wait_FD);
+   exception
+      when EXCEPTIONS.DIF_REGISTRATION_FAILURE =>
+         Caused_Error := True;
+      Assert (Register_Wait_Success /= -1 and not Caused_Error, "rina_register_wait failed for valid FDs");
    end Test_Register_Wait_Valid_FD;
 
    -- Test Case 035: Verify Application Name Correspondence After rina_register_wait
-   procedure Test_Register_Wait_App_Name_Correspondence (Object : in out Test) is 
+   procedure Test_Register_Wait_App_Name_Correspondence (Object : in out Test) is
+      Valid_Wait_FD : File_Descriptor := RINA_Open;
       Register_Wait_Success : File_Descriptor := Invalid_FD;
+      Caused_Error : Boolean := False;
    begin
-      Assert (Register_Wait_Success /= -1, "App name does not correspond to FD number in namespace directory");
+      Register_Wait_Success := RINA_Register_Wait (RINA_Dev_FD, Valid_Wait_FD);
+   exception
+      when EXCEPTIONS.DIF_REGISTRATION_FAILURE =>
+         Caused_Error := True;
+      Assert (Register_Wait_Success /= -1 and not Caused_Error, "App name does not correspond to FD number in namespace directory");
    end Test_Register_Wait_App_Name_Correspondence;
 
 
