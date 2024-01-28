@@ -42,7 +42,7 @@ package body Test_RINA_Unregister is
       
       Unregister_Success := RINA_Unregister (RINA_Dev_FD, DIF_Name, App_Name, 0);
       exception
-         when Exceptions.Bounded_Length_Expcetion =>
+         when Exceptions.Bounded_Length_Exception =>
             Caused_Error := True;
 
       Assert (Caused_Error and Unregister_Success = Invalid_FD, "DIF_Name is empty");
