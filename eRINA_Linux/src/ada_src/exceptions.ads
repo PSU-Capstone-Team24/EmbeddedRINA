@@ -6,5 +6,5 @@ package Exceptions is
    Flow_Acceptance_Failure : exception;
    Not_Implemented_Exception : exception;
    IPCP_Creation_Exception : exception;
-   Bounded_Length_Expcetion : exception;
+   Bounded_Length_Exception : exception;
 end Exceptions;
