@@ -74,7 +74,7 @@ package body Test_RINA_Unregister is
    begin
        Unregister_Success := RINA_Unregister (RINA_Dev_FD, DIF_Name, Long_App_Name, 0);
        exception
-        when Exceptions.Bounded_Length_Expcetion =>
+        when Exceptions.Bounded_Length_Exception =>
             Caused_Error := True;
 
         Assert (Caused_Error and Unregister_Success = Invalid_FD, "App name is too long");
@@ -88,7 +88,7 @@ package body Test_RINA_Unregister is
    begin
       Unregister_Success := RINA_Register (RINA_Dev_FD, DIF_Name, Empty_App_Name, 0);
       exception
-         when Exceptions.Bounded_Length_Expcetion =>
+         when Exceptions.Bounded_Length_Exception =>
             Caused_Error := True;
 
       Assert (Caused_Error and Unregister_Success = Invalid_FD, "App name is empty");
