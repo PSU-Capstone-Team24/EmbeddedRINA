@@ -10,6 +10,8 @@ package Test_RINA_Unregister is
 private
    type Test is new AUnit.Test_Fixtures.Test_Fixture with null record;
 
+   procedure Test_Unregister_AppName_to_DIF (Object : in out Test);
+   procedure Test_Unregister_DIF_Name_Too_Long (Object : in out Test);
    procedure Test_Unregister_DIF_Name_Empty (Object : in out Test);
    procedure Test_Unregister_DIF_Name_Not_Registered (Object : in out Test);
    procedure Test_Unregister_App_Name_Too_Long (Object : in out Test);
