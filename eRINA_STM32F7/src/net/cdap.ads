@@ -1,11 +1,9 @@
 with System;
 with Interfaces;
 
-with Buffers;
-  use Buffers;
+with Buffers; use Buffers;
 
-with Ada.Strings.Unbounded;
-  use Ada.Strings.Unbounded;
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 
 with Protobuf;
 
@@ -16,11 +14,9 @@ package CDAP is
       M_DELETE, M_DELETE_R, M_READ, M_READ_R, M_CANCELREAD, M_CANCELREAD_R,
       M_WRITE, M_WRITE_R, M_START, M_START_R, M_STOP, M_STOP_R);
 
-   type CDAPFlags is
-     (F_NO_FLAGS, F_SYNC, F_RD_INCOMPLETE);
-   
-   type Auth_Type is
-     (AUTH_NONE, AUTH_PASSWD, AUTH_SSHRSA, AUTH_SSHDSA);
+   type CDAPFlags is (F_NO_FLAGS, F_SYNC, F_RD_INCOMPLETE);
+
+   type Auth_Type is (AUTH_NONE, AUTH_PASSWD, AUTH_SSHRSA, AUTH_SSHDSA);
 
    type Auth_Value is record
       Auth_Name     : Unbounded_String;

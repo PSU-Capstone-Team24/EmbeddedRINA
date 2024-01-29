@@ -21,7 +21,7 @@ with Net.Buffers;
 package Echo_Server is
 
    type Message is record
-      Id      : Natural := 0;
+      Id      : Natural          := 0;
       Content : String (1 .. 80) := (others => ' ');
    end record;
    type Message_List is array (1 .. 10) of Message;
@@ -42,10 +42,9 @@ package Echo_Server is
       Messages : Logger;
    end record;
 
-   overriding
-   procedure Receive (Endpoint : in out Echo_Server;
-                      From     : in Net.Sockets.Sockaddr_In;
-                      Packet   : in out Net.Buffers.Buffer_Type);
+   overriding procedure Receive
+     (Endpoint : in out Echo_Server; From : in Net.Sockets.Sockaddr_In;
+      Packet   : in out Net.Buffers.Buffer_Type);
 
    Server : aliased Echo_Server;
 

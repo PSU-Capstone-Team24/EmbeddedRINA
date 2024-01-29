@@ -1,7 +1,6 @@
 --  TODO: Temp only, we should try to only use a single type
 --  of byte buffer (i.e. those provided by ada_enet)
-with Interfaces;
-  use Interfaces;
+with Interfaces; use Interfaces;
 
 package Buffers is
    --  unsigned subtypes copied from ada_enet
@@ -9,7 +8,7 @@ package Buffers is
    subtype Uint16 is Unsigned_16;
    subtype Uint32 is Unsigned_32;
    subtype Uint64 is Unsigned_64;
-   
+
    --  signed subtypes
    subtype Int8 is Short_Short_Integer;
    subtype Int16 is Short_Integer;

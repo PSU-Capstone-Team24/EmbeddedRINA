@@ -43,12 +43,12 @@ package body Receiver is
       use type Ada.Real_Time.Time_Span;
       use type Net.Uint64;
 
-      Packet  : Net.Buffers.Buffer_Type;
-      Ether   : Net.Headers.Ether_Header_Access;
-      Now     : Ada.Real_Time.Time;
-      Dt      : Us_Time;
-      Total   : Net.Uint64 := 0;
-      Count   : Net.Uint64 := 0;
+      Packet : Net.Buffers.Buffer_Type;
+      Ether  : Net.Headers.Ether_Header_Access;
+      Now    : Ada.Real_Time.Time;
+      Dt     : Us_Time;
+      Total  : Net.Uint64 := 0;
+      Count  : Net.Uint64 := 0;
    begin
       --  Wait until the Ethernet driver is ready.
       Ada.Synchronous_Task_Control.Suspend_Until_True (Ready);
@@ -67,15 +67,17 @@ package body Receiver is
             Demos.Ifnet.Receive (Packet);
 
             --  Used to compute processing time
-            Now := Ada.Real_Time.Clock;
+            Now   := Ada.Real_Time.Clock;
             Ether := Packet.Ethernet;
 
             --  We will try to process all ARP packets
             --  However, we will later ignore any that do not have the rLite protocol type (0xd1f0)
-            if Ether.Ether_Type = Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP) then
+            if Ether.Ether_Type =
+              Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
+            then
                Net.Protos.Arp.Receive (Demos.Ifnet, Packet);
             end if;
-            
+
             --  For our case, we ignore IP packets
             --  if Ether.Ether_Type = Net.Headers.To_Network (Net.Protos.ETHERTYPE_IP) then
             --     Net.Protos.Dispatchers.Receive (Demos.Ifnet, Packet);
@@ -85,8 +87,8 @@ package body Receiver is
             Dt := Us_Time ((Ada.Real_Time.Clock - Now) / ONE_US);
 
             --  Compute average, min and max values.
-            Count := Count + 1;
-            Total := Total + Net.Uint64 (Dt);
+            Count            := Count + 1;
+            Total            := Total + Net.Uint64 (Dt);
             Avg_Receive_Time := Us_Time (Total / Count);
 
             if Dt < Min_Receive_Time then

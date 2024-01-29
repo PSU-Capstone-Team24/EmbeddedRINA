@@ -48,8 +48,9 @@ procedure Echo is
    procedure Header;
 
    procedure Refresh is
-      Msg : constant Echo_Server.Message_List := Echo_Server.Server.Messages.Get;
-      Y   : Natural := 120;
+      Msg : constant Echo_Server.Message_List :=
+        Echo_Server.Server.Messages.Get;
+      Y : Natural := 120;
    begin
       Demos.Refresh_Ifnet_Stats;
       Demos.Put (250, 100, Net.Uint64 (Echo_Server.Server.Count));
@@ -74,8 +75,9 @@ procedure Echo is
 begin
    Initialize ("STM32 Echo");
 
-   Echo_Server.Server.Bind (Demos.Ifnet'Access, (Port => Net.Headers.To_Network (7),
-                                                 Addr => (others => 0)));
+   Echo_Server.Server.Bind
+     (Demos.Ifnet'Access,
+      (Port => Net.Headers.To_Network (7), Addr => (others => 0)));
 
    loop
       Net.Protos.Arp.Timeout (Demos.Ifnet);

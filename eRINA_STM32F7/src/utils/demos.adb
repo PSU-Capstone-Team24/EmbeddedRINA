@@ -19,6 +19,7 @@ with Bitmapped_Drawing;
 with Bitmap_Color_Conversion;
 with STM32.SDRAM;
 with STM32.RNG.Interrupts;
+
 with Net.Utils;
 with Receiver;
 package body Demos is
@@ -38,44 +39,38 @@ package body Demos is
    --  ------------------------------
    --  Write a message on the display.
    --  ------------------------------
-   procedure Put (X   : in Natural;
-                  Y   : in Natural;
-                  Msg : in String) is
+   procedure Put (X : in Natural; Y : in Natural; Msg : in String) is
    begin
-      Bitmapped_Drawing.Draw_String (Buffer     => STM32.Board.Display.Hidden_Buffer (1).all,
-                                     Start      => Scale ((X, Y)),
-                                     Msg        => Msg,
-                                     Font       => Current_Font,
-                                     Foreground => Foreground,
-                                     Background => Background);
+      Bitmapped_Drawing.Draw_String
+        (Buffer     => STM32.Board.Display.Hidden_Buffer (1).all,
+         Start      => Scale ((X, Y)), Msg => Msg, Font => Current_Font,
+         Foreground => Foreground, Background => Background);
    end Put;
 
    --  ------------------------------
    --  Write the 64-bit integer value on the display.
    --  ------------------------------
-   procedure Put (X     : in Natural;
-                  Y     : in Natural;
-                  Value : in Net.Uint64) is
-      Buffer : constant HAL.Bitmap.Any_Bitmap_Buffer := STM32.Board.Display.Hidden_Buffer (1);
-      FG     : constant HAL.UInt32 := Bitmap_Color_Conversion.Bitmap_Color_To_Word (Buffer.Color_Mode,
-                                                                                   Foreground);
-      BG     : constant HAL.UInt32 := Bitmap_Color_Conversion.Bitmap_Color_To_Word (Buffer.Color_Mode,
-                                                                                   Background);
-      V      : constant String := Net.Uint64'Image (Value);
-      Pos    : HAL.Bitmap.Point := (X + 100, Y);
-      D      : Natural := 1;
+   procedure Put (X : in Natural; Y : in Natural; Value : in Net.Uint64) is
+      Buffer : constant HAL.Bitmap.Any_Bitmap_Buffer :=
+        STM32.Board.Display.Hidden_Buffer (1);
+      FG : constant HAL.UInt32 :=
+        Bitmap_Color_Conversion.Bitmap_Color_To_Word
+          (Buffer.Color_Mode, Foreground);
+      BG : constant HAL.UInt32 :=
+        Bitmap_Color_Conversion.Bitmap_Color_To_Word
+          (Buffer.Color_Mode, Background);
+      V   : constant String  := Net.Uint64'Image (Value);
+      Pos : HAL.Bitmap.Point := (X + 100, Y);
+      D   : Natural          := 1;
    begin
       for I in reverse V'Range loop
-         Bitmapped_Drawing.Draw_Char (Buffer     => Buffer.all,
-                                      Start      => Scale (Pos),
-                                      Char       => V (I),
-                                      Font       => Current_Font,
-                                      Foreground => FG,
-                                      Background => BG);
+         Bitmapped_Drawing.Draw_Char
+           (Buffer => Buffer.all, Start => Scale (Pos), Char => V (I),
+            Font   => Current_Font, Foreground => FG, Background => BG);
          Pos.X := Pos.X - 8;
-         D := D + 1;
+         D     := D + 1;
          if D = 4 then
-            D := 1;
+            D     := 1;
             Pos.X := Pos.X - 4;
          end if;
       end loop;
@@ -89,13 +84,13 @@ package body Demos is
       use type Receiver.Us_Time;
 
       State    : constant Net.DHCP.State_Type := Dhcp.Get_State;
-      Min_Time : constant Receiver.Us_Time := Receiver.Min_Receive_Time;
-      Max_Time : constant Receiver.Us_Time := Receiver.Max_Receive_Time;
-      Avg_Time : constant Receiver.Us_Time := Receiver.Avg_Receive_Time;
+      Min_Time : constant Receiver.Us_Time    := Receiver.Min_Receive_Time;
+      Max_Time : constant Receiver.Us_Time    := Receiver.Max_Receive_Time;
+      Avg_Time : constant Receiver.Us_Time    := Receiver.Avg_Receive_Time;
    begin
       case State is
-         when Net.DHCP.STATE_BOUND | Net.DHCP.STATE_DAD
-            | Net.DHCP.STATE_RENEWING | Net.DHCP.STATE_REBINDING =>
+         when Net.DHCP.STATE_BOUND | Net.DHCP.STATE_DAD |
+           Net.DHCP.STATE_RENEWING | Net.DHCP.STATE_REBINDING =>
             if State = Net.DHCP.STATE_REBINDING then
                Foreground := HAL.Bitmap.Red;
             elsif State /= Net.DHCP.STATE_BOUND then
@@ -139,23 +134,24 @@ package body Demos is
    --  ------------------------------
    --  Initialize the board and the interface.
    --  ------------------------------
-   procedure Initialize (Title  : in String) is
+   procedure Initialize (Title : in String) is
    begin
       STM32.RNG.Interrupts.Initialize_RNG;
       STM32.Board.Display.Initialize;
       STM32.Board.Display.Initialize_Layer (1, HAL.Bitmap.ARGB_1555);
 
       --  Static IP interface, default netmask and no gateway.
---        Ifnet.Ip := (192, 168, 1, 2);
---        Ifnet.Gateway := (192, 168, 1, 240);
---        Ifnet.Dns := (192, 168, 1, 240);
+      --        Ifnet.Ip := (192, 168, 1, 2);
+      --        Ifnet.Gateway := (192, 168, 1, 240);
+      --        Ifnet.Dns := (192, 168, 1, 240);
 
       --  STMicroelectronics OUI = 00 81 E1
       Ifnet.Mac := (0, 16#81#, 16#E1#, 5, 5, 1);
 
       --  Setup some receive buffers and initialize the Ethernet driver.
-      Net.Buffers.Add_Region (STM32.SDRAM.Reserve (Amount => HAL.UInt32 (NET_BUFFER_SIZE)),
-                              NET_BUFFER_SIZE);
+      Net.Buffers.Add_Region
+        (STM32.SDRAM.Reserve (Amount => HAL.UInt32 (NET_BUFFER_SIZE)),
+         NET_BUFFER_SIZE);
       Ifnet.Initialize;
       Receiver.Start;
 
@@ -177,10 +173,35 @@ package body Demos is
 --           Put (326, 70, "Send");
 --           Put (402, 70, "Receive");
          Header;
+
+         STM32.Board.Display.Hidden_Buffer (1).Set_Source (HAL.Bitmap.Blue);
+         STM32.Board.Display.Hidden_Buffer (1).Fill_Rect
+           ((Position => (16, STM32.Board.LCD_Natural_Height - 40),
+             Width    => 100, Height => 30));
+
          STM32.Board.Display.Hidden_Buffer (1).Set_Source (HAL.Bitmap.Blue);
          STM32.Board.Display.Hidden_Buffer (1).Draw_Horizontal_Line
-           (Pt    => (X => 0, Y => 84),
-            Width => STM32.Board.LCD_Natural_Width);
+           (Pt => (X => 0, Y => 84), Width => STM32.Board.LCD_Natural_Width);
+
+         Current_Font := BMP_Fonts.Font16x24;
+         Background   := HAL.Bitmap.Blue;
+         Foreground   := HAL.Bitmap.White;
+         Put (32, STM32.Board.LCD_Natural_Height - 35, "Menu");
+
+         STM32.Board.Display.Hidden_Buffer (1).Set_Source (HAL.Bitmap.Blue);
+         STM32.Board.Display.Hidden_Buffer (1).Fill_Rect
+           ((Position =>
+               (STM32.Board.LCD_Natural_Width - 175 - 16,
+                STM32.Board.LCD_Natural_Height - 40),
+             Width => 175, Height => 20));
+
+         Current_Font := Default_Font;
+         Put
+           (STM32.Board.LCD_Natural_Width - 150 - 37,
+            STM32.Board.LCD_Natural_Height - 35, "Broadcast RINA Packet");
+
+         Background := HAL.Bitmap.Black;
+
          STM32.Board.Display.Update_Layer (1);
       end loop;
    end Initialize;

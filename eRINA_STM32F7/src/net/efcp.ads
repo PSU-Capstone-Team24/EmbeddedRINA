@@ -44,24 +44,24 @@ package EFCP is
       Dst_Cep     : Uint16;
       Src_Cep     : Uint16;
       PDU_Len     : Uint16;
-      QOS_Id      : Uint16; 
+      QOS_Id      : Uint16;
    end record;
 
    type EFCP_Header_Access is access all EFCP_Header;
 
    for EFCP_Header use record
-      PDU_Version    at 0 range 0 .. 7;
-      PDU_Type       at 1 range 0 .. 7;
-      PDU_Flags      at 2 range 0 .. 15;
-      PDU_CSum       at 4 range 0 .. 15;
-      PDU_TTL        at 6 range 0 .. 15;
-      PDU_SeqNum     at 8 range 0 .. 31;
-      Dst_Addr       at 12 range 0 .. 31;
-      Src_Addr       at 16 range 0 .. 31;
-      Dst_Cep        at 20 range 0 .. 15;
-      Src_Cep        at 22 range 0 .. 15;
-      PDU_Len        at 24 range 0 .. 15;
-      QOS_Id         at 26 range 0 .. 15;
+      PDU_Version at  0 range 0 ..  7;
+      PDU_Type    at  1 range 0 ..  7;
+      PDU_Flags   at  2 range 0 .. 15;
+      PDU_CSum    at  4 range 0 .. 15;
+      PDU_TTL     at  6 range 0 .. 15;
+      PDU_SeqNum  at  8 range 0 .. 31;
+      Dst_Addr    at 12 range 0 .. 31;
+      Src_Addr    at 16 range 0 .. 31;
+      Dst_Cep     at 20 range 0 .. 15;
+      Src_Cep     at 22 range 0 .. 15;
+      PDU_Len     at 24 range 0 .. 15;
+      QOS_Id      at 26 range 0 .. 15;
    end record;
 
 end EFCP;
