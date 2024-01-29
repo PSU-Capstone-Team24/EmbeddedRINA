@@ -2,6 +2,8 @@
 --  messages such as the CDAP ones coming from rLite
 --  https://protobuf.dev/programming-guides/encoding/
 
+with Ada.Containers.Vectors;
+  
 with Buffers;
   use Buffers;
 
@@ -26,4 +28,24 @@ package Protobuf is
 
     function Tag_To_Wire_Type (Input : Byte) return Wire;
     function Tag_To_Field_Number (Input : Byte) return Byte;
+
+    package VARINT_Vectors is new Ada.Containers.Vectors (Positive, Byte);
+    use VARINT_Vectors;
+
+    --  Variable-width integers, or varints, are at the core of the wire format.
+    --  They allow encoding unsigned 64-bit ints using anywhere between 1 and 10 bytes
+    --  Where smaller values use fewer bytes
+    function To_VARINT (V : in Vector) return Uint64;
+
+    --  MT: TODO: Implement these
+
+    -- function VARINT_To_Int32 (Input : Uint64) return Int32;
+    -- function VARINT_To_Int64 (Input : Uint64) return Int64;
+    
+    -- Different signed types, sint32 and sint64 vs int32 or int64, encode negative integers differently
+    -- function VARINT_To_SInt32 (Input : Uint64) return Int32;
+    -- function VARINT_To_SInt64 (Input : Uint64) return Int64;
+    
+    -- function VARINT_To_Uint32 (Input : Uint64) return Uint32;
+    -- function VARINT_To_Uint64 (Input : Uint64) return Uint64;
 end Protobuf;
