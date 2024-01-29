@@ -8,13 +8,11 @@
 --  You may obtain a copy of the License at
 --
 --      http://www.apache.org/licenses/LICENSE-2.0
---
---  Unless required by applicable law or agreed to in writing, software
---  distributed under the License is distributed on an "AS IS" BASIS,
---  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
---  See the License for the specific language governing permissions and
---  limitations under the License.
 -----------------------------------------------------------------------
+
+--  Modified for use in EmbeddedRINA PSU Capstone
+--  TODO: Update this notice with changes so we are license compliant
+
 with Ada.Real_Time;
 with Ada.Synchronous_Task_Control;
 with Net.Buffers;
@@ -22,6 +20,7 @@ with Net.Protos.Arp;
 with Net.Protos.Dispatchers;
 with Net.Headers;
 with Demos;
+
 package body Receiver is
 
    use type Net.Ip_Addr;
@@ -57,19 +56,30 @@ package body Receiver is
       --  Loop receiving packets and dispatching them.
       Min_Receive_Time := Us_Time'Last;
       Max_Receive_Time := Us_Time'First;
+
       loop
+
          if Packet.Is_Null then
             Net.Buffers.Allocate (Packet);
          end if;
+
          if not Packet.Is_Null then
             Demos.Ifnet.Receive (Packet);
+
+            --  Used to compute processing time
             Now := Ada.Real_Time.Clock;
             Ether := Packet.Ethernet;
+
+            --  We will try to process all ARP packets
+            --  However, we will later ignore any that do not have the rLite protocol type (0xd1f0)
             if Ether.Ether_Type = Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP) then
                Net.Protos.Arp.Receive (Demos.Ifnet, Packet);
-            elsif Ether.Ether_Type = Net.Headers.To_Network (Net.Protos.ETHERTYPE_IP) then
-               Net.Protos.Dispatchers.Receive (Demos.Ifnet, Packet);
             end if;
+            
+            --  For our case, we ignore IP packets
+            --  if Ether.Ether_Type = Net.Headers.To_Network (Net.Protos.ETHERTYPE_IP) then
+            --     Net.Protos.Dispatchers.Receive (Demos.Ifnet, Packet);
+            --  end if;
 
             --  Compute the time taken to process the packet in microseconds.
             Dt := Us_Time ((Ada.Real_Time.Clock - Now) / ONE_US);
@@ -78,9 +88,11 @@ package body Receiver is
             Count := Count + 1;
             Total := Total + Net.Uint64 (Dt);
             Avg_Receive_Time := Us_Time (Total / Count);
+
             if Dt < Min_Receive_Time then
                Min_Receive_Time := Dt;
             end if;
+
             if Dt > Max_Receive_Time then
                Max_Receive_Time := Dt;
             end if;
