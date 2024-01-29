@@ -133,7 +133,7 @@ package body Test_RINA_Register is
 
    -- Test Case 009
    procedure Test_Register_AppName_to_DIF (Object : in out Test) is
-   Register_Success : File_Descriptor;
+   Register_Success : File_Descriptor := Invalid_FD;
    Caused_Error : Boolean := False;
    begin
       Register_Success := RINA_Register (RINA_Dev_FD, DIF_Name, Application_Name, 0);
