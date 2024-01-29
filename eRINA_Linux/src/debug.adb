@@ -6,7 +6,7 @@ with Ada.Characters.Latin_1;
 
 package body Debug is
    procedure Print (Caller : String; Msg : String; Level : Debug_Level) is
-      DEBUG : constant Boolean := true;
+      DEBUG : constant Boolean := True;
    begin
       if DEBUG then
          --  Trick the terminal into printing in color
@@ -15,9 +15,12 @@ package body Debug is
          Ada.Text_IO.Put (Ada.Characters.Latin_1.ESC & "[0m ");
 
          case Level is
-            when Info => Ada.Text_IO.Put (Ada.Characters.Latin_1.ESC & "[34m");
-            when Warning => Ada.Text_IO.Put (Ada.Characters.Latin_1.ESC & "[33m");
-            when Error => Ada.Text_IO.Put (Ada.Characters.Latin_1.ESC & "[31m");
+            when Info =>
+               Ada.Text_IO.Put (Ada.Characters.Latin_1.ESC & "[34m");
+            when Warning =>
+               Ada.Text_IO.Put (Ada.Characters.Latin_1.ESC & "[33m");
+            when Error =>
+               Ada.Text_IO.Put (Ada.Characters.Latin_1.ESC & "[31m");
          end case;
 
          Ada.Text_IO.Put (Msg);

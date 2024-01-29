@@ -4,18 +4,19 @@ pragma Style_Checks (Off);
 with Interfaces; use Interfaces;
 with Interfaces.C;
 with Interfaces.C.Strings;
-with Bindings.Rlite.Msg; 
+with Bindings.Rlite.Msg;
 
 package Bindings.Rlite.Common is
    package C renames Interfaces.C;
 
-   type Unsigned_64 is mod 2 ** 64 with size => 64;
+   type Unsigned_64 is mod 2**64 with
+        Size => 64;
 
-   --  Application naming information:
-   --  Application Process Name
-   --  Application Process Instance
-   --  Application Entity Name
-   --  Application Entity Instance
+      --  Application naming information:
+      --  Application Process Name
+      --  Application Process Instance
+      --  Application Entity Name
+      --  Application Entity Instance
    type RINA_Name is record
       Apn : C.Strings.chars_ptr;
       Api : C.Strings.chars_ptr;

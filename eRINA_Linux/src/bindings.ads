@@ -1,3 +1,3 @@
 package Bindings is
-pragma Pure (Bindings);
+   pragma Pure (Bindings);
 end Bindings;
