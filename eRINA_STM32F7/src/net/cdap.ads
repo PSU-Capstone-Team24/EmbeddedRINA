@@ -5,8 +5,6 @@ with Buffers; use Buffers;
 
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 
-with Protobuf;
-
 package CDAP is
 
    type Op_Code is
@@ -35,6 +33,37 @@ package CDAP is
       Doubleval  : Uint64;
       Boolval    : Boolean;
    end record;
+
+   type CDAP_Field is
+     (Abs_Syntax, OpCode, Invoke_Id, Flags, Obj_Class, Obj_Name, Obj_Inst,
+     ObjValue, Result, Scope, Filter, Auth_Mech, AuthValue, Dest_Ae_Inst,
+     Dest_Ae_Name, Dest_Ap_Inst, Dest_Ap_Name, Src_Ae_Inst, Src_Ae_Name,
+     Src_Ap_Inst, Src_Ap_Name, Result_Reason, Version);
+
+   for CDAP_Field use
+     (Abs_Syntax   => 1,
+      OpCode       => 2,
+      Invoke_Id    => 3,
+      Flags        => 4,
+      Obj_Class    => 5,
+      Obj_Name     => 6,
+      Obj_Inst     => 7,
+      ObjValue     => 8,
+      Result       => 9,
+      Scope        => 10,
+      Filter       => 11,
+      Auth_Mech    => 17,
+      AuthValue    => 18,
+      Dest_AE_Inst => 19,
+      Dest_AE_Name => 20,
+      Dest_AP_Inst => 21,
+      Dest_AP_Name => 22,
+      Src_AE_Inst  => 23,
+      Src_AE_Name  => 24,
+      Src_AP_Inst  => 25,
+      Src_AP_Name  => 26,
+      Result_Reason => 27,
+      Version      => 28);
 
    type CDAPMessage is record
       Abs_Syntax    : Uint32;

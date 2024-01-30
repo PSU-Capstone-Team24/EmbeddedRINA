@@ -5,6 +5,7 @@
 with Ada.Containers.Vectors;
 
 with Buffers; use Buffers;
+with CDAP; use CDAP;
 
 package Protobuf is
 
@@ -14,27 +15,41 @@ package Protobuf is
    --  This allows old parsers to skip over new fields they don’t understand.
    --  This type of scheme is sometimes called Tag-Length-Value, or TLV.
 
-   --  ID  Name        Used For
+   --  ID  Name      Used For
    --  -------------------------------------------------------------------------
-   --  0       VARINT      int32, int64, uint32, uint64, sint32, sint64, bool, enum
-   --  1       I64             fixed64, sfixed64, double
-   --  2       LEN             string, bytes, embedded messages, packed repeated fields
-   --  3       SGROUP      group start (deprecated)
-   --  4       EGROUP      group end (deprecated)
-   --  5       I32             fixed32, sfixed32, float
+   --  0   VARINT    int32, int64, uint32, uint64, sint32, sint64, bool, enum
+   --  1   I64       fixed64, sfixed64, double
+   --  2   LEN       string, bytes, embedded messages, packed repeated fields
+   --  3   SGROUP    group start (deprecated)
+   --  4   EGROUP    group end (deprecated)
+   --  5   I32       fixed32, sfixed32, float
 
    type Wire is (VARINT, I64, LEN, SGROUP, EGROUP, I32);
 
    function Tag_To_Wire_Type (Input : Byte) return Wire;
-   function Tag_To_Field_Number (Input : Byte) return Byte;
+   function Tag_To_Field_Number (Input : Byte) return CDAP_Field;
+   function Has_MSB (Input : Byte) return Boolean;
 
-   package VARINT_Vectors is new Ada.Containers.Vectors (Positive, Byte);
-   use VARINT_Vectors;
+   package ProtoBuf_Vectors is new Ada.Containers.Vectors (Positive, Byte);
+   use ProtoBuf_Vectors;
+
+   subtype Byte_Vector is Vector;
+
+   Test_Packet : Byte_Vector := 16#08# & 16#49# & 16#10# & 16#00# & 16#18# &
+      16#02# & 16#20# & 16#00# & 16#2A# & 16#00# & 16#32# & 16#00# & 16#48# &
+      16#00# & 16#9A# & 16#01# & 16#00# & 16#A2# & 16#01# & 16#00# & 16#AA# &
+      16#01# & 16#00# & 16#B2# & 16#01# & 16#06# & 16#62# & 16#2E# & 16#49# &
+      16#50# & 16#43# & 16#50# & 16#BA# & 16#01# & 16#00# & 16#C2# & 16#01# &
+      16#00# & 16#CA# & 16#01# & 16#00# & 16#D2# & 16#01# & 16#06# & 16#61# &
+      16#2E# & 16#49# & 16#50# & 16#43# & 16#50# & 16#E0# & 16#01# & 16#01#;
+
+   --  Takes in a vector of bytes and returns a CDAP message record
+   function To_CDAP(V : in Byte_Vector) return CDAPMessage;
 
    --  Variable-width integers, or varints, are at the core of the wire format.
    --  They allow encoding unsigned 64-bit ints using anywhere between 1 and 10 bytes
    --  Where smaller values use fewer bytes
-   function To_VARINT (V : in Vector) return Uint64;
+   function To_VARINT (V : in Byte_Vector) return Uint64;
 
    --  MT: TODO: Implement these
 

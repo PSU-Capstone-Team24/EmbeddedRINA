@@ -4,6 +4,12 @@
 
 package body Protobuf is
    use type Ada.Containers.Count_Type;
+   
+   function Has_MSB (Input : Byte) return Boolean is
+      Result : constant Byte := input and 2#1000_0000#;
+   begin
+      return (Result = 1);
+   end Has_MSB;
 
    function Tag_To_Wire_Type (Input : Byte) return Wire is
       Wire_Type_Num : constant Byte := Input and 2#0000_0111#;
@@ -26,14 +32,16 @@ package body Protobuf is
       end case;
    end Tag_To_Wire_Type;
 
-   function Tag_To_Field_Number (Input : Byte) return Byte is
-   begin
+   function Tag_To_Field_Number (Input : Byte) return CDAP_Field is
       --  Drop most significant bit and shift right 3 times
-      return Shift_Right (Input and 2#0111_1111#, 3);
+      Value : constant Byte := Shift_Right (Input and 2#0111_1111#, 3);
+   begin
+      --  MT: TODO: Need to handle weird case when resulting value does not match an enum in CDAP_Field
+      return CDAP_Field'Val (Value);
    end Tag_To_Field_Number;
 
-   function To_VARINT (V : in Vector) return Uint64 is
-      Working_Vector : Vector;
+   function To_VARINT (V : in Byte_Vector) return Uint64 is
+      Working_Vector : Byte_Vector;
 
       procedure Remove_MSB (C : Cursor) is
          MSB_Removed : constant Byte := V (C) and 2#0111_1111#;
@@ -59,4 +67,43 @@ package body Protobuf is
       return 0;
    end To_VARINT;
 
+   function To_CDAP(V : in Vector) return CDAPMessage is
+      Result_Msg : CDAPMessage;
+      Wire_Type : Wire;
+      Field_Id : CDAP_Field;
+      Is_Tag_Field : Boolean := True;
+
+      --  Using a cursor here instead of an iterative loop so we can skip elements
+      C : Cursor := V.First;
+   begin
+      while C /= No_Element loop
+         if Is_Tag_Field then
+            Wire_Type := Tag_To_Wire_Type (V(C));
+            Field_Id := Tag_To_Field_Number (V(C));
+            Is_Tag_Field := False;
+         else
+            if Wire_Type = VARINT then
+
+               declare
+                  VARINT_Vector : Byte_Vector;
+               begin
+                  --  Keep reading bytes until we no longer have a MSB of 1
+                  while C /= No_Element loop
+                     VARINT_Vector.Append (V(C));
+                     exit when (not Has_MSB (V(C)));
+                     C := Next (C);
+                  end loop;
+               end;
+
+            end if;
+
+            --  Next field will be a tag field
+            Is_Tag_Field := True;
+         end if;
+
+         C := Next (C);
+      end loop;
+
+      return Result_Msg;
+   end To_CDAP;
 end Protobuf;
