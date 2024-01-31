@@ -30,18 +30,12 @@ package Protobuf is
    function Tag_To_Field_Number (Input : Byte) return CDAP_Field;
    function Has_MSB (Input : Byte) return Boolean;
 
-   package ProtoBuf_Vectors is new Ada.Containers.Vectors (Positive, Byte);
-   use ProtoBuf_Vectors;
+   package Byte_Vectors is new Ada.Containers.Vectors (Positive, Byte);
+   subtype Byte_Vector is Byte_Vectors.Vector;
+   subtype Byte_Cursor is Byte_Vectors.Cursor;
 
-   subtype Byte_Vector is Vector;
-
-   Test_Packet : Byte_Vector := 16#08# & 16#49# & 16#10# & 16#00# & 16#18# &
-      16#02# & 16#20# & 16#00# & 16#2A# & 16#00# & 16#32# & 16#00# & 16#48# &
-      16#00# & 16#9A# & 16#01# & 16#00# & 16#A2# & 16#01# & 16#00# & 16#AA# &
-      16#01# & 16#00# & 16#B2# & 16#01# & 16#06# & 16#62# & 16#2E# & 16#49# &
-      16#50# & 16#43# & 16#50# & 16#BA# & 16#01# & 16#00# & 16#C2# & 16#01# &
-      16#00# & 16#CA# & 16#01# & 16#00# & 16#D2# & 16#01# & 16#06# & 16#61# &
-      16#2E# & 16#49# & 16#50# & 16#43# & 16#50# & 16#E0# & 16#01# & 16#01#;
+   type Bit is range 0 .. 1 with Size => 1;
+   type Bit_Array is array (Positive range <>) of Bit;
 
    --  Takes in a vector of bytes and returns a CDAP message record
    function To_CDAP(V : in Byte_Vector) return CDAPMessage;

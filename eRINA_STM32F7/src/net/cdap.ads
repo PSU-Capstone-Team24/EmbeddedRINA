@@ -65,7 +65,7 @@ package CDAP is
       Result_Reason => 27,
       Version      => 28);
 
-   type CDAPMessage is record
+   type CDAPMessage is tagged record
       Abs_Syntax    : Uint32;
       OpCode        : Op_Code := M_CONNECT;
       Invoke_Id     : Uint32;
@@ -91,4 +91,11 @@ package CDAP is
       Version       : Uint64;
    end record;
 
+   procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Uint32);
+   procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Op_Code);
+   procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : CDAPFlags);
+   procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Obj_Value);
+   procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Auth_Value);
+   procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Unbounded_String);
+   procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Uint64);
 end CDAP;

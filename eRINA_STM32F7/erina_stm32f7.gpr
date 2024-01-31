@@ -10,7 +10,7 @@ project eRINA_STM32F7 is
    for Object_Dir use "obj/" & eRINA_STM32F7_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
-   for Main use ("dns.adb", "echo.adb", "ping.adb", "time.adb", "demo.adb");
+   for Main use ("dns.adb", "echo.adb", "ping.adb", "time.adb", "demo.adb", "test.adb");
 
    package Compiler is
       for Default_Switches ("Ada") use eRINA_STM32F7_Config.Ada_Compiler_Switches & "-mno-unaligned-access";
