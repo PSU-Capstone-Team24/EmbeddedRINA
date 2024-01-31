@@ -21,11 +21,17 @@ package body Test_RINA_Unregister is
    Test_Suite : aliased AUnit.Test_Suites.Test_Suite;
 
    function Suite return AUnit.Test_Suites.Access_Test_Suite is
+      Name_012 : constant String := "TC-012";
+      Name_013 : constant String := "TC-013";
       Name_014 : constant String := "TC-014";
       Name_015 : constant String := "TC-015";
       Name_016 : constant String := "TC-016";
       Name_017 : constant String := "TC-017";
    begin
+    Test_Suite.Add_Test (Caller.Create 
+            (Name_012 & " Verify that rina_unregister successfully unregisters an application name from a DIF", Test_Unregister_AppName_to_DIF'Access));
+    Test_Suite.Add_Test (Caller.Create
+            (Name_013 & " Verify rina_unregister fails when the DIF name is too long", Test_Unregister_DIF_Name_Too_Long'Access));
     Test_Suite.Add_Test (Caller.Create
             (Name_014 & " Verify rina_unregister throws exception when DIF name is empty", Test_Unregister_DIF_Name_Empty'Access));
     Test_Suite.Add_Test (Caller.Create
@@ -37,6 +43,30 @@ package body Test_RINA_Unregister is
 
     return Test_Suite'Access;
    end Suite;
+
+   --Test Case 012
+   procedure Test_Unregister_AppName_to_DIF (Object : in out Test) is
+   Register_Success : File_Descriptor;
+   Unregister_Success : File_Descriptor := Invalid_FD;
+   Caused_Error : Boolean := False;
+   begin
+      Register_Success := RINA_Register(RINA_Dev_FD, DIF_Name, "TestAppName123", 0);
+      Unregister_Success := RINA_Unregister (Register_Success, DIF_Name, "TestAppName123", 0);
+      Assert(Unregister_Success /= Invalid_FD, "Successfully unregistered application from DIF");
+   end Test_Unregister_AppName_to_DIF;
+
+   --Test Case 013
+   procedure Test_Unregister_DIF_Name_Too_Long (Object : in out Test) is
+      DIF_Name : constant String := "this_dif_name_is__waaaaaaaaaaaaaaaaaaaaaaaaaaaaaay_too_long_and_should_throw_and_exception_when_unregistration_is_attempted_1_2_3_4_5_6_7_8";
+      Caused_Error : Boolean := false;
+      Unregister_Success : File_Descriptor := Invalid_FD;
+   begin
+      Unregister_Success := RINA_Unregister (RINA_Dev_FD, DIF_Name, Application_Name, 0);
+      exception
+         when Exceptions.Bounded_Length_Exception =>
+            Caused_Error := True;
+      Assert(Caused_Error and Unregister_Success = Invalid_FD, "DIF_Name is too long");
+   end Test_Unregister_DIF_Name_Too_Long;
 
    --Test Case 014
    procedure Test_Unregister_DIF_Name_Empty (Object : in out Test) is
