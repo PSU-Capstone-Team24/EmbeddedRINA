@@ -91,7 +91,6 @@ package CDAP is
       Version       : Uint64;
    end record;
 
-   procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Uint32);
    procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Op_Code);
    procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : CDAPFlags);
    procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Obj_Value);

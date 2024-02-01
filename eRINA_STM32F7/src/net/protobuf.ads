@@ -36,6 +36,7 @@ package Protobuf is
 
    type Bit is range 0 .. 1 with Size => 1;
    type Bit_Array is array (Positive range <>) of Bit;
+   pragma Pack (Bit_Array);
 
    --  Takes in a vector of bytes and returns a CDAP message record
    function To_CDAP(V : in Byte_Vector) return CDAPMessage;

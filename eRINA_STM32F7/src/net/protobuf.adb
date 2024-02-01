@@ -1,17 +1,22 @@
 --  This package exists to support Protobuf encoded
 --  messages such as the CDAP ones coming from rLite
 --  https://protobuf.dev/programming-guides/encoding/
+with Ada.Text_IO; use Ada.Text_IO;
+with Ada.Unchecked_Conversion;
 
 package body Protobuf is
    use type Ada.Containers.Count_Type;
 
+   function Bit_Array_To_Uint64 is
+     new Ada.Unchecked_Conversion (Source => Bit_Array, Target => Uint64);
+
    function Has_MSB (Input : Byte) return Boolean is
       Result : constant Byte := input and 2#1000_0000#;
    begin
-      return (Result = 1);
+      return (Result = 128);
    end Has_MSB;
    
-   function Get_Bit_At (Input : Byte; Pos : Positive) return Bit is
+   function Get_Bit_At (Input : Byte; Pos : Natural) return Bit is
       Shifted : constant Byte := Shift_Right(Input, Pos) and 2#0000_0001#;
    begin
       return Bit (Shifted);
@@ -42,13 +47,17 @@ package body Protobuf is
       --  Drop most significant bit and shift right 3 times
       Value : constant Byte := Shift_Right (Input and 2#0111_1111#, 3);
    begin
+      --  MT: TODO: Debug only! Remove Me!
+      Put_Line ("Decoded tagged field :: " & CDAP_Field'Enum_Val (Value)'Image);
+
       --  MT: TODO: Need to handle weird case when resulting value does not match an enum in CDAP_Field
-      return CDAP_Field'Val (Value);
+      return CDAP_Field'Enum_Val (Value);
    end Tag_To_Field_Number;
 
    function To_VARINT (V : in Byte_Vector) return Uint64 is
       Working_Byte_Vector : Byte_Vector;
       Working_Bit_Array : Bit_Array(1 .. 64) := (others => 0);
+      Result : Uint64 := 0;
 
       procedure Remove_MSB (C : Byte_Cursor) is
          MSB_Removed : constant Byte := V (C) and 2#0111_1111#;
@@ -69,19 +78,22 @@ package body Protobuf is
       end if;
 
       --  Flip endianness and drop the MSB of each byte
-      --  The MSB is just there to tell us whether we’ve reached the end of the number
-      V.Reverse_Iterate (Process => Remove_MSB'Access);
+      --  The MSB is just there to tell us whether we've reached the end of the number
+      --  V.Reverse_Iterate (Process => Remove_MSB'Access);
 
       --  For each byte
       for I in V.First_Index .. V.Last_Index loop
-         --  For each bit in this byte
-         for J in 1 .. 8 loop
-            Working_Bit_Array((I - V.First_Index) * 8 + J) := Get_Bit_At (V(I), J - 1);
+         --  For each bit in this byte, note 1 .. 7 and not 1 .. 8, we ignore the MSB
+         for J in 1 .. 7 loop
+            Working_Bit_Array((I - V.First_Index) * 7 + J) := Get_Bit_At (V(I), J - 1);
          end loop;
       end loop;
+      
+      --  MT: TODO: Debug only! Remove Me!
+      Put_Line ("Decoded VARINT to be :: " & Uint64'Image(Bit_Array_To_Uint64 (Working_Bit_Array)));
 
-      --  TODO: MT Concatenate bytes and unchecked cast to uint64
-      return 0;
+      --  MT: TODO: May need some idiot proofing
+      return Bit_Array_To_Uint64 (Working_Bit_Array);
    end To_VARINT;
 
    function To_CDAP(V : in Byte_Vector) return CDAPMessage is
