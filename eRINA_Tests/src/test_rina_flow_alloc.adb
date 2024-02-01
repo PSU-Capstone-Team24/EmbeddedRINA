@@ -25,21 +25,21 @@ package body Test_RINA_Flow_Alloc is
    begin
       Test_Suite.Add_Test
         (Caller.Create
-           ("TC-025 Valid Flow Allocation",
+           ("TC-024 Valid Flow Allocation",
             Test_Valid_Flow_Allocation'Access));
       Test_Suite.Add_Test
-        (Caller.Create ("TC-026 Invalid Flags", Test_Invalid_Flags'Access));
+        (Caller.Create ("TC-025 Invalid Flags", Test_Invalid_Flags'Access));
       Test_Suite.Add_Test
         (Caller.Create
-           ("TC-027 Incorrect Flowspec Version",
+           ("TC-026 Incorrect Flowspec Version",
             Test_Incorrect_Flowspec_Version'Access));
       Test_Suite.Add_Test
         (Caller.Create
-           ("TC-028 RINA Open Failure", Test_RINA_Open_Failure'Access));
+           ("TC-027 RINA Open Failure", Test_RINA_Open_Failure'Access));
       return Test_Suite'Access;
    end Suite;
 
-   -- TC 025
+   -- TC 024
    procedure Test_Valid_Flow_Allocation (Object : in out Test) is
       dif_name    : Bounded_String := To_Bounded_String ("TestDIF");
       local_appl  : Bounded_String := To_Bounded_String ("TestLocalAppl");
@@ -57,7 +57,7 @@ package body Test_RINA_Flow_Alloc is
       Assert (result /= Invalid_FD, "Invalid file descriptor returned");
    end Test_Valid_Flow_Allocation;
 
-   -- TC 026
+   -- TC 025
    procedure Test_Invalid_Flags (Object : in out Test) is
       dif_name    : Bounded_String := To_Bounded_String ("TestDIF");
       local_appl  : Bounded_String := To_Bounded_String ("TestLocalAppl");
@@ -73,7 +73,7 @@ package body Test_RINA_Flow_Alloc is
       Assert (result = Invalid_FD, "Invalid file descriptor returned");
    end Test_Invalid_Flags;
 
-   -- TC 027
+   -- TC 026
    procedure Test_Incorrect_Flowspec_Version (Object : in out Test) is
       dif_name    : Bounded_String := To_Bounded_String ("TestDIF");
       local_appl  : Bounded_String := To_Bounded_String ("TestLocalAppl");
@@ -90,7 +90,7 @@ package body Test_RINA_Flow_Alloc is
       Assert (result = Invalid_FD, "Invalid file descriptor returned");
    end Test_Incorrect_Flowspec_Version;
 
-   -- TC 028
+   -- TC 027
    procedure Test_RINA_Open_Failure (Object : in out Test) is
       dif_name    : Bounded_String := To_Bounded_String ("TEST123DIF");
       local_appl  : Bounded_String := To_Bounded_String ("TestLocalAppl");

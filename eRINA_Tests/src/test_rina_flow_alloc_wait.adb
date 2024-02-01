@@ -21,11 +21,11 @@ package body Test_RINA_Flow_Alloc_Wait is
       Name : constant String := "RINA_Flow_Alloc_Wait";
     begin
       Test_Suite.Add_Test (Caller.Create
-         ("TC-029 Positive Flow Alloc Response", Test_Positive_Flow_Alloc_Response'Access));
+         ("TC-028 Positive Flow Alloc Response", Test_Positive_Flow_Alloc_Response'Access));
       return Test_Suite'Access;
     end Suite;
 
-    -- TC 029
+    -- TC 028
     procedure Test_Positive_Flow_Alloc_Response (Object : in out Test) is
         wfd : File_Descriptor := 1;
         port_id : Unsigned_16 := 2020;
