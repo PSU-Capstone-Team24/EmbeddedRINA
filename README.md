@@ -24,6 +24,13 @@ eRINA aims to take the fundamental principles of RINA and implement them as a so
 
 ## Tests Implemented Progress
 
-| Test Suite | Implementation Progress |
-| ---------- | ----------------------- |
-| TS-001     |   :white_check_mark:    |
+| Test Suite | Done |
+| ---------- | ---- |
+| TS-001 | :white_check_mark: |
+| TS-002 | :x: |
+| TS-003 | :construction: |
+| TS-004 | :construction: |
+| TS-005 | :x: |
+| TS-006 | :white_check_mark: |
+| TS-007 | :white_check_mark: |
+| TS-008 | :x: |
