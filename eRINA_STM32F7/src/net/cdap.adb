@@ -23,6 +23,40 @@ package body CDAP is
       end case;
    end Set_Field;
 
+   procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Byte_Buffer) is
+      Final_String : String := Buffer_To_String (Val);
+      Final_String_Unbounded : Unbounded_String := To_Unbounded_String (Final_String);
+   begin
+      case Field is
+         when Obj_Class =>
+            Self.Obj_Class := Final_String_Unbounded;
+         when Obj_Name =>
+            Self.Obj_Name := Final_String_Unbounded;
+         when Auth_Mech =>
+            Self.Auth_Mech := Final_String_Unbounded;
+         when Dest_Ae_Inst =>
+            Self.Dest_Ae_Inst := Final_String_Unbounded;
+         when Dest_Ae_Name =>
+            Self.Dest_Ae_Name := Final_String_Unbounded;
+         when Dest_Ap_Inst =>
+            Self.Dest_Ap_Inst := Final_String_Unbounded;
+         when Dest_Ap_Name =>
+            Self.Dest_Ap_Name := Final_String_Unbounded;
+         when Src_Ae_Inst =>
+            Self.Src_Ae_Inst := Final_String_Unbounded;
+         when Src_Ae_Name =>
+            Self.Src_Ae_Name := Final_String_Unbounded;
+         when Src_Ap_Inst =>
+            Self.Src_Ap_Inst := Final_String_Unbounded;
+         when Src_Ap_Name =>
+            Self.Src_Ap_Name := Final_String_Unbounded;
+         when Result_Reason =>
+            Self.Result_Reason := Final_String_Unbounded;
+         when others =>
+            null;
+      end case;
+   end Set_Field;
+
    procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Op_Code)
    is
    begin
@@ -52,4 +86,5 @@ package body CDAP is
    begin
       null;
    end Set_Field;
+
 end CDAP;

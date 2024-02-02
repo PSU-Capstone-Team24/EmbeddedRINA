@@ -1,9 +1,6 @@
-with System;
 with Interfaces;
-
-with Buffers; use Buffers;
-
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Buffers; use Buffers;
 
 package CDAP is
 
@@ -97,4 +94,5 @@ package CDAP is
    procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Auth_Value);
    procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Unbounded_String);
    procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Uint64);
+   procedure Set_Field (Self : in out CDAPMessage; Field : CDAP_Field; Val : Byte_Buffer);
 end CDAP;

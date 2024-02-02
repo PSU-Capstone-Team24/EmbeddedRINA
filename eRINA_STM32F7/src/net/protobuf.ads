@@ -30,14 +30,6 @@ package Protobuf is
    function Tag_To_Field_Number (Input : Byte) return CDAP_Field;
    function Has_MSB (Input : Byte) return Boolean;
 
-   package Byte_Vectors is new Ada.Containers.Vectors (Positive, Byte);
-   subtype Byte_Vector is Byte_Vectors.Vector;
-   subtype Byte_Cursor is Byte_Vectors.Cursor;
-
-   type Bit is range 0 .. 1 with Size => 1;
-   type Bit_Array is array (Positive range <>) of Bit;
-   pragma Pack (Bit_Array);
-
    --  Takes in a vector of bytes and returns a CDAP message record
    function To_CDAP(V : in Byte_Vector) return CDAPMessage;
 

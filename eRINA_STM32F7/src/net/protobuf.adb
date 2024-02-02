@@ -113,7 +113,6 @@ package body Protobuf is
             Is_Tag_Field := False;
          else
             if Wire_Type = VARINT then
-
                declare
                   VARINT_Vector : Byte_Vector;
                begin
@@ -127,7 +126,38 @@ package body Protobuf is
                   --  Decode and update message
                   Result_Msg.Set_Field (Field_Id, To_VARINT (VARINT_Vector));
                end;
+            end if;
 
+            --  LEN can be a string, embedded messages, packed repeated fields, or even just an array of bytes
+            --  For our purposes we always return a vector of bytes, then let the known tag field dictate what this
+            --  should turn into...
+            if Wire_Type = LEN then
+               declare
+                  LEN_Vector : Byte_Vector;
+                  Data_Vector : Byte_Vector;
+                  LEN_Length : Natural := 0;
+                  LEN_Iterator : Natural := 0;
+               begin
+                  while C /= Byte_Vectors.No_Element loop
+                     LEN_Vector.Append (V(C));
+                     C := Byte_Vectors.Next (C);
+                     exit when (not Has_MSB (V(C)));
+                  end loop;
+
+                  --  The VARINT storing the length is an int32
+                  LEN_Length := Natural (To_VARINT (LEN_Vector));
+                  Put_Line ("Found LEN with length: " & LEN_Length'Image);
+
+                  while C /= Byte_Vectors.No_Element loop
+                     Data_Vector.Append (V(C));
+                     LEN_Iterator := LEN_Iterator + 1;
+                     exit when (LEN_Iterator = LEN_Length);
+                     C := Byte_Vectors.Next (C);
+                  end loop;
+
+                  Put_Line ("Decoded LEN of size (" & LEN_Length'Image & ") to be :: " & Buffer_To_String (Byte_Vector_To_Buffer (Data_Vector)));
+                  Result_Msg.Set_Field (Field_Id, Byte_Vector_To_Buffer (Data_Vector));
+               end;
             end if;
 
             --  Next field will be a tag field
