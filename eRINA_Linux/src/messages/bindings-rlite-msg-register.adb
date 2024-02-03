@@ -15,27 +15,21 @@ package body Bindings.Rlite.Msg.Register is
    function Serialize (Self : in Request) return Byte_Buffer is
       --  This is starting to look... not so robust... :(
       Hdr_Ptr : constant Byte_Buffer (1 .. Self.Hdr'Size / 8) with
-         Address => Self.Hdr'Address,
-         Import,
-         Volatile;
+        Address => Self.Hdr'Address, Import, Volatile;
 
       Reg_Ptr : constant Byte_Buffer (1 .. Self.Reg'Size / 8) with
-         Address => Self.Reg'Address,
-         Import,
-         Volatile;
+        Address => Self.Reg'Address, Import, Volatile;
 
-         --  Rlite has some padding here
+      --  Rlite has some padding here
       Pad1 : constant Byte_Buffer (1 .. 7) := (others => 0);
 
       --  Rlite wants us to pass the size of names first
       Appl_Name_Size : constant Unsigned_16 :=
         Unsigned_16 (Used_Size (Self.Appl_Name));
 
-      Appl_Name_Size_Ptr : constant Byte_Buffer
-      (1 .. Appl_Name_Size'Size / 8) with
-         Address => Appl_Name_Size'Address,
-         Import,
-         Volatile;
+      Appl_Name_Size_Ptr :
+        constant Byte_Buffer (1 .. Appl_Name_Size'Size / 8) with
+        Address => Appl_Name_Size'Address, Import, Volatile;
 
       Appl_Name_Ptr : constant Byte_Buffer :=
         To_Packed_Buffer (Self.Appl_Name);
@@ -44,23 +38,16 @@ package body Bindings.Rlite.Msg.Register is
       Dif_Name_Size : constant Unsigned_16 :=
         Unsigned_16 (Used_Size (Self.Dif_Name));
 
-      Dif_Name_Size_Ptr : constant Byte_Buffer
-      (1 .. Dif_Name_Size'Size / 8) with
-         Address => Dif_Name_Size'Address,
-         Import,
-         Volatile;
+      Dif_Name_Size_Ptr :
+        constant Byte_Buffer (1 .. Dif_Name_Size'Size / 8) with
+        Address => Dif_Name_Size'Address, Import, Volatile;
 
       Dif_Name_Ptr : constant Byte_Buffer := To_Packed_Buffer (Self.Dif_Name);
 
       --  Final serialized concatenated byte buffer in Rlite format
       Serialized_Msg : constant Byte_Buffer :=
-        Hdr_Ptr &
-        Reg_Ptr &
-        Pad1 &
-        Appl_Name_Size_Ptr &
-        Appl_Name_Ptr &
-        Dif_Name_Size_Ptr &
-        Dif_Name_Ptr;
+        Hdr_Ptr & Reg_Ptr & Pad1 & Appl_Name_Size_Ptr & Appl_Name_Ptr &
+        Dif_Name_Size_Ptr & Dif_Name_Ptr;
    begin
       return Serialized_Msg;
    end Serialize;
@@ -127,24 +114,18 @@ package body Bindings.Rlite.Msg.Register is
 
    function Serialize (Self : in Move) return Byte_Buffer is
       Hdr_Ptr : constant Byte_Buffer (1 .. Self.Hdr'Size / 8) with
-         Address => Self.Hdr'Address,
-         Import,
-         Volatile;
+        Address => Self.Hdr'Address, Import, Volatile;
 
       Ipcp_Id_Ptr : constant Byte_Buffer (1 .. Self.Ipcp_Id'Size / 8) with
-         Address => Self.Ipcp_Id'Address,
-         Import,
-         Volatile;
+        Address => Self.Ipcp_Id'Address, Import, Volatile;
 
-         --  Rlite has 16 bits (2 bytes) of padding here
+      --  Rlite has 16 bits (2 bytes) of padding here
       Pad1 : constant Byte_Buffer (1 .. 2) := (others => 0);
 
       Fd_Ptr : constant Byte_Buffer (1 .. Self.Fd'Size / 8) with
-         Address => Self.Fd'Address,
-         Import,
-         Volatile;
+        Address => Self.Fd'Address, Import, Volatile;
 
-         --  Final serialized concatenated byte buffer in Rlite format
+      --  Final serialized concatenated byte buffer in Rlite format
       Serialized_Msg : constant Byte_Buffer :=
         Hdr_Ptr & Ipcp_Id_Ptr & Pad1 & Fd_Ptr;
    begin

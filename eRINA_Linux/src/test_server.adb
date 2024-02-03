@@ -57,20 +57,15 @@ begin
    else
       Text_IO.Put_Line
         ("Successfully opened RINA control device (File Desc: " &
-         File_Descriptor'Image (RINA_Dev_FD) &
-         ")");
+         File_Descriptor'Image (RINA_Dev_FD) & ")");
    end if;
 
    Ipcp_Ret :=
      RINA_Create_IPCP (RINA_Dev_FD, IPCP_Name, Normal, IPCP_DIF_Name);
 
    Ada.Text_IO.Put_Line
-     ("Created IPCP '" &
-      IPCP_Name &
-      "' with DIF '" &
-      IPCP_DIF_Name &
-      "' of type Normal - IPCP_ID = " &
-      Rl_Ipcp_Id_T'Image (Ipcp_Ret));
+     ("Created IPCP '" & IPCP_Name & "' with DIF '" & IPCP_DIF_Name &
+      "' of type Normal - IPCP_ID = " & Rl_Ipcp_Id_T'Image (Ipcp_Ret));
 
    Ada.Text_IO.Put ("Enter name of server application to register: ");
    Ada.Text_IO.Get_Line (Application_Name, Application_Name_Last);
@@ -96,19 +91,15 @@ begin
 
       if Register_Success = Invalid_FD then
          Text_IO.Put_Line
-           ("Error registering application " &
-            Application_Name &
-            " to " &
+           ("Error registering application " & Application_Name & " to " &
             DIF_Name);
 
          --  Reset DIF name so user has another chance to enter a valid one
          DIF_Name := (others => ASCII.NUL);
       else
          Text_IO.Put_Line
-           ("Successfully registered application " &
-            Application_Name &
-            " to " &
-            DIF_Name);
+           ("Successfully registered application " & Application_Name &
+            " to " & DIF_Name);
       end if;
    end loop;
 
@@ -145,9 +136,7 @@ begin
             Counter_Msg   := Counter_Msg + 1;
             Appl_Data_Msg :=
               Overwrite
-                (Appl_Data_Msg,
-                 26,
-                 Integer'Image (Counter_Msg),
+                (Appl_Data_Msg, 26, Integer'Image (Counter_Msg),
                  Ada.Strings.Right);
 
             declare
@@ -157,9 +146,7 @@ begin
                Written := Write (Flow_Respond, Buf'Address, Buf'Size / 8);
                Debug.Print
                  ("Test_Server",
-                  "Sent message: " &
-                  To_String (Appl_Data_Msg) &
-                  " Bytes: " &
+                  "Sent message: " & To_String (Appl_Data_Msg) & " Bytes: " &
                   Integer'Image (Written),
                   Debug.Info);
             end;

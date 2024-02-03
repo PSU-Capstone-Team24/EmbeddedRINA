@@ -6,7 +6,7 @@ with Bindings.Rlite.Msg; use Bindings.Rlite.Msg;
 package Bindings.Rlite.Msg.Flow is
 
    RINA_FLOW_SPEC_VERSION  : constant Unsigned_32 := 2;
-   RINA_FLOW_SPEC_LOSS_MAX : constant Unsigned_16 := 10000;
+   RINA_FLOW_SPEC_LOSS_MAX : constant Unsigned_16 := 10_000;
 
    --  Record to specify the flow QoS parameters asked by
    --  the application issuing a flow allocation request.
@@ -31,8 +31,7 @@ package Bindings.Rlite.Msg.Flow is
    end record;
 
    function Buffer_To_Flow_Spec is new Ada.Unchecked_Conversion
-     (Source => Byte_Buffer,
-      Target => Flow.RINA_Flow_Spec);
+     (Source => Byte_Buffer, Target => Flow.RINA_Flow_Spec);
 
    -- struct rl_kmsg_fa_req
    -- (Application --> Kernel) to initiate a flow allocation.
@@ -56,8 +55,7 @@ package Bindings.Rlite.Msg.Flow is
    end record;
 
    overriding procedure Deserialize
-     (Self : in out Request;
-      fd   :        OS.File_Descriptor);
+     (Self : in out Request; fd : OS.File_Descriptor);
 
    overriding function Serialize (Self : in Request) return Byte_Buffer;
 
@@ -69,8 +67,7 @@ package Bindings.Rlite.Msg.Flow is
    end record;
 
    overriding procedure Deserialize
-     (Self : in out Response_Arrived;
-      fd   :        OS.File_Descriptor);
+     (Self : in out Response_Arrived; fd : OS.File_Descriptor);
 
    overriding function Serialize
      (Self : in Response_Arrived) return Byte_Buffer;
@@ -96,8 +93,7 @@ package Bindings.Rlite.Msg.Flow is
    end record;
 
    overriding procedure Deserialize
-     (Self : in out Response;
-      fd   :        OS.File_Descriptor);
+     (Self : in out Response; fd : OS.File_Descriptor);
 
    overriding function Serialize (Self : in Response) return Byte_Buffer;
 
@@ -114,8 +110,7 @@ package Bindings.Rlite.Msg.Flow is
    end record;
 
    overriding procedure Deserialize
-     (Self : in out Request_Arrived;
-      fd   :        OS.File_Descriptor);
+     (Self : in out Request_Arrived; fd : OS.File_Descriptor);
 
    overriding function Serialize
      (Self : in Request_Arrived) return Byte_Buffer;

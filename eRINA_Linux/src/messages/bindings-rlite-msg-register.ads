@@ -12,8 +12,7 @@ package Bindings.Rlite.Msg.Register is
    pragma Pack (Request);
 
    overriding procedure Deserialize
-     (Self : in out Request;
-      fd   :        OS.File_Descriptor);
+     (Self : in out Request; fd : OS.File_Descriptor);
 
    overriding function Serialize (Self : in Request) return Byte_Buffer;
 
@@ -28,8 +27,7 @@ package Bindings.Rlite.Msg.Register is
    pragma Pack (Response);
 
    overriding procedure Deserialize
-     (Self : in out Response;
-      fd   :        OS.File_Descriptor);
+     (Self : in out Response; fd : OS.File_Descriptor);
 
    overriding function Serialize (Self : in Response) return Byte_Buffer;
 
@@ -41,8 +39,7 @@ package Bindings.Rlite.Msg.Register is
    pragma Pack (Move);
 
    overriding procedure Deserialize
-     (Self : in out Move;
-      fd   :        OS.File_Descriptor);
+     (Self : in out Move; fd : OS.File_Descriptor);
 
    overriding function Serialize (Self : in Move) return Byte_Buffer;
 

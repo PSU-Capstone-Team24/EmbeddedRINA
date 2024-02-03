@@ -25,7 +25,8 @@ package Buffers is
    subtype Byte_Vector is Byte_Vectors.Vector;
    subtype Byte_Cursor is Byte_Vectors.Cursor;
 
-   type Bit is range 0 .. 1 with Size => 1;
+   type Bit is range 0 .. 1 with
+     Size => 1;
    type Bit_Array is array (Positive range <>) of Bit;
    pragma Pack (Bit_Array);
 

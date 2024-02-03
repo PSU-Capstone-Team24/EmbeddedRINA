@@ -61,9 +61,9 @@ package body Buffers is
 
       return Result;
    end Buffer_To_String;
-   
+
    function Byte_Vector_To_Buffer (Vector : Byte_Vector) return Byte_Buffer is
-      Buffer : Byte_Buffer(1 .. Natural (Vector.Length)) := (others => 0);
+      Buffer : Byte_Buffer (1 .. Natural (Vector.Length)) := (others => 0);
    begin
       for I in Buffer'Range loop
          Buffer (I) := Vector.Element (I);
