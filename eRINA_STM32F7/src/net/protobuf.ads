@@ -5,7 +5,6 @@
 with Ada.Containers.Vectors;
 
 with Buffers; use Buffers;
-with CDAP; use CDAP;
 
 package Protobuf is
 
@@ -27,11 +26,7 @@ package Protobuf is
    type Wire is (VARINT, I64, LEN, SGROUP, EGROUP, I32);
 
    function Tag_To_Wire_Type (Input : Byte) return Wire;
-   function Tag_To_Field_Number (Input : Byte) return CDAP_Field;
    function Has_MSB (Input : Byte) return Boolean;
-
-   --  Takes in a vector of bytes and returns a CDAP message record
-   function To_CDAP(V : in Byte_Vector) return CDAPMessage;
 
    --  Variable-width integers, or varints, are at the core of the wire format.
    --  They allow encoding unsigned 64-bit ints using anywhere between 1 and 10 bytes
