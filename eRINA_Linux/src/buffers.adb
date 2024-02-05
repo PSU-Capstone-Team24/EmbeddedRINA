@@ -29,9 +29,6 @@ package body Buffers is
          return Str;
       end ToHex;
    begin
-      Ada.Text_IO.New_Line;
-      Ada.Text_IO.Put ("Byte Stream: ");
-
       for Byte of Input loop
          Ada.Text_IO.Put (ToHex (Byte) & " ");
       end loop;

@@ -1,7 +1,7 @@
 with Demos;
 with Net;
-with CDAP;
-with EFCP;
+-- with CDAP;
+-- with EFCP;
 with IPCP_Manager; use IPCP_Manager;
 
 procedure Demo is

@@ -79,11 +79,6 @@ package body Protobuf is
          end loop;
       end loop;
 
-      --  MT: TODO: Debug only! Remove Me!
-      Put_Line
-        ("Decoded VARINT to be :: " &
-         Uint64'Image (Bit_Array_To_Uint64 (Working_Bit_Array)));
-
       --  MT: TODO: May need some idiot proofing
       return Bit_Array_To_Uint64 (Working_Bit_Array);
    end To_VARINT;
