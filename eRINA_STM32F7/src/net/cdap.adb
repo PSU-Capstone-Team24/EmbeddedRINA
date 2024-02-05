@@ -256,11 +256,11 @@ package body CDAP is
 
       --  Obj_Class
       Put (Head ("Obj_Class:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Obj_Class));
+      Put_Line ("'" & To_String(Self.Obj_Class) & "'");
 
       --  Obj_Name
       Put (Head ("Obj_Name:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Obj_Name));
+      Put_Line ("'" & To_String(Self.Obj_Name) & "'");
 
       --  Obj_Inst
       Put (Head ("Obj_Inst:", 15, ' '));
@@ -291,7 +291,13 @@ package body CDAP is
 
       --  Obj_Value.Byteval
       Put (Head("  Byteval:", 16, ' '));
-      Put_Bytes(Byte_Vector_To_Buffer (Self.ObjValue.Byteval));
+
+      case Self.ObjValue.Byteval.Length is
+         when 0 =>
+            Put_Line("N/A");
+         when others =>
+            Put_Bytes(Byte_Vector_To_Buffer (Self.ObjValue.Byteval));
+      end case;
 
       --  Obj_Value.Floatval
       Put (Head("  Floatval:", 15, ' '));
