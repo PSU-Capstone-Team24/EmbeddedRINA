@@ -16,5 +16,6 @@ private
    procedure Test_Unregister_DIF_Name_Not_Registered (Object : in out Test);
    procedure Test_Unregister_App_Name_Too_Long (Object : in out Test);
    procedure Test_Unregister_App_Name_Empty (Object : in out Test);
+   procedure Test_Unregister_Invalid_File_Descriptor (Object : in out Test);
 
 end Test_RINA_Unregister;
