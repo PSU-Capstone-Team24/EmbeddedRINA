@@ -1,6 +1,7 @@
 with CDAP;
 with Buffers;     use Buffers.Byte_Vectors;
 with Ada.Text_IO; use Ada.Text_IO;
+with DIF_Manager;
 
 procedure Test is
    Message     : CDAP.CDAPMessage;

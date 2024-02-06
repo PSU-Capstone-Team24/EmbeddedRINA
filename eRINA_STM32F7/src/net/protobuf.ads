@@ -2,8 +2,6 @@
 --  messages such as the CDAP ones coming from rLite
 --  https://protobuf.dev/programming-guides/encoding/
 
-with Ada.Containers.Vectors;
-
 with Buffers; use Buffers;
 
 package Protobuf is

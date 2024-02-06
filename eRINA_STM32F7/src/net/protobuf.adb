@@ -1,8 +1,8 @@
 --  This package exists to support Protobuf encoded
 --  messages such as the CDAP ones coming from rLite
 --  https://protobuf.dev/programming-guides/encoding/
-with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Unchecked_Conversion;
+with Ada.Containers;
 
 package body Protobuf is
    use type Ada.Containers.Count_Type;
@@ -44,16 +44,7 @@ package body Protobuf is
    end Tag_To_Wire_Type;
 
    function To_VARINT (V : in Byte_Vector) return Uint64 is
-      Working_Byte_Vector : Byte_Vector;
       Working_Bit_Array   : Bit_Array (1 .. 64) := (others => 0);
-      Result              : Uint64              := 0;
-
-      procedure Remove_MSB (C : Byte_Cursor) is
-         MSB_Removed : constant Byte := V (C) and 2#0111_1111#;
-      begin
-         Working_Byte_Vector.Append (MSB_Removed);
-      end Remove_MSB;
-
    begin
       --  MT: TODO: dropping this requirement for now
       --  Note we are checking vector capacity (max elements), not length (total elements)
