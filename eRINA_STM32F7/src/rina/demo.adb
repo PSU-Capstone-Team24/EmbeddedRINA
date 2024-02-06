@@ -1,12 +1,9 @@
 with Demos;
-with Net;
 -- with CDAP;
 -- with EFCP;
 with IPCP_Manager; use IPCP_Manager;
 
 procedure Demo is
-
-   use Net;
 
    procedure Header is
    begin
@@ -16,8 +13,15 @@ procedure Demo is
    --  Debug only, remove later
    Demo_IPCP_Name : constant IPCP_Name.Bounded_String :=
      IPCP_Name.To_Bounded_String ("Demo.IPCP");
-   Demo_IPCP_MacAddr : constant Ether_Addr := (others => 16#ff#);
-   Demo_IPCP : IPCP := IPCP_Manager.Create (Demo_IPCP_Name, Demo_IPCP_MacAddr);
+
+   procedure DoStuff is
+   begin
+      --  I am an "application process"
+      --  I run concurrently with the rest of the system and communicate over IPC
+      null;
+   end DoStuff;
+
+   Demo_IPCP : IPCP := (Name => Demo_IPCP_Name, Executable => DoStuff'Unrestricted_Access, IO_Buffer => <>);
 begin
    Header;
 end Demo;
