@@ -51,8 +51,12 @@ package body GUI is
         fontHeight : Natural := BMP_Fonts.Char_Height(Font => Large_Font);
         srcToPoint : HAL.Bitmap.Point := (0, (CONSOLE_STARTING_POINT.Y + (fontHeight * SrcLineNumber)));
         dstToPoint : HAL.Bitmap.Point := (0, (CONSOLE_STARTING_POINT.Y + (fontHeight * DstLineNumer)));
+        srcRect : HAL.Bitmap.Rect := (Position => srcToPoint, Width => 480, Height => fontHeight);
     begin
         HAL.Bitmap.Copy_Rect(Src_Buffer => STM32.Board.Display.Hidden_Buffer (1).all, Src_Pt => srcToPoint, Dst_Buffer => STM32.Board.Display.Hidden_Buffer (1).all, Dst_Pt => dstToPoint, Width => 480, Height => fontHeight, Synchronous => True);
+        if DeleteSrc then
+            HAL.Bitmap.Fill_Rect(Buffer => STM32.Board.Display.Hidden_Buffer (1).all, Area => srcRect);
+        end if;
         STM32.Board.Display.Update_Layer(1, True);
     end CopyLine;
 
