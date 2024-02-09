@@ -70,16 +70,18 @@ procedure Dns is
    procedure Refresh is
       use type Net.DHCP.State_Type;
 
-      Y     : Natural := 90;
+      Y      : Natural := 90;
       Status : Net.Error_Code;
       pragma Unreferenced (Status);
    begin
       for I in Dns_List.Queries'Range loop
          if Dns_List.Queries (I).Get_Name'Length > 0 then
             Demos.Put (0, Y, Dns_List.Queries (I).Get_Name);
-            Demos.Put (180, Y, Net.Utils.To_String (Dns_List.Queries (I).Get_Ip));
+            Demos.Put
+              (180, Y, Net.Utils.To_String (Dns_List.Queries (I).Get_Ip));
             Demos.Put (330, Y, Get_Status (Dns_List.Queries (I)));
-            Demos.Put (400, Y, Net.Uint32'Image (Dns_List.Queries (I).Get_Ttl));
+            Demos.Put
+              (400, Y, Net.Uint32'Image (Dns_List.Queries (I).Get_Ttl));
             --  Put (250, Y, Net.Uint64 (Hosts (I).Seq));
             --  Demos.Put (400, Y, Net.Uint64 (Dns_List.Queries (I).));
             Y := Y + 16;
@@ -89,13 +91,20 @@ procedure Dns is
       STM32.Board.Display.Update_Layer (1);
 
       if Demos.Dhcp.Get_State = Net.DHCP.STATE_BOUND then
-         Dns_List.Queries (1).Resolve (Demos.Ifnet'Access, "www.google.com", Status);
-         Dns_List.Queries (2).Resolve (Demos.Ifnet'Access, "www.facebook.com", Status);
-         Dns_List.Queries (3).Resolve (Demos.Ifnet'Access, "www.apple.com", Status);
-         Dns_List.Queries (4).Resolve (Demos.Ifnet'Access, "www.adacore.com", Status);
-         Dns_List.Queries (5).Resolve (Demos.Ifnet'Access, "github.com", Status);
-         Dns_List.Queries (6).Resolve (Demos.Ifnet'Access, "www.twitter.com", Status);
-         Dns_List.Queries (7).Resolve (Demos.Ifnet'Access, "www.kalabosse.com", Status);
+         Dns_List.Queries (1).Resolve
+           (Demos.Ifnet'Access, "www.google.com", Status);
+         Dns_List.Queries (2).Resolve
+           (Demos.Ifnet'Access, "www.facebook.com", Status);
+         Dns_List.Queries (3).Resolve
+           (Demos.Ifnet'Access, "www.apple.com", Status);
+         Dns_List.Queries (4).Resolve
+           (Demos.Ifnet'Access, "www.adacore.com", Status);
+         Dns_List.Queries (5).Resolve
+           (Demos.Ifnet'Access, "github.com", Status);
+         Dns_List.Queries (6).Resolve
+           (Demos.Ifnet'Access, "www.twitter.com", Status);
+         Dns_List.Queries (7).Resolve
+           (Demos.Ifnet'Access, "www.kalabosse.com", Status);
       end if;
    end Refresh;
 
@@ -104,7 +113,8 @@ procedure Dns is
    procedure Initialize is new Demos.Initialize (Header);
 
    --  The display refresh period.
-   REFRESH_PERIOD   : constant Ada.Real_Time.Time_Span := Ada.Real_Time.Milliseconds (1000);
+   REFRESH_PERIOD : constant Ada.Real_Time.Time_Span :=
+     Ada.Real_Time.Milliseconds (1_000);
 
    --  Refresh display deadline.
    Display_Deadline : Ada.Real_Time.Time;

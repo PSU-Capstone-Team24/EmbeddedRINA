@@ -62,7 +62,7 @@ procedure Ping is
    Counter : Natural := 3;
 
    procedure Refresh is
-      Y     : Natural := 90;
+      Y     : Natural                         := 90;
       Hosts : constant Pinger.Ping_Info_Array := Pinger.Get_Hosts;
    begin
       for I in Hosts'Range loop
@@ -86,24 +86,25 @@ procedure Ping is
    procedure Initialize is new Demos.Initialize (Header);
 
    --  The ping period.
-   PING_PERIOD   : constant Ada.Real_Time.Time_Span := Ada.Real_Time.Milliseconds (1000);
+   PING_PERIOD : constant Ada.Real_Time.Time_Span :=
+     Ada.Real_Time.Milliseconds (1_000);
 
    --  Send ping echo request deadline
    Ping_Deadline : Ada.Real_Time.Time;
 
-   Icmp_Handler  : Net.Protos.Receive_Handler;
+   Icmp_Handler : Net.Protos.Receive_Handler;
 begin
    Initialize ("STM32 Ping");
 
    Pinger.Add_Host ((192, 168, 1, 1));
    Pinger.Add_Host ((8, 8, 8, 8));
-   Net.Protos.Dispatchers.Set_Handler (Proto    => Net.Protos.IPv4.P_ICMP,
-                                       Handler  => Pinger.Receive'Access,
-                                       Previous => Icmp_Handler);
+   Net.Protos.Dispatchers.Set_Handler
+     (Proto    => Net.Protos.IPv4.P_ICMP, Handler => Pinger.Receive'Access,
+      Previous => Icmp_Handler);
 
    --  Change font to 8x8.
    Demos.Current_Font := BMP_Fonts.Font8x8;
-   Ping_Deadline := Ada.Real_Time.Clock;
+   Ping_Deadline      := Ada.Real_Time.Clock;
    loop
       declare
          Now           : constant Ada.Real_Time.Time := Ada.Real_Time.Clock;

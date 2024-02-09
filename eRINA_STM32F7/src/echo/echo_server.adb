@@ -24,12 +24,12 @@ package body Echo_Server is
       begin
          Id := Id + 1;
          if Id <= List'Last then
-            List (Id).Id := Id;
+            List (Id).Id      := Id;
             List (Id).Content := Content.Content;
          else
             List (1 .. List'Last - 1) := List (2 .. List'Last);
-            List (List'Last).Id := Id;
-            List (List'Last).Content := Content.Content;
+            List (List'Last).Id       := Id;
+            List (List'Last).Content  := Content.Content;
          end if;
       end Echo;
 
@@ -40,17 +40,19 @@ package body Echo_Server is
 
    end Logger;
 
-   overriding
-   procedure Receive (Endpoint : in out Echo_Server;
-                      From     : in Net.Sockets.Sockaddr_In;
-                      Packet   : in out Net.Buffers.Buffer_Type) is
+   overriding procedure Receive
+     (Endpoint : in out Echo_Server; From : in Net.Sockets.Sockaddr_In;
+      Packet   : in out Net.Buffers.Buffer_Type)
+   is
       use type Net.Uint16;
 
-      Size   : constant Net.Uint16 := Packet.Get_Data_Size (Net.Buffers.UDP_PACKET);
+      Size : constant Net.Uint16 :=
+        Packet.Get_Data_Size (Net.Buffers.UDP_PACKET);
       Status : Net.Error_Code;
       Msg    : Message;
-      Len    : constant Natural
-        := (if Size > Msg.Content'Length then Msg.Content'Length else Natural (Size));
+      Len    : constant Natural :=
+        (if Size > Msg.Content'Length then Msg.Content'Length
+         else Natural (Size));
    begin
       Packet.Get_String (Msg.Content (1 .. Len));
       Packet.Set_Data_Size (Size);
