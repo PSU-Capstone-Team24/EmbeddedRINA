@@ -1,5 +1,6 @@
 with Bitmapped_Drawing;
 with STM32.Board;
+with GUI;
 
 package body Debug is
 

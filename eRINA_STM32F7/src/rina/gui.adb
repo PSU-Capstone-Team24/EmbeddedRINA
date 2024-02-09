@@ -1,5 +1,4 @@
 with Bitmapped_Drawing;
-with HAL.Bitmap;
 with STM32.Board;
 with STM32.RNG.Interrupts;
 
@@ -7,8 +6,8 @@ package body GUI is
 
    function Scale (Point : in HAL.Bitmap.Point) return HAL.Bitmap.Point is
    begin
-      if STM32.Board.LCD_Natural_Width > 480 then
-         return (Point.X * 800 / 480, Point.Y * 480 / 272);
+      if STM32.Board.LCD_Natural_Width > Board_Resolution.Width then
+         return (Point.X * 800 / Board_Resolution.Width, Point.Y * Board_Resolution.Width / Board_Resolution.Height);
       else
          return Point;
       end if;
@@ -28,7 +27,7 @@ package body GUI is
    end Print;
 
    procedure Initialize (Title : in String) is
-      Title_Location : HAL.Bitmap.Point := (80, 10);
+      Title_Location : constant HAL.Bitmap.Point := (80, 10);
    begin
       STM32.RNG.Interrupts.Initialize_RNG;
       STM32.Board.Display.Initialize;

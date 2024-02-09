@@ -1,6 +1,5 @@
 with HAL.Bitmap;
 with BMP_Fonts;
-with GUI;
 
 package Debug is
    type Debug is (Error, Warning, Info);
