@@ -16,7 +16,7 @@ package body GUI is
    procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point) is
    begin
       Bitmapped_Drawing.Draw_String
-        (Buffer     => STM32.Board.Display.Hidden_Buffer (1).all,
+        (Buffer     => GUI.Screen_Buffer.all,
          Start      => Scale ((Pos.X, Pos.Y)),
          Msg        => Msg,
          Font       => BMP_Fonts.Font8x8,
