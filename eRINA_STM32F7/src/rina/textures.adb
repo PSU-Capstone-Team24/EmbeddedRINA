@@ -1,5 +1,5 @@
 with Bitmap_Color_Conversion;
-with STM32.Board;
+with GUI;
 
 package body Textures is
    procedure Print (T : in Texture; Pos : in HAL.Bitmap.Point) is
