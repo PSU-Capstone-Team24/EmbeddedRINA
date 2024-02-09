@@ -16,8 +16,9 @@ package GUI is
    Board_Resolution : Size := (480, 272);
 
    procedure Initialize (Title : in String);
-   procedure Print (Msg : in String; Pos : HAL.Bitmap.Point);
+   procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point);
+   
    function MeasureText
-     (Text : in String; Font : BMP_Fonts.BMP_Font) return Size;
+     (Text : in String; Font : in BMP_Fonts.BMP_Font) return Size;
    function Scale (Point : in HAL.Bitmap.Point) return HAL.Bitmap.Point;
 end GUI;

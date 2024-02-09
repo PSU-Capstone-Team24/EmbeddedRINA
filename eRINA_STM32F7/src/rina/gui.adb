@@ -14,17 +14,21 @@ package body GUI is
       end if;
    end Scale;
 
-   procedure Print (Msg : in String; Pos : HAL.Bitmap.Point) is
+   procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point) is
    begin
       Bitmapped_Drawing.Draw_String
         (Buffer     => STM32.Board.Display.Hidden_Buffer (1).all,
-         Start      => Scale ((Pos.X, Pos.Y)), Msg => Msg,
-         Font       => BMP_Fonts.Font8x8, Foreground => Foreground,
+         Start      => Scale ((Pos.X, Pos.Y)),
+         Msg        => Msg,
+         Font       => BMP_Fonts.Font8x8,
+         Foreground => Foreground,
          Background => Background);
+    
+      STM32.Board.Display.Update_Layer (1, True);
    end Print;
 
    procedure Initialize (Title : in String) is
-      Title_Location : HAL.Bitmap.Point := (80, 5);
+      Title_Location : HAL.Bitmap.Point := (80, 10);
    begin
       STM32.RNG.Interrupts.Initialize_RNG;
       STM32.Board.Display.Initialize;
@@ -33,7 +37,7 @@ package body GUI is
    end Initialize;
 
    function MeasureText
-     (Text : in String; Font : BMP_Fonts.BMP_Font) return Size
+     (Text : in String; Font : in BMP_Fonts.BMP_Font) return Size
    is
    begin
       return

@@ -13,7 +13,5 @@ package body Textures is
               ((Pos.X + Row, Pos.Y + Column));
          end loop;
       end loop;
-
-      STM32.Board.Display.Update_Layer (1);
    end Print;
 end Textures;

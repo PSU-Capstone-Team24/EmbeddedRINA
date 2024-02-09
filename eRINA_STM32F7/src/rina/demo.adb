@@ -8,7 +8,7 @@ procedure Demo is
 begin
    GUI.Initialize ("eRINA Debug");
 
-   Textures.Print (Textures.PSU.Bitmap, (0, 0));
+   Textures.Print (Textures.PSU.Bitmap, (5, 10));
    --  Keep board from immediately terminating
    loop
       Debug.Print (Debug.Info, "Message " & Counter'Image);
