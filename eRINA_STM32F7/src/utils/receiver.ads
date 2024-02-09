@@ -22,16 +22,19 @@ package Receiver is
    type Us_Time is new Natural;
 
    --  Average, min and max time in microseconds taken to process a packet.
-   Avg_Receive_Time : Us_Time := 0 with Atomic;
-   Min_Receive_Time : Us_Time := 0 with Atomic;
-   Max_Receive_Time : Us_Time := 0 with Atomic;
+   Avg_Receive_Time : Us_Time := 0 with
+     Atomic;
+   Min_Receive_Time : Us_Time := 0 with
+     Atomic;
+   Max_Receive_Time : Us_Time := 0 with
+     Atomic;
 
    --  Start the receiver loop.
    procedure Start;
 
    --  The task that waits for packets.
    task Controller with
-     Storage_Size => (16 * 1024),
-     Priority => System.Default_Priority;
+     Storage_Size => (16 * 1_024), Priority => System.Default_Priority
+;
 
 end Receiver;
