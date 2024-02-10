@@ -29,6 +29,7 @@ package body Test_RINA_Open is
       return Test_Suite'Access;
    end Suite;
 
+   -- TC 001
    procedure Test_Open (Object : in out Test) is
       Rlite_Fd : File_Descriptor := Invalid_FD;
    begin
@@ -36,6 +37,7 @@ package body Test_RINA_Open is
       Assert(Rlite_Fd /= Invalid_FD, "Invalid file descriptor returned");
    end Test_Open;
 
+   -- TC 002
    procedure Test_Open_Failure (Object : in out Test) is
       Fd : File_Descriptor := Invalid_FD;
    begin

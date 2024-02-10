@@ -27,6 +27,7 @@ package body Test_RINA_Unregister is
       Name_015 : constant String := "TC-015";
       Name_016 : constant String := "TC-016";
       Name_017 : constant String := "TC-017";
+      Name_018 : constant String := "TC-018";
    begin
     Test_Suite.Add_Test (Caller.Create 
             (Name_012 & " Verify that rina_unregister successfully unregisters an application name from a DIF", Test_Unregister_AppName_to_DIF'Access));
@@ -40,6 +41,9 @@ package body Test_RINA_Unregister is
             (Name_016 & " Verify rina_unregister throws exception when application name is too long", Test_Unregister_App_Name_Too_Long'Access));
     Test_Suite.Add_Test (Caller.Create
             (Name_017 & " Verify rina_unregister throws exception when application name is empty", Test_Unregister_App_Name_Empty'Access));
+   Test_Suite.Add_Test (Caller.Create
+            (Name_018 & " Verify rina_unregister returns Invalid_FD when passed an invalid file descriptor for the control device", Test_Unregister_Invalid_File_Descriptor'Access));
+         
 
     return Test_Suite'Access;
    end Suite;
@@ -123,5 +127,15 @@ package body Test_RINA_Unregister is
 
       Assert (Caused_Error and Unregister_Success = Invalid_FD, "App name is empty");
    end Test_Unregister_App_Name_Empty;
+
+   -- TC 018
+   procedure Test_Unregister_Invalid_File_Descriptor (Object : in out Test) is
+      Invalid_FileD : File_Descriptor := Invalid_FD;
+      Unregister_Success : File_Descriptor;
+      Caused_Error : Boolean := False;
+   begin
+      Unregister_Success := RINA_Register(Invalid_FileD, DIF_Name, "NewTestAppName", 0);
+      Assert (Caused_Error = False and Unregister_Success = Invalid_FD, "Invalid file descriptor passed for control device");
+   end Test_Unregister_Invalid_File_Descriptor;
 
 end Test_RINA_Unregister;

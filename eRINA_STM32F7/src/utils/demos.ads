@@ -55,6 +55,10 @@ package Demos is
       with procedure Header;
    procedure Initialize (Title : in String);
 
+   generic
+      with procedure Header;
+   procedure Initialize_Blank;
+
    pragma Warnings (Off);
 
    --  Get the default font size according to the display size.

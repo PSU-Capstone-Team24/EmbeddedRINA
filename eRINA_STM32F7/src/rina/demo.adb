@@ -7,21 +7,15 @@ procedure Demo is
 
    procedure Header is
    begin
-      Demos.Put (0, 0, "eRINA_Debug");
+      Demos.Put (0, 0, "eRINA Debug");
    end Header;
 
-   --  Debug only, remove later
-   Demo_IPCP_Name : constant IPCP_Name.Bounded_String :=
-     IPCP_Name.To_Bounded_String ("Demo.IPCP");
-
-   procedure DoStuff is
-   begin
-      --  I am an "application process"
-      --  I run concurrently with the rest of the system and communicate over IPC
-      null;
-   end DoStuff;
-
-   Demo_IPCP : IPCP := (Name => Demo_IPCP_Name, Executable => DoStuff'Unrestricted_Access, IO_Buffer => <>);
+   procedure Initialize is new Demos.Initialize_Blank (Header);
 begin
-   Header;
+   Initialize;
+
+   --  Keep board from immediately terminating
+   loop
+      null;
+   end loop;
 end Demo;

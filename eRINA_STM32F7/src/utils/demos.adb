@@ -131,6 +131,19 @@ package body Demos is
       end if;
    end Refresh_Ifnet_Stats;
 
+   procedure Initialize_Blank is
+   begin
+      STM32.RNG.Interrupts.Initialize_RNG;
+      STM32.Board.Display.Initialize;
+      STM32.Board.Display.Initialize_Layer (1, HAL.Bitmap.ARGB_1555);
+      
+      Current_Font := BMP_Fonts.Font16x24;
+      Header;
+      Current_Font := Default_Font;
+      
+      STM32.Board.Display.Update_Layer (1);
+   end Initialize_Blank;
+   
    --  ------------------------------
    --  Initialize the board and the interface.
    --  ------------------------------
