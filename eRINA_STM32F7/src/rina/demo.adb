@@ -2,6 +2,7 @@ with GUI;
 with Debug;
 with Textures;
 with Textures.PSU;
+with Network;
 
 procedure Demo is
    Counter : Natural := 0;

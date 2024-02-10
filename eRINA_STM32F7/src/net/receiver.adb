@@ -1,31 +1,13 @@
------------------------------------------------------------------------
---  receiver -- Ethernet Packet Receiver
---  Copyright (C) 2016, 2017 Stephane Carrez
---  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
---
---  Licensed under the Apache License, Version 2.0 (the "License");
---  you may not use this file except in compliance with the License.
---  You may obtain a copy of the License at
---
---      http://www.apache.org/licenses/LICENSE-2.0
---
---  Unless required by applicable law or agreed to in writing, software
---  distributed under the License is distributed on an "AS IS" BASIS,
---  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
---  See the License for the specific language governing permissions and
---  limitations under the License.
------------------------------------------------------------------------
 with Ada.Real_Time;
 with Ada.Synchronous_Task_Control;
 with Net.Buffers;
 with Net.Protos.Arp;
 with Net.Protos.Dispatchers;
 with Net.Headers;
-with Demos;
+with Network;
+
 package body Receiver is
 
-   use type Net.Ip_Addr;
-   use type Net.Uint8;
    use type Net.Uint16;
 
    Ready  : Ada.Synchronous_Task_Control.Suspension_Object;
@@ -61,18 +43,20 @@ package body Receiver is
          if Packet.Is_Null then
             Net.Buffers.Allocate (Packet);
          end if;
+         
          if not Packet.Is_Null then
-            Demos.Ifnet.Receive (Packet);
+            Network.Ifnet.Receive (Packet);
             Now   := Ada.Real_Time.Clock;
             Ether := Packet.Ethernet;
+            
             if Ether.Ether_Type =
               Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
             then
-               Net.Protos.Arp.Receive (Demos.Ifnet, Packet);
+               Net.Protos.Arp.Receive (Network.Ifnet, Packet);
             elsif Ether.Ether_Type =
-              Net.Headers.To_Network (Net.Protos.ETHERTYPE_IP)
+              Net.Headers.To_Network (Net.Protos.ETHERTYPE_RINA)
             then
-               Net.Protos.Dispatchers.Receive (Demos.Ifnet, Packet);
+               Net.Protos.Dispatchers.Receive (Network.Ifnet, Packet);
             end if;
 
             --  Compute the time taken to process the packet in microseconds.
