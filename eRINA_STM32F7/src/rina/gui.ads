@@ -1,6 +1,5 @@
 with BMP_Fonts;
 with HAL.Bitmap;
-with STM32.Board;
 
 package GUI is
    pragma Warnings (Off);
@@ -16,8 +15,7 @@ package GUI is
 
    Board_Resolution : Size := (480, 272);
 
-   Screen_Buffer : HAL.Bitmap.Any_Bitmap_Buffer renames STM32.Board.Display.Hidden_Buffer (1);
-
+   function ScreenBuffer return HAL.Bitmap.Any_Bitmap_Buffer;
    procedure Initialize (Title : in String);
    procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point);
    

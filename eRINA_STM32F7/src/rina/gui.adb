@@ -1,9 +1,13 @@
 with Bitmapped_Drawing;
-with HAL.Bitmap;
 with STM32.Board;
 with STM32.RNG.Interrupts;
 
 package body GUI is
+
+   function ScreenBuffer return HAL.Bitmap.Any_Bitmap_Buffer is
+   begin
+      return STM32.Board.Display.Hidden_Buffer (1);
+   end ScreenBuffer;
 
    function Scale (Point : in HAL.Bitmap.Point) return HAL.Bitmap.Point is
    begin
@@ -17,7 +21,7 @@ package body GUI is
    procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point) is
    begin
       Bitmapped_Drawing.Draw_String
-        (Buffer     => STM32.Board.Display.Hidden_Buffer (1).all,
+        (Buffer     => ScreenBuffer.all,
          Start      => Scale ((Pos.X, Pos.Y)),
          Msg        => Msg,
          Font       => BMP_Fonts.Font8x8,
@@ -28,7 +32,7 @@ package body GUI is
    end Print;
 
    procedure Initialize (Title : in String) is
-      Title_Location : HAL.Bitmap.Point := (80, 10);
+      Title_Location : constant HAL.Bitmap.Point := (80, 10);
    begin
       STM32.RNG.Interrupts.Initialize_RNG;
       STM32.Board.Display.Initialize;
