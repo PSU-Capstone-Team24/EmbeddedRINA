@@ -43,12 +43,12 @@ package body Receiver is
          if Packet.Is_Null then
             Net.Buffers.Allocate (Packet);
          end if;
-         
+
          if not Packet.Is_Null then
             Network.Ifnet.Receive (Packet);
             Now   := Ada.Real_Time.Clock;
             Ether := Packet.Ethernet;
-            
+
             if Ether.Ether_Type =
               Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
             then

@@ -73,15 +73,13 @@ package body Debug is
          Height   => FONT_HEIGHT);
    begin
       HAL.Bitmap.Copy_Rect
-        (Src_Buffer => GUI.ScreenBuffer.all,
-         Src_Pt     => srcToPoint,
-         Dst_Buffer => GUI.ScreenBuffer.all,
-         Dst_Pt     => dstToPoint, Width => GUI.Board_Resolution.Width,
-         Height     => FONT_HEIGHT, Synchronous => True);
+        (Src_Buffer  => GUI.ScreenBuffer.all, Src_Pt => srcToPoint,
+         Dst_Buffer  => GUI.ScreenBuffer.all, Dst_Pt => dstToPoint,
+         Width       => GUI.Board_Resolution.Width, Height => FONT_HEIGHT,
+         Synchronous => True);
       if DeleteSrc then
          HAL.Bitmap.Fill_Rect
-           (Buffer => GUI.ScreenBuffer.all,
-            Area   => srcRect);
+           (Buffer => GUI.ScreenBuffer.all, Area => srcRect);
       end if;
       STM32.Board.Display.Update_Layer (1, True);
    end CopyLine;

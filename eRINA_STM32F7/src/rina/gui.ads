@@ -18,7 +18,7 @@ package GUI is
    function ScreenBuffer return HAL.Bitmap.Any_Bitmap_Buffer;
    procedure Initialize (Title : in String);
    procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point);
-   
+
    function MeasureText
      (Text : in String; Font : in BMP_Fonts.BMP_Font) return Size;
    function Scale (Point : in HAL.Bitmap.Point) return HAL.Bitmap.Point;

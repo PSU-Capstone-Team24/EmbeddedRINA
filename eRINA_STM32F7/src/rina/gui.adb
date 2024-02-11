@@ -12,7 +12,9 @@ package body GUI is
    function Scale (Point : in HAL.Bitmap.Point) return HAL.Bitmap.Point is
    begin
       if STM32.Board.LCD_Natural_Width > Board_Resolution.Width then
-         return (Point.X * 800 / Board_Resolution.Width, Point.Y * Board_Resolution.Width / Board_Resolution.Width);
+         return
+           (Point.X * 800 / Board_Resolution.Width,
+            Point.Y * Board_Resolution.Width / Board_Resolution.Width);
       else
          return Point;
       end if;
@@ -21,13 +23,10 @@ package body GUI is
    procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point) is
    begin
       Bitmapped_Drawing.Draw_String
-        (Buffer     => ScreenBuffer.all,
-         Start      => Scale ((Pos.X, Pos.Y)),
-         Msg        => Msg,
-         Font       => BMP_Fonts.Font8x8,
-         Foreground => Foreground,
+        (Buffer     => ScreenBuffer.all, Start => Scale ((Pos.X, Pos.Y)),
+         Msg => Msg, Font => BMP_Fonts.Font8x8, Foreground => Foreground,
          Background => Background);
-    
+
       STM32.Board.Display.Update_Layer (1, True);
    end Print;
 

@@ -7,7 +7,9 @@ with Network;
 procedure Demo is
    Counter : Natural := 0;
 begin
+
    GUI.Initialize ("eRINA Debug");
+   Network.Initialize;
 
    Textures.Print (Textures.PSU.Bitmap, (5, 10));
    --  Keep board from immediately terminating
