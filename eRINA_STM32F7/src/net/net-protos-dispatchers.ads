@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
---  pinger -- Ping hosts
+--  net-protos-dispatchers -- Network protocol dispatchers
 --  Copyright (C) 2016, 2017 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
@@ -15,36 +15,20 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-with Net;
-with Net.Interfaces;
 with Net.Buffers;
-package Pinger is
+with Net.Interfaces;
+package Net.Protos.Dispatchers is
 
-   --  Maximum number of host we can ping.
-   MAX_PING_HOST : constant Positive := 8;
+   --  Set a protocol handler to deal with a packet of the given protocol when it is received.
+   --  Return the previous protocol handler.
+   procedure Set_Handler
+     (Proto    : in     Net.Uint8; Handler : in Receive_Handler;
+      Previous :    out Receive_Handler);
 
-   NO_IP : constant Net.Ip_Addr := (0, 0, 0, 0);
-
-   --  Information about a ping request that we sent.
-   type Ping_Info is record
-      Ip       : Net.Ip_Addr := NO_IP;
-      Seq      : Net.Uint16  := 0;
-      Received : Natural     := 0;
-   end record;
-
-   type Ping_Info_Array is array (Natural range <>) of Ping_Info;
-
-   --  Get the list of hosts with their ping counters.
-   function Get_Hosts return Ping_Info_Array;
-
-   --  Add the host to ping list.
-   procedure Add_Host (Ip : in Net.Ip_Addr);
-
-   --  Send the ICMP echo request to each host.
-   procedure Do_Ping;
-
+   --  Receive an IPv4 packet and dispatch it according to the protocol.
    procedure Receive
      (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
-      Packet : in out Net.Buffers.Buffer_Type);
+      Packet : in out Net.Buffers.Buffer_Type) with
+     Pre => not Packet.Is_Null;
 
-end Pinger;
+end Net.Protos.Dispatchers;

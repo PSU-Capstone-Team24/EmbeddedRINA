@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  receiver -- Ethernet Packet Receiver
---  Copyright (C) 2016, 2017 Stephane Carrez
+--  net-interfaces -- Network interface
+--  Copyright (C) 2016 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +15,24 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-with Net.DNS;
-package Dns_List is
 
-   type Query_Array is array (1 .. 30) of aliased Net.DNS.Query;
+package body Net.Interfaces is
 
-   Queries : Query_Array;
+   --  ------------------------------
+   --  Check if the IP address is in the same subnet as the interface IP address.
+   --  ------------------------------
+   function Is_Local_Network
+     (Ifnet : in Ifnet_Type; Ip : in Ip_Addr) return Boolean
+   is
+   begin
+      for I in Ip'Range loop
+         if (Ifnet.Netmask (I) and Ip (I)) /=
+           (Ifnet.Netmask (I) and Ifnet.Ip (I))
+         then
+            return False;
+         end if;
+      end loop;
+      return True;
+   end Is_Local_Network;
 
-end Dns_List;
+end Net.Interfaces;

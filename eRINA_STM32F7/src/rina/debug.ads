@@ -11,6 +11,14 @@ package Debug is
    MAX_LINES    : constant Natural := 20;
    LINE_PADDING : constant Natural := 2;
 
+   protected type Mutex is
+      entry Seize;
+      procedure Release;
+   private
+      Owned : Boolean := False;
+   end Mutex;
+
+   Print_Mutex : Mutex;
    procedure Print (Debug_Level : in Debug; Msg : in String);
    procedure CopyLine
      (SrcLineNumber : in Natural; DstLineNumer : in Natural;

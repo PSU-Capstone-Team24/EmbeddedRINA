@@ -1,35 +1,18 @@
------------------------------------------------------------------------
---  receiver -- Ethernet Packet Receiver
---  Copyright (C) 2016, 2017 Stephane Carrez
---  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
---
---  Licensed under the Apache License, Version 2.0 (the "License");
---  you may not use this file except in compliance with the License.
---  You may obtain a copy of the License at
---
---      http://www.apache.org/licenses/LICENSE-2.0
------------------------------------------------------------------------
-
---  Modified for use in EmbeddedRINA PSU Capstone
---  TODO: Update this notice with changes so we are license compliant
-
 with Ada.Real_Time;
 with Ada.Synchronous_Task_Control;
 with Net.Buffers;
 with Net.Protos.Arp;
 with Net.Protos.Dispatchers;
 with Net.Headers;
-with Demos;
+with Network;
+with Debug;
 
 package body Receiver is
 
-   use type Net.Ip_Addr;
-   use type Net.Uint8;
    use type Net.Uint16;
 
    Ready  : Ada.Synchronous_Task_Control.Suspension_Object;
    ONE_US : constant Ada.Real_Time.Time_Span := Ada.Real_Time.Microseconds (1);
-
    --  ------------------------------
    --  Start the receiver loop.
    --  ------------------------------
@@ -50,8 +33,12 @@ package body Receiver is
       Total  : Net.Uint64 := 0;
       Count  : Net.Uint64 := 0;
    begin
+      Debug.Print (Debug.Info, "Initializing Ethernet Controller...");
+
       --  Wait until the Ethernet driver is ready.
       Ada.Synchronous_Task_Control.Suspend_Until_True (Ready);
+
+      Debug.Print (Debug.Info, "Ethernet Controller Initialized!");
 
       --  Loop receiving packets and dispatching them.
       Min_Receive_Time := Us_Time'Last;
@@ -64,22 +51,20 @@ package body Receiver is
          end if;
 
          if not Packet.Is_Null then
-            Demos.Ifnet.Receive (Packet);
-
-            --  Used to compute processing time
+            Network.Ifnet.Receive (Packet);
             Now   := Ada.Real_Time.Clock;
             Ether := Packet.Ethernet;
 
-            --  We will try to process all ARP packets
-            --  However, we will later ignore any that do not have the rLite protocol type (0xd1f0)
             if Ether.Ether_Type =
               Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
             then
-               Net.Protos.Arp.Receive (Demos.Ifnet, Packet);
+               ARP_Request_Count := ARP_Request_Count + 1;
+               Debug.Print (Debug.Info, "ARP Packet Received");
+               Net.Protos.Arp.Receive (Network.Ifnet, Packet);
             elsif Ether.Ether_Type =
-              Net.Headers.To_Network (Net.Protos.ETHERTYPE_IP)
+              Net.Headers.To_Network (Net.Protos.ETHERTYPE_RINA)
             then
-               Net.Protos.Dispatchers.Receive (Demos.Ifnet, Packet);
+               Net.Protos.Dispatchers.Receive (Network.Ifnet, Packet);
             end if;
 
             --  For our case, we ignore IP packets

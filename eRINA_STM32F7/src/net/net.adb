@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------
---  receiver -- Ethernet Packet Receiver
---  Copyright (C) 2016, 2017 Stephane Carrez
+--  net -- Network stack
+--  Copyright (C) 2016 Stephane Carrez
 --  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
 --
 --  Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,26 +15,14 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-with System;
-with Net;
-package Receiver is
+package body Net is
 
-   type Us_Time is new Natural;
+   --  ------------------------------
+   --  Returns true if the IPv4 address is a multicast address.
+   --  ------------------------------
+   function Is_Multicast (IP : in Ip_Addr) return Boolean is
+   begin
+      return (IP (IP'First) and 16#f0#) = 16#e0#;
+   end Is_Multicast;
 
-   --  Average, min and max time in microseconds taken to process a packet.
-   Avg_Receive_Time : Us_Time := 0 with
-     Atomic;
-   Min_Receive_Time : Us_Time := 0 with
-     Atomic;
-   Max_Receive_Time : Us_Time := 0 with
-     Atomic;
-
-   --  Start the receiver loop.
-   procedure Start;
-
-   --  The task that waits for packets.
-   task Controller with
-     Storage_Size => (16 * 1_024), Priority => System.Default_Priority
-;
-
-end Receiver;
+end Net;
