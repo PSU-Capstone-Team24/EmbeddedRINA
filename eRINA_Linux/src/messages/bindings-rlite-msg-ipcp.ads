@@ -24,8 +24,7 @@ package Bindings.Rlite.Msg.IPCP is
      (Self : in Create_Response) return Byte_Buffer;
 
    overriding procedure Deserialize
-     (Self : in out Create_Response;
-      Fd   :        OS.File_Descriptor);
+     (Self : in out Create_Response; Fd : OS.File_Descriptor);
 
    type Destroy is new Rl_Msg_Base with record
       Ipcp_Id : Rl_Ipcp_Id_T;

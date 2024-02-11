@@ -35,9 +35,7 @@ package Bindings.Rlite.API is
 
    --  Creates a new IPCP and creates a DIF of type DIF_Type with name DIF_Name
    function RINA_Create_IPCP
-     (Fd       : OS.File_Descriptor;
-      Name     : String;
-      DIF_Type : DIF_Types;
+     (Fd       : OS.File_Descriptor; Name : String; DIF_Type : DIF_Types;
       DIF_Name : String) return Rl_Ipcp_Id_T;
 
    -- Removes/destroys an existing IPCP by name
@@ -55,10 +53,8 @@ package Bindings.Rlite.API is
    --                    const char *local_appl
    --                    int flags)
    function RINA_Register
-     (fd         : OS.File_Descriptor;
-      dif_name   : String;
-      local_appl : String;
-      flags      : Integer) return OS.File_Descriptor;
+     (fd    : OS.File_Descriptor; dif_name : String; local_appl : String;
+      flags : Integer) return OS.File_Descriptor;
 
    --  Unregister the application name @local_appl from the DIF where it was registered
    --  The @dif_name argument must match the one passed to rina_register().
@@ -66,10 +62,8 @@ package Bindings.Rlite.API is
    --  int rina_unregister(int fd, const char *dif_name, const char *local_appl,
    --                      int flags);
    function RINA_Unregister
-     (Fd         : OS.File_Descriptor;
-      Dif_Name   : String;
-      Local_Appl : String;
-      Flags      : Integer) return OS.File_Descriptor;
+     (Fd    : OS.File_Descriptor; Dif_Name : String; Local_Appl : String;
+      Flags : Integer) return OS.File_Descriptor;
 
    --  Accept an incoming flow request arrived on @fd. If @flags does not contain
    --  RINA_F_NORESP, it also sends a positive response to the requesting application;
@@ -78,10 +72,9 @@ package Bindings.Rlite.API is
    --  int rina_flow_accept(int fd, char **remote_appl, struct rina_flow_spec *spec,
    --                       unsigned int flags);
    function RINA_Flow_Accept
-     (Fd          :        OS.File_Descriptor;
-      Remote_Appl : in out Bounded_String;
-      Spec        :        Msg.Flow.RINA_Flow_Spec;
-      Flags       :        Integer) return OS.File_Descriptor;
+     (Fd   : OS.File_Descriptor; Remote_Appl : in out Bounded_String;
+      Spec : Msg.Flow.RINA_Flow_Spec; Flags : Integer)
+      return OS.File_Descriptor;
 
    --  Issue a flow allocation request towards the destination application called
    --  @remote_appl, using @local_appl as a source application name. If @flowspec
@@ -91,11 +84,9 @@ package Bindings.Rlite.API is
    --                      const char *remote_appl,
    --                      const struct rina_flow_spec *flowspec, unsigned int flags);
    function RINA_Flow_Alloc
-     (Dif_Name    : String;
-      Local_Appl  : String;
-      Remote_Appl : String;
-      Flowspec    : Flow.RINA_Flow_Spec;
-      Flags       : Unsigned_32) return OS.File_Descriptor;
+     (Dif_Name : String; Local_Appl : String; Remote_Appl : String;
+      Flowspec : Flow.RINA_Flow_Spec; Flags : Unsigned_32)
+      return OS.File_Descriptor;
 
 --  Wait for the completion of a flow allocation procedure previously initiated
 --  with a call to rina_flow_alloc() with the RINA_F_NOWAIT flag set. The @wfd
@@ -105,8 +96,7 @@ package Bindings.Rlite.API is
      (Wfd : OS.File_Descriptor) return OS.File_Descriptor;
 
    function RINA_Flow_Respond
-     (Fd       : OS.File_Descriptor;
-      Handle   : OS.File_Descriptor;
-      Response : Integer) return OS.File_Descriptor;
+     (Fd : OS.File_Descriptor; Handle : OS.File_Descriptor; Response : Integer)
+      return OS.File_Descriptor;
 
 end Bindings.Rlite.API;

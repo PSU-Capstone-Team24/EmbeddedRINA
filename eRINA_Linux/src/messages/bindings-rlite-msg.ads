@@ -40,45 +40,23 @@ package Bindings.Rlite.Msg is
 
    --  Message types, must be listed alternating requests with corresponding responses
    type Rl_Msg_T is
-     (RLITE_DUMMY,
-      RLITE_KER_IPCP_CREATE,
-      RLITE_KER_IPCP_CREATE_RESP,
-      RLITE_KER_IPCP_DESTROY,
-      RLITE_KER_APPL_REGISTER,
-      RLITE_KER_APPL_REGISTER_RESP,
-      RLITE_KER_FA_REQ,
-      RLITE_KER_FA_RESP_ARRIVED,
-      RLITE_KER_FA_RESP,
-      RLITE_KER_FA_REQ_ARRIVED,
-      RLITE_KER_IPCP_CONFIG,
-      RLITE_KER_IPCP_PDUFT_SET,
-      RLITE_KER_IPCP_PDUFT_FLUSH,
-      RLITE_KER_IPCP_UIPCP_SET,
-      RLITE_KER_UIPCP_FA_REQ_ARRIVED,
-      RLITE_KER_UIPCP_FA_RESP_ARRIVED,
-      RLITE_KER_FLOW_DEALLOCATED,
-      RLITE_KER_FLOW_DEALLOC,
-      RLITE_KER_IPCP_UPDATE,
-      RLITE_KER_FLOW_FETCH,
-      RLITE_KER_FLOW_FETCH_RESP,
-      RLITE_KER_IPCP_UIPCP_WAIT,
-      RLITE_KER_FLOW_STATS_REQ,
-      RLITE_KER_FLOW_STATS_RESP,
-      RLITE_KER_FLOW_CFG_UPDATE,
-      RLITE_KER_IPCP_QOS_SUPPORTED,
-      RLITE_KER_APPL_MOVE,
-      RLITE_KER_IPCP_PDUFT_DEL,
-      RLITE_KER_MEMTRACK_DUMP,
-      RLITE_KER_REG_FETCH,
-      RLITE_KER_REG_FETCH_RESP,
-      RLITE_KER_FLOW_STATE,
-      RLITE_KER_IPCP_STATS_REQ,
-      RLITE_KER_IPCP_STATS_RESP,
-      RLITE_KER_IPCP_CONFIG_GET_REQ,
-      RLITE_KER_IPCP_CONFIG_GET_RESP,
-      RLITE_KER_IPCP_SCHED_WRR,
-      RLITE_KER_IPCP_SCHED_PFIFO,
-      RLITE_KER_MSG_MAX);
+     (RLITE_DUMMY, RLITE_KER_IPCP_CREATE, RLITE_KER_IPCP_CREATE_RESP,
+      RLITE_KER_IPCP_DESTROY, RLITE_KER_APPL_REGISTER,
+      RLITE_KER_APPL_REGISTER_RESP, RLITE_KER_FA_REQ,
+      RLITE_KER_FA_RESP_ARRIVED, RLITE_KER_FA_RESP, RLITE_KER_FA_REQ_ARRIVED,
+      RLITE_KER_IPCP_CONFIG, RLITE_KER_IPCP_PDUFT_SET,
+      RLITE_KER_IPCP_PDUFT_FLUSH, RLITE_KER_IPCP_UIPCP_SET,
+      RLITE_KER_UIPCP_FA_REQ_ARRIVED, RLITE_KER_UIPCP_FA_RESP_ARRIVED,
+      RLITE_KER_FLOW_DEALLOCATED, RLITE_KER_FLOW_DEALLOC,
+      RLITE_KER_IPCP_UPDATE, RLITE_KER_FLOW_FETCH, RLITE_KER_FLOW_FETCH_RESP,
+      RLITE_KER_IPCP_UIPCP_WAIT, RLITE_KER_FLOW_STATS_REQ,
+      RLITE_KER_FLOW_STATS_RESP, RLITE_KER_FLOW_CFG_UPDATE,
+      RLITE_KER_IPCP_QOS_SUPPORTED, RLITE_KER_APPL_MOVE,
+      RLITE_KER_IPCP_PDUFT_DEL, RLITE_KER_MEMTRACK_DUMP, RLITE_KER_REG_FETCH,
+      RLITE_KER_REG_FETCH_RESP, RLITE_KER_FLOW_STATE, RLITE_KER_IPCP_STATS_REQ,
+      RLITE_KER_IPCP_STATS_RESP, RLITE_KER_IPCP_CONFIG_GET_REQ,
+      RLITE_KER_IPCP_CONFIG_GET_RESP, RLITE_KER_IPCP_SCHED_WRR,
+      RLITE_KER_IPCP_SCHED_PFIFO, RLITE_KER_MSG_MAX);
 
    --  Make sure this is always 16 bits
    for Rl_Msg_T'Size use 16;
@@ -93,20 +71,16 @@ package Bindings.Rlite.Msg is
    --  Only use these when we are super-duper sure we know what we're doing
    --  Otherwise what we assume is usable data can end up being garbage...
    function Buffer_To_Rl_Msg_Hdr is new Ada.Unchecked_Conversion
-     (Source => Byte_Buffer,
-      Target => Rl_Msg_Hdr);
+     (Source => Byte_Buffer, Target => Rl_Msg_Hdr);
 
    function Buffer_To_Unsigned_8 is new Ada.Unchecked_Conversion
-     (Source => Byte_Buffer,
-      Target => Unsigned_8);
+     (Source => Byte_Buffer, Target => Unsigned_8);
 
    function Buffer_To_Unsigned_16 is new Ada.Unchecked_Conversion
-     (Source => Byte_Buffer,
-      Target => Unsigned_16);
+     (Source => Byte_Buffer, Target => Unsigned_16);
 
    function Buffer_To_Unsigned_32 is new Ada.Unchecked_Conversion
-     (Source => Byte_Buffer,
-      Target => Unsigned_32);
+     (Source => Byte_Buffer, Target => Unsigned_32);
 
    type Rl_Msg_Base is abstract tagged record
       Hdr : Rl_Msg_Hdr;
@@ -115,8 +89,7 @@ package Bindings.Rlite.Msg is
 --  Abstract base serialization function, must be overridden by child messages
    function Serialize (Self : in Rl_Msg_Base) return Byte_Buffer is abstract;
    procedure Deserialize
-     (Self : in out Rl_Msg_Base;
-      fd   :        OS.File_Descriptor) is null;
+     (Self : in out Rl_Msg_Base; fd : OS.File_Descriptor) is null;
 
    function Read_Next_Msg (fd : OS.File_Descriptor) return Byte_Buffer;
 

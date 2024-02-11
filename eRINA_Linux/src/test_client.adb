@@ -39,8 +39,7 @@ begin
    else
       Text_IO.Put_Line
         ("Successfully opened RINA control device (File Desc: " &
-         GNAT.OS_Lib.File_Descriptor'Image (RINA_Dev_FD) &
-         ")");
+         GNAT.OS_Lib.File_Descriptor'Image (RINA_Dev_FD) & ")");
    end if;
 
    Ada.Text_IO.Put ("Enter name of client (this) application: ");
@@ -69,11 +68,7 @@ begin
       Ada.Text_IO.Put_Line ("Attempting to allocate a flow...");
       Alloc_Success :=
         RINA_Flow_Alloc
-          (DIF_Name,
-           Client_Name,
-           Server_Name,
-           QoS_Parameters,
-           0);
+          (DIF_Name, Client_Name, Server_Name, QoS_Parameters, 0);
    end;
 
    if Alloc_Success = Invalid_FD then

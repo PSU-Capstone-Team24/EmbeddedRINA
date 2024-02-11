@@ -15,8 +15,7 @@ package body Bindings.Rlite.Ctrl is
    --  I don't like this being here
    --  we should separate the IPCP map and relevant funcs to a separate package
    function Search_Map_By_Value
-     (Map_Var : in out Map;
-      Value   :        Rl_Ipcp_Id_T) return Cursor
+     (Map_Var : in out Map; Value : Rl_Ipcp_Id_T) return Cursor
    is
       Index : Cursor := No_Element;
    begin
@@ -32,9 +31,7 @@ package body Bindings.Rlite.Ctrl is
    end Search_Map_By_Value;
 
    procedure Rl_Write_Msg
-     (Rfd   : OS.File_Descriptor;
-      Msg   : Byte_Buffer;
-      Quiet : Integer)
+     (Rfd : OS.File_Descriptor; Msg : Byte_Buffer; Quiet : Integer)
    is
 
       Ser_Len : constant Natural := Msg'Size / 8;
@@ -48,29 +45,22 @@ package body Bindings.Rlite.Ctrl is
       --  Verbose
       Put_Bytes (Msg);
       Debug.Print
-        ("Rl_Write_Msg",
-         "Bytes Written " & Integer'Image (Ret),
-         Debug.Info);
+        ("Rl_Write_Msg", "Bytes Written " & Integer'Image (Ret), Debug.Info);
       Debug.Print
-        ("Rl_Write_Msg",
-         "Message Type: " & Rl_Msg_T'Enum_Val (Msg (3))'Image,
+        ("Rl_Write_Msg", "Message Type: " & Rl_Msg_T'Enum_Val (Msg (3))'Image,
          Debug.Info);
 
       --  Check for failure conditions
       if Ret < 0 then
          Debug.Print
-           ("Rl_Write_Msg",
-            "Message malformed or write failure",
-            Debug.Error);
+           ("Rl_Write_Msg", "Message malformed or write failure", Debug.Error);
          raise Exceptions.DIF_Registration_Failure;
       end if;
 
       --  Check that we were actually able to write something
       if Ret = 0 then
          Debug.Print
-           ("Rl_Write_Msg",
-            "0 bytes written during OS.Write",
-            Debug.Warning);
+           ("Rl_Write_Msg", "0 bytes written during OS.Write", Debug.Warning);
          raise Exceptions.DIF_Registration_Failure;
       end if;
 
@@ -78,22 +68,20 @@ package body Bindings.Rlite.Ctrl is
 
    -- TODO: Needs to be implemented. Maybe first 16 bits are header where rest is body.
    function Rl_Read_Msg
-     (Rfd   : OS.File_Descriptor;
-      Quiet : Integer) return Byte_Buffer
+     (Rfd : OS.File_Descriptor; Quiet : Integer) return Byte_Buffer
    is
       Bytes_Read : Integer;
-      Buffer     : Byte_Buffer (1 .. 4096);
+      Buffer     : Byte_Buffer (1 .. 4_096);
    begin
       --  Arbitrary 4096 bytes to follow along with rlite serbuf[4096]
-      Bytes_Read := OS.Read (Rfd, Buffer'Address, 4096);
+      Bytes_Read := OS.Read (Rfd, Buffer'Address, 4_096);
       return Buffer;
    end Rl_Read_Msg;
 
    function RINA_Create_IPCP
-     (Fd       : OS.File_Descriptor;
-      Name     : Bounded_String;
-      DIF_Type : Bindings.Rlite.Msg.IPCP.DIF_Types;
-      DIF_Name : Bounded_String) return Rl_Ipcp_Id_T
+     (Fd       : OS.File_Descriptor; Name : Bounded_String;
+      DIF_Type : Bindings.Rlite.Msg.IPCP.DIF_Types; DIF_Name : Bounded_String)
+      return Rl_Ipcp_Id_T
    is
       Request  : IPCP.Create;
       Response : IPCP.Create_Response;
@@ -123,8 +111,7 @@ package body Bindings.Rlite.Ctrl is
       --  Assert msg_type = RLITE_KER_IPCP_CREATE_RESP
       if Response.Hdr.Msg_Type /= RLITE_KER_IPCP_CREATE_RESP then
          Debug.Print
-           ("RINA_Create_IPCP",
-            "Deserialized wrong message type?",
+           ("RINA_Create_IPCP", "Deserialized wrong message type?",
             Debug.Error);
          raise Exceptions.IPCP_Creation_Exception;
       end if;
@@ -132,9 +119,7 @@ package body Bindings.Rlite.Ctrl is
       --  Assert event_id = RINA_REG_EVENT_ID = 0x7A6B
       if Response.Hdr.Event_Id /= Request.Hdr.Event_Id then
          Debug.Print
-           ("RINA_Create_IPCP",
-            "Deserialized wrong event_id?",
-            Debug.Error);
+           ("RINA_Create_IPCP", "Deserialized wrong event_id?", Debug.Error);
          raise Exceptions.IPCP_Creation_Exception;
       end if;
 
@@ -167,11 +152,11 @@ package body Bindings.Rlite.Ctrl is
    end RINA_Destroy_IPCP;
 
    function RINA_Register_Wait
-     (Fd  : OS.File_Descriptor;
-      Wfd : OS.File_Descriptor) return OS.File_Descriptor
+     (Fd : OS.File_Descriptor; Wfd : OS.File_Descriptor)
+      return OS.File_Descriptor
    is
-      Buffer     : Byte_Buffer (1 .. 4096) := (others => 0);
-      Bytes_Read : Integer                 := 0;
+      Buffer     : Byte_Buffer (1 .. 4_096) := (others => 0);
+      Bytes_Read : Integer                  := 0;
       Resp       : Register.Response;
       Move       : Register.Move;
    begin
@@ -181,8 +166,7 @@ package body Bindings.Rlite.Ctrl is
 --  Assert msg_type = RLITE_KER_APPL_REGISTER_RESP = 0x0005
       if Resp.Hdr.Msg_Type /= RLITE_KER_APPL_REGISTER_RESP then
          Debug.Print
-           ("RINA_Register_Wait",
-            "Deserialized wrong message type?",
+           ("RINA_Register_Wait", "Deserialized wrong message type?",
             Debug.Error);
          return OS.Invalid_FD;
       end if;
@@ -190,9 +174,7 @@ package body Bindings.Rlite.Ctrl is
       --  Assert event_id = RINA_REG_EVENT_ID = 0x7A6B
       if Resp.Hdr.Event_Id /= RINA_REG_EVENT_ID then
          Debug.Print
-           ("RINA_Register_Wait",
-            "Deserialized wrong event_id?",
-            Debug.Error);
+           ("RINA_Register_Wait", "Deserialized wrong event_id?", Debug.Error);
          return OS.Invalid_FD;
       end if;
 
@@ -222,11 +204,9 @@ package body Bindings.Rlite.Ctrl is
    end RINA_Register_Wait;
 
    function RINA_Register_Common
-     (Fd         : OS.File_Descriptor;
-      Dif_Name   : Bounded_String;
-      Local_Appl : Bounded_String;
-      Flags      : Integer;
-      Reg        : Unsigned_8) return OS.File_Descriptor
+     (Fd         : OS.File_Descriptor; Dif_Name : Bounded_String;
+      Local_Appl : Bounded_String; Flags : Integer; Reg : Unsigned_8)
+      return OS.File_Descriptor
    is
 
       Wfd : OS.File_Descriptor := OS.Invalid_FD;
@@ -245,8 +225,7 @@ package body Bindings.Rlite.Ctrl is
       if Bits_Other_Than_NoWait /= 0 then
 --  Flag has bits other than RINA_F_NOWAIT set, return invalid file descriptor
          Debug.Print
-           ("RINA_Register_Common",
-            "Flag has bits other than RINA_F_NOWAIT",
+           ("RINA_Register_Common", "Flag has bits other than RINA_F_NOWAIT",
             Debug.Error);
          return OS.Invalid_FD;
       end if;
@@ -258,8 +237,7 @@ package body Bindings.Rlite.Ctrl is
          --  Invalid control device file descriptor
          Debug.Print
            ("RINA_Register_Common",
-            "File descriptor to RINA control device < 0",
-            Debug.Error);
+            "File descriptor to RINA control device < 0", Debug.Error);
          return OS.Invalid_FD;
       end if;
 
@@ -286,16 +264,14 @@ package body Bindings.Rlite.Ctrl is
    end RINA_Register_Common;
 
    function RINA_Flow_Accept
-     (fd          :        OS.File_Descriptor;
-      remote_appl : in out Bounded_String;
-      spec        :        Flow.RINA_Flow_Spec;
-      flags       :        Integer) return OS.File_Descriptor
+     (fd   : OS.File_Descriptor; remote_appl : in out Bounded_String;
+      spec : Flow.RINA_Flow_Spec; flags : Integer) return OS.File_Descriptor
    is
       Resp                   : Flow.Response;
       Req                    : Flow.Request_Arrived;
       Spi                    : Sa_Pending_Item;
-      Buffer                 : Byte_Buffer (1 .. 4096) := (others => 0);
-      Bits_Other_Than_NoResp : constant Unsigned_32    :=
+      Buffer                 : Byte_Buffer (1 .. 4_096) := (others => 0);
+      Bits_Other_Than_NoResp : constant Unsigned_32     :=
         Unsigned_32 (flags) and not Unsigned_32 (API.RINA_F_NORESP);
       Has_NoResp_Flag : constant Unsigned_32 :=
         Unsigned_32 (flags) and Unsigned_32 (API.RINA_F_NORESP);
@@ -357,27 +333,22 @@ package body Bindings.Rlite.Ctrl is
    end RINA_Flow_Accept;
 
    function RINA_Flow_Alloc
-     (dif_name      : Bounded_String;
-      local_appl    : Bounded_String;
-      remote_appl   : Bounded_String;
-      flowspec      : Flow.RINA_Flow_Spec;
-      flags         : Unsigned_32;
-      upper_ipcp_id : Rl_Ipcp_Id_T) return OS.File_Descriptor
+     (dif_name    : Bounded_String; local_appl : Bounded_String;
+      remote_appl : Bounded_String; flowspec : Flow.RINA_Flow_Spec;
+      flags       : Unsigned_32; upper_ipcp_id : Rl_Ipcp_Id_T)
+      return OS.File_Descriptor
    is
       req : Flow.Request;
       wfd : OS.File_Descriptor;
       function Get_Pid return Unsigned_32 with
-         Import,
-         Convention    => C,
-         External_Name => "getpid";
+        Import, Convention => C, External_Name => "getpid";
       Bits_Other_Than_NoWait : constant Unsigned_32 :=
         flags and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NOWAIT);
    begin
       if Bits_Other_Than_NoWait /= 0 then
          --  Flag has bits other than RINA_Flow_Alloc set, return invalid file descriptor
          Debug.Print
-           ("RINA_Flow_Alloc",
-            "Flag has bits other than RINA_Flow_Alloc",
+           ("RINA_Flow_Alloc", "Flag has bits other than RINA_Flow_Alloc",
             Debug.Error);
          return OS.Invalid_FD;
       end if;
@@ -423,25 +394,24 @@ package body Bindings.Rlite.Ctrl is
    end RINA_Flow_Alloc;
 
    function RINA_Flow_Alloc_Wait
-     (wfd     : OS.File_Descriptor;
-      port_id : Unsigned_16) return OS.File_Descriptor
+     (wfd : OS.File_Descriptor; port_id : Unsigned_16)
+      return OS.File_Descriptor
    is
    begin
       return wfd;
    end RINA_Flow_Alloc_Wait;
 
    function RINA_Flow_Respond
-     (fd       : OS.File_Descriptor;
-      handle   : OS.File_Descriptor;
-      response : Integer) return OS.File_Descriptor
+     (fd : OS.File_Descriptor; handle : OS.File_Descriptor; response : Integer)
+      return OS.File_Descriptor
    is
       spi    : Sa_Pending_Item_Base;
       req    : Flow.Request_Arrived;
       resp   : Flow.Response;
-      ffd    : OS.File_Descriptor      := OS.Invalid_FD;
+      ffd    : OS.File_Descriptor       := OS.Invalid_FD;
       ret    : Integer;
-      cursor : Sig_Action_List.Cursor  := Sa_Pending.First;
-      Buffer : Byte_Buffer (1 .. 4096) := (others => 0);
+      cursor : Sig_Action_List.Cursor   := Sa_Pending.First;
+      Buffer : Byte_Buffer (1 .. 4_096) := (others => 0);
    begin
    --  List of pending signal actions, contains a nested doubly linked list...
       while Sig_Action_List.Has_Element (cursor) loop
@@ -497,15 +467,13 @@ package body Bindings.Rlite.Ctrl is
    end RINA_Flow_Respond;
 
    function Ioctl
-     (Fd  : OS.File_Descriptor;
-      Cmd : Unsigned_32;
-      Arg : System.Address) return Integer;
+     (Fd : OS.File_Descriptor; Cmd : Unsigned_32; Arg : System.Address)
+      return Integer;
    pragma Import (C, Ioctl, "ioctl");
 
    function Open_Port_Common
-     (port_id : Rl_Port_T;
-      mode    : Unsigned_8;
-      ipcp_id : Rl_Ipcp_Id_T) return OS.File_Descriptor
+     (port_id : Rl_Port_T; mode : Unsigned_8; ipcp_id : Rl_Ipcp_Id_T)
+      return OS.File_Descriptor
    is
       info : Common.Rl_Ioctl_Info;
       fd   : OS.File_Descriptor;
@@ -515,8 +483,7 @@ package body Bindings.Rlite.Ctrl is
 
       if fd < 0 then
          Debug.Print
-           ("Open_Port_Common",
-            "Could not open a file descriptor to rLite IO",
+           ("Open_Port_Common", "Could not open a file descriptor to rLite IO",
             Debug.Error);
          return OS.Invalid_FD;
       end if;
@@ -530,17 +497,14 @@ package body Bindings.Rlite.Ctrl is
       --  If unsuccessful, ioctl() returns -1
       if ret < 0 then
          Debug.Print
-           ("Open_Port_Common",
-            "Could not write to rLite IO",
-            Debug.Error);
+           ("Open_Port_Common", "Could not write to rLite IO", Debug.Error);
          return OS.Invalid_FD;
       end if;
 
       return fd;
    end Open_Port_Common;
 
-   function Rl_Open_Appl_Port
-     (port_id : Rl_Port_T) return OS.File_Descriptor
+   function Rl_Open_Appl_Port (port_id : Rl_Port_T) return OS.File_Descriptor
    is
    begin
       return Open_Port_Common (port_id, RLITE_IO_MODE_APPL_BIND, 0);

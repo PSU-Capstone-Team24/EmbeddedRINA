@@ -8,18 +8,14 @@ package body Bindings.Rlite.Msg.IPCP is
 
    function Serialize (Self : in Create) return Byte_Buffer is
       Hdr_Ptr : constant Byte_Buffer (1 .. Self.Hdr'Size / 8) with
-         Address => Self.Hdr'Address,
-         Import,
-         Volatile;
+        Address => Self.Hdr'Address, Import, Volatile;
 
       IPCP_Name_Size : constant Unsigned_16 :=
         Unsigned_16 (Used_Size (Self.Ipcp_Name));
 
-      IPCP_Name_Size_Ptr : constant Byte_Buffer
-      (1 .. IPCP_Name_Size'Size / 8) with
-         Address => IPCP_Name_Size'Address,
-         Import,
-         Volatile;
+      IPCP_Name_Size_Ptr :
+        constant Byte_Buffer (1 .. IPCP_Name_Size'Size / 8) with
+        Address => IPCP_Name_Size'Address, Import, Volatile;
 
       IPCP_Name_Ptr : constant Byte_Buffer :=
         To_Packed_Buffer (Self.Ipcp_Name);
@@ -29,36 +25,25 @@ package body Bindings.Rlite.Msg.IPCP is
 
       DIF_Type_Size : constant Unsigned_16 := Unsigned_16 (DIF_Type'Size / 8);
 
-      DIF_Type_Size_Ptr : constant Byte_Buffer
-      (1 .. DIF_Type_Size'Size / 8) with
-         Address => DIF_Type_Size'Address,
-         Import,
-         Volatile;
+      DIF_Type_Size_Ptr :
+        constant Byte_Buffer (1 .. DIF_Type_Size'Size / 8) with
+        Address => DIF_Type_Size'Address, Import, Volatile;
 
       DIF_Type_Ptr : constant Byte_Buffer (1 .. DIF_Type'Size / 8) with
-         Address => DIF_Type'Address,
-         Import,
-         Volatile;
+        Address => DIF_Type'Address, Import, Volatile;
 
       DIF_Name_Size : constant Unsigned_16 :=
         Unsigned_16 (Used_Size (Self.DIF_Name));
 
-      DIF_Name_Size_Ptr : constant Byte_Buffer
-      (1 .. DIF_Name_Size'Size / 8) with
-         Address => DIF_Name_Size'Address,
-         Import,
-         Volatile;
+      DIF_Name_Size_Ptr :
+        constant Byte_Buffer (1 .. DIF_Name_Size'Size / 8) with
+        Address => DIF_Name_Size'Address, Import, Volatile;
 
       DIF_Name_Ptr : constant Byte_Buffer := To_Packed_Buffer (Self.DIF_Name);
 
       Serialized_Msg : constant Byte_Buffer :=
-        Hdr_Ptr &
-        IPCP_Name_Size_Ptr &
-        IPCP_Name_Ptr &
-        DIF_Type_Size_Ptr &
-        DIF_Type_Ptr &
-        DIF_Name_Size_Ptr &
-        DIF_Name_Ptr;
+        Hdr_Ptr & IPCP_Name_Size_Ptr & IPCP_Name_Ptr & DIF_Type_Size_Ptr &
+        DIF_Type_Ptr & DIF_Name_Size_Ptr & DIF_Name_Ptr;
    begin
       return Serialized_Msg;
    end Serialize;
@@ -71,8 +56,7 @@ package body Bindings.Rlite.Msg.IPCP is
    end Serialize;
 
    overriding procedure Deserialize
-     (Self : in out Create_Response;
-      Fd   :        OS.File_Descriptor)
+     (Self : in out Create_Response; Fd : OS.File_Descriptor)
    is
       Buffer   : constant Byte_Buffer := Read_Next_Msg (Fd);
       Msg_Data : constant Byte_Buffer :=
@@ -94,14 +78,10 @@ package body Bindings.Rlite.Msg.IPCP is
 
    overriding function Serialize (Self : Destroy) return Byte_Buffer is
       Hdr_Ptr : constant Byte_Buffer (1 .. Self.Hdr'Size / 8) with
-         Address => Self.Hdr'Address,
-         Import,
-         Volatile;
+        Address => Self.Hdr'Address, Import, Volatile;
 
       IPCP_Id : constant Byte_Buffer (1 .. Self.Ipcp_Id'Size / 8) with
-         Address => Self.Ipcp_Id'Address,
-         Import,
-         Volatile;
+        Address => Self.Ipcp_Id'Address, Import, Volatile;
 
       Pad1 : constant Byte_Buffer (1 .. 6) := (others => 0);
 

@@ -23,9 +23,7 @@ package body Bindings.Rlite.API is
    end RINA_Close;
 
    function RINA_Create_IPCP
-     (Fd       : OS.File_Descriptor;
-      Name     : String;
-      DIF_Type : DIF_Types;
+     (Fd       : OS.File_Descriptor; Name : String; DIF_Type : DIF_Types;
       DIF_Name : String) return Rl_Ipcp_Id_T
    is
    begin
@@ -37,10 +35,9 @@ package body Bindings.Rlite.API is
          raise Exceptions.Bounded_Length_Exception;
       end if;
 
-      return Ctrl.RINA_Create_IPCP
-          (Fd,
-           To_Bounded_String (Name),
-           DIF_Type,
+      return
+        Ctrl.RINA_Create_IPCP
+          (Fd, To_Bounded_String (Name), DIF_Type,
            To_Bounded_String (DIF_Name));
    end RINA_Create_IPCP;
 
@@ -61,10 +58,8 @@ package body Bindings.Rlite.API is
    end RINA_Destroy_IPCP;
 
    function RINA_Register
-     (fd         : OS.File_Descriptor;
-      dif_name   : String;
-      local_appl : String;
-      flags      : Integer) return OS.File_Descriptor
+     (fd    : OS.File_Descriptor; dif_name : String; local_appl : String;
+      flags : Integer) return OS.File_Descriptor
    is
    begin
       if dif_name'Length > Max_Length or dif_name'Length = 0 then
@@ -75,19 +70,15 @@ package body Bindings.Rlite.API is
          raise Exceptions.Bounded_Length_Exception;
       end if;
 
-      return Ctrl.RINA_Register_Common
-          (fd,
-           To_Bounded_String (dif_name),
-           To_Bounded_String (local_appl),
-           flags,
-           1);
+      return
+        Ctrl.RINA_Register_Common
+          (fd, To_Bounded_String (dif_name), To_Bounded_String (local_appl),
+           flags, 1);
    end RINA_Register;
 
    function RINA_Unregister
-     (Fd         : OS.File_Descriptor;
-      Dif_Name   : String;
-      Local_Appl : String;
-      Flags      : Integer) return OS.File_Descriptor
+     (Fd    : OS.File_Descriptor; Dif_Name : String; Local_Appl : String;
+      Flags : Integer) return OS.File_Descriptor
    is
    begin
       if Dif_Name'Length > Max_Length or Dif_Name'Length = 0 then
@@ -98,30 +89,24 @@ package body Bindings.Rlite.API is
          raise Exceptions.Bounded_Length_Exception;
       end if;
 
-      return Ctrl.RINA_Register_Common
-          (Fd,
-           To_Bounded_String (Dif_Name),
-           To_Bounded_String (Local_Appl),
-           Flags,
-           0);
+      return
+        Ctrl.RINA_Register_Common
+          (Fd, To_Bounded_String (Dif_Name), To_Bounded_String (Local_Appl),
+           Flags, 0);
    end RINA_Unregister;
 
    function RINA_Flow_Accept
-     (Fd          :        OS.File_Descriptor;
-      Remote_Appl : in out Bounded_String;
-      Spec        :        Flow.RINA_Flow_Spec;
-      Flags       :        Integer) return OS.File_Descriptor
+     (Fd   : OS.File_Descriptor; Remote_Appl : in out Bounded_String;
+      Spec : Flow.RINA_Flow_Spec; Flags : Integer) return OS.File_Descriptor
    is
    begin
       return Ctrl.RINA_Flow_Accept (Fd, Remote_Appl, Spec, Flags);
    end RINA_Flow_Accept;
 
    function RINA_Flow_Alloc
-     (Dif_Name    : String;
-      Local_Appl  : String;
-      Remote_Appl : String;
-      Flowspec    : Flow.RINA_Flow_Spec;
-      Flags       : Unsigned_32) return OS.File_Descriptor
+     (Dif_Name : String; Local_Appl : String; Remote_Appl : String;
+      Flowspec : Flow.RINA_Flow_Spec; Flags : Unsigned_32)
+      return OS.File_Descriptor
    is
    begin
       if Dif_Name'Length > Max_Length or Dif_Name'Length = 0 then
@@ -136,13 +121,10 @@ package body Bindings.Rlite.API is
          raise Exceptions.Bounded_Length_Exception;
       end if;
 
-      return Ctrl.RINA_Flow_Alloc
-          (To_Bounded_String (Dif_Name),
-           To_Bounded_String (Local_Appl),
-           To_Bounded_String (Remote_Appl),
-           Flowspec,
-           Flags,
-           16#FFFF#);
+      return
+        Ctrl.RINA_Flow_Alloc
+          (To_Bounded_String (Dif_Name), To_Bounded_String (Local_Appl),
+           To_Bounded_String (Remote_Appl), Flowspec, Flags, 16#FFFF#);
    end RINA_Flow_Alloc;
 
    function RINA_Flow_Alloc_Wait
@@ -153,9 +135,8 @@ package body Bindings.Rlite.API is
    end RINA_Flow_Alloc_Wait;
 
    function RINA_Flow_Respond
-     (Fd       : OS.File_Descriptor;
-      Handle   : OS.File_Descriptor;
-      Response : Integer) return OS.File_Descriptor
+     (Fd : OS.File_Descriptor; Handle : OS.File_Descriptor; Response : Integer)
+      return OS.File_Descriptor
    is
    begin
       return Ctrl.RINA_Flow_Respond (Fd, Handle, Response);

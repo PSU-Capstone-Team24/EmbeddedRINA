@@ -1,8 +1,4 @@
---  Temp disabling
-pragma Style_Checks (Off);
-
 with Ada.Text_IO;
-with Exceptions;
 
 package body Buffers is
 
@@ -35,12 +31,6 @@ package body Buffers is
 
       Ada.Text_IO.New_Line;
    end Put_Bytes;
-
-   procedure Push_Bytes (Self : Byte_Buffer; To_Push : in T) is
-   begin
-      --  pls don't call me >:(
-      raise Exceptions.Not_Implemented_Exception;
-   end Push_Bytes;
 
    function Buffer_To_String (Buffer : Byte_Buffer) return String is
       --  +1 to account for ASCII.NUL

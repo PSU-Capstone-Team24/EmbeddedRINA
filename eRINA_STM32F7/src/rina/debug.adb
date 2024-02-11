@@ -4,6 +4,17 @@ with GUI;
 
 package body Debug is
 
+   protected body Mutex is
+      entry Seize when not Owned is
+      begin
+         Owned := True;
+      end Seize;
+      procedure Release is
+      begin
+         Owned := False;
+      end Release;
+   end Mutex;
+
    -- Probably a cleaner way to do this
    procedure Print (Debug_Level : in Debug; Msg : in String) is
       currentLine : constant Natural :=
@@ -11,6 +22,7 @@ package body Debug is
       Foreground : HAL.Bitmap.Bitmap_Color;
       Background : HAL.Bitmap.Bitmap_Color;
    begin
+      Print_Mutex.Seize;
 
       Foreground :=
         (case Debug_Level is when Info | Error => HAL.Bitmap.White,
@@ -33,7 +45,7 @@ package body Debug is
 
       --  Draw debug prefix
       Bitmapped_Drawing.Draw_String
-        (Buffer => GUI.ScreenBuffer.all,
+        (Buffer => GUI.Screen_Buffer.all,
          Start  =>
            GUI.Scale
              ((CURRENT_CONSOLE_POSITION.X, CURRENT_CONSOLE_POSITION.Y)),
@@ -42,12 +54,12 @@ package body Debug is
 
       --  Draw actual message text
       Bitmapped_Drawing.Draw_String
-        (Buffer => GUI.ScreenBuffer.all,
+        (Buffer => GUI.Screen_Buffer.all,
          Start  =>
            GUI.Scale
              ((CURRENT_CONSOLE_POSITION.X +
                GUI.MeasureText (Debug_Level'Image, BMP_Fonts.Font8x8).Width +
-               LINE_PADDING,
+               LINE_PADDING * 2,
                CURRENT_CONSOLE_POSITION.Y)),
          Msg => Msg, Font => BMP_Fonts.Font8x8, Foreground => HAL.Bitmap.White,
          Background => HAL.Bitmap.Black);
@@ -57,6 +69,8 @@ package body Debug is
         CURRENT_CONSOLE_POSITION.Y + FONT_HEIGHT + LINE_PADDING;
 
       STM32.Board.Display.Update_Layer (1, True);
+
+      Print_Mutex.Release;
    end Print;
 
    procedure CopyLine
@@ -65,23 +79,29 @@ package body Debug is
    is
       --  TODO: Cleanup later...
       srcToPoint : constant HAL.Bitmap.Point :=
-        (0, (CONSOLE_STARTING_POINT.Y + (FONT_HEIGHT * SrcLineNumber)));
+        (0,
+         Natural'Min
+           (CONSOLE_STARTING_POINT.Y +
+            (FONT_HEIGHT + LINE_PADDING) * SrcLineNumber,
+            GUI.Board_Resolution.Height - 2));
       dstToPoint : constant HAL.Bitmap.Point :=
-        (0, (CONSOLE_STARTING_POINT.Y + (FONT_HEIGHT * DstLineNumer)));
+        (0,
+         Natural'Min
+           (CONSOLE_STARTING_POINT.Y +
+            (FONT_HEIGHT + LINE_PADDING) * DstLineNumer,
+            GUI.Board_Resolution.Height - 2));
       srcRect : constant HAL.Bitmap.Rect :=
         (Position => srcToPoint, Width => GUI.Board_Resolution.Width,
-         Height   => FONT_HEIGHT);
+         Height   => FONT_HEIGHT + LINE_PADDING);
    begin
       HAL.Bitmap.Copy_Rect
-        (Src_Buffer => GUI.ScreenBuffer.all,
-         Src_Pt     => srcToPoint,
-         Dst_Buffer => GUI.ScreenBuffer.all,
-         Dst_Pt     => dstToPoint, Width => GUI.Board_Resolution.Width,
-         Height     => FONT_HEIGHT, Synchronous => True);
+        (Src_Buffer => GUI.Screen_Buffer.all, Src_Pt => srcToPoint,
+         Dst_Buffer => GUI.Screen_Buffer.all, Dst_Pt => dstToPoint,
+         Width      => GUI.Board_Resolution.Width,
+         Height     => FONT_HEIGHT + LINE_PADDING, Synchronous => True);
       if DeleteSrc then
          HAL.Bitmap.Fill_Rect
-           (Buffer => GUI.ScreenBuffer.all,
-            Area   => srcRect);
+           (Buffer => GUI.Screen_Buffer.all, Area => srcRect);
       end if;
       STM32.Board.Display.Update_Layer (1, True);
    end CopyLine;
