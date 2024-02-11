@@ -49,9 +49,9 @@ procedure Time is
    procedure Header;
    function To_Digits (Val : Net.Uint32) return String;
    function To_String (H, M, S : Net.Uint32) return String;
-   procedure Server_Status (X, Y     : in Natural;
-                            Server   : in out Net.NTP.Client;
-                            Deadline : in out Ada.Real_Time.Time);
+   procedure Server_Status
+     (X, Y     : in     Natural; Server : in out Net.NTP.Client;
+      Deadline : in out Ada.Real_Time.Time);
 
    Dec_String : constant String := "0123456789";
 
@@ -68,9 +68,10 @@ procedure Time is
       return To_Digits (H) & ":" & To_Digits (M) & ":" & To_Digits (S);
    end To_String;
 
-   procedure Server_Status (X, Y     : in Natural;
-                            Server   : in out Net.NTP.Client;
-                            Deadline : in out Ada.Real_Time.Time) is
+   procedure Server_Status
+     (X, Y     : in     Natural; Server : in out Net.NTP.Client;
+      Deadline : in out Ada.Real_Time.Time)
+   is
       T    : Net.NTP.NTP_Timestamp;
       H    : Net.Uint32;
       M    : Net.Uint32;
@@ -84,15 +85,16 @@ procedure Time is
       if not (Ref.Status in Net.NTP.SYNCED | Net.NTP.RESYNC) then
          Demos.Put (X, Y, "??:??:??");
       else
-         T := Net.NTP.Get_Time (Ref);
-         S := T.Seconds mod 86400;
-         H := S / 3600;
-         S := S mod 3600;
-         M := S / 60;
-         S := S mod 60;
-         W := Net.Uint64 (Net.Uint32'Last - T.Sub_Seconds);
-         W := Interfaces.Shift_Right (W * 1_000_000, 32);
-         Wait := Ada.Real_Time.Clock + Ada.Real_Time.Microseconds (Integer (W));
+         T    := Net.NTP.Get_Time (Ref);
+         S    := T.Seconds mod 86_400;
+         H    := S / 3_600;
+         S    := S mod 3_600;
+         M    := S / 60;
+         S    := S mod 60;
+         W    := Net.Uint64 (Net.Uint32'Last - T.Sub_Seconds);
+         W    := Interfaces.Shift_Right (W * 1_000_000, 32);
+         Wait :=
+           Ada.Real_Time.Clock + Ada.Real_Time.Microseconds (Integer (W));
          if Wait < Deadline then
             Deadline := Wait;
          end if;
@@ -146,11 +148,16 @@ begin
    loop
       Net.Protos.Arp.Timeout (Demos.Ifnet);
       Demos.Dhcp.Process (Dhcp_Deadline);
-      if Ntp_Init = False and then Demos.Dhcp.Get_State = Net.DHCP.STATE_BOUND then
-         Time_Manager.Client.Initialize (Demos.Ifnet'Access, Demos.Dhcp.Get_Config.Ntp);
-         Time_Manager.Ubuntu_Ntp.Resolve (Demos.Ifnet'Access, "ntp.ubuntu.com", Error);
-         Time_Manager.Bbox_Ntp.Resolve (Demos.Ifnet'Access, "ntp.bbox.fr", Error);
-         Time_Manager.Pool_Ntp.Resolve (Demos.Ifnet'Access, "pool.ntp.org", Error);
+      if Ntp_Init = False and then Demos.Dhcp.Get_State = Net.DHCP.STATE_BOUND
+      then
+         Time_Manager.Client.Initialize
+           (Demos.Ifnet'Access, Demos.Dhcp.Get_Config.Ntp);
+         Time_Manager.Ubuntu_Ntp.Resolve
+           (Demos.Ifnet'Access, "ntp.ubuntu.com", Error);
+         Time_Manager.Bbox_Ntp.Resolve
+           (Demos.Ifnet'Access, "ntp.bbox.fr", Error);
+         Time_Manager.Pool_Ntp.Resolve
+           (Demos.Ifnet'Access, "pool.ntp.org", Error);
          Ntp_Init := True;
       end if;
       if Ntp_Init then

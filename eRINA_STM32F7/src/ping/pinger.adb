@@ -47,7 +47,7 @@ package body Pinger is
          for I in 1 .. Last_Host loop
             if Hosts (I).Ip = Ip_Hdr.Ip_Src then
                Hosts (I).Received := Hosts (I).Received + 1;
-               Receive_Count := Receive_Count + 1;
+               Receive_Count      := Receive_Count + 1;
                return;
             end if;
          end loop;
@@ -58,7 +58,7 @@ package body Pinger is
          for I in Targets'Range loop
             Hosts (I).Seq := Hosts (I).Seq + 1;
          end loop;
-         Targets := Hosts (Targets'Range);
+         Targets    := Hosts (Targets'Range);
          Send_Count := Send_Count + 1;
       end Prepare_Send;
 
@@ -75,9 +75,9 @@ package body Pinger is
                   return;
                end if;
             end loop;
-            Last_Host := Last_Host + 1;
-            Hosts (Last_Host).Ip  := Ip;
-            Hosts (Last_Host).Seq := 0;
+            Last_Host                  := Last_Host + 1;
+            Hosts (Last_Host).Ip       := Ip;
+            Hosts (Last_Host).Seq      := 0;
             Hosts (Last_Host).Received := 0;
          end if;
       end Add_Host;
@@ -100,8 +100,10 @@ package body Pinger is
       Pinger.Add_Host (Ip);
    end Add_Host;
 
-   procedure Receive (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
-                      Packet : in out Net.Buffers.Buffer_Type) is
+   procedure Receive
+     (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
+      Packet : in out Net.Buffers.Buffer_Type)
+   is
       Hdr : constant Net.Headers.ICMP_Header_Access := Packet.ICMP;
    begin
       if Hdr.Icmp_Type = Net.Headers.ICMP_ECHO_REPLY then
@@ -125,12 +127,9 @@ package body Pinger is
          exit when Packet.Is_Null;
 
          Packet.Set_Length (64);
-         Net.Protos.Icmp.Echo_Request (Ifnet     => Demos.Ifnet,
-                                       Target_Ip => Hosts (I).Ip,
-                                       Packet    => Packet,
-                                       Seq       => Hosts (I).Seq,
-                                       Ident     => 1234,
-                                       Status    => Status);
+         Net.Protos.Icmp.Echo_Request
+           (Ifnet => Demos.Ifnet, Target_Ip => Hosts (I).Ip, Packet => Packet,
+            Seq   => Hosts (I).Seq, Ident => 1_234, Status => Status);
       end loop;
    end Do_Ping;
 

@@ -32,24 +32,20 @@ package Demos is
    NET_BUFFER_SIZE : constant Net.Uint32 := Net.Buffers.NET_ALLOC_SIZE * 256;
 
    --  The Ethernet interface driver.
-   Ifnet     : aliased Net.Interfaces.STM32.STM32_Ifnet;
+   Ifnet : aliased Net.Interfaces.STM32.STM32_Ifnet;
 
    --  The DHCP client used by the demos.
-   Dhcp      : aliased Net.DHCP.Client;
+   Dhcp : aliased Net.DHCP.Client;
 
-   Current_Font : BMP_Fonts.BMP_Font := BMP_Fonts.Font12x12;
+   Current_Font : BMP_Fonts.BMP_Font      := BMP_Fonts.Font12x12;
    Foreground   : HAL.Bitmap.Bitmap_Color := HAL.Bitmap.White;
    Background   : HAL.Bitmap.Bitmap_Color := HAL.Bitmap.Black;
 
    --  Write a message on the display.
-   procedure Put (X   : in Natural;
-                  Y   : in Natural;
-                  Msg : in String);
+   procedure Put (X : in Natural; Y : in Natural; Msg : in String);
 
    --  Write the 64-bit integer value on the display.
-   procedure Put (X : in Natural;
-                  Y : in Natural;
-                  Value : in Net.Uint64);
+   procedure Put (X : in Natural; Y : in Natural; Value : in Net.Uint64);
 
    --  Refresh the ifnet statistics on the display.
    procedure Refresh_Ifnet_Stats;
@@ -57,7 +53,7 @@ package Demos is
    --  Initialize the board and the interface.
    generic
       with procedure Header;
-   procedure Initialize (Title  : in String);
+   procedure Initialize (Title : in String);
 
    generic
       with procedure Header;
@@ -67,6 +63,7 @@ package Demos is
 
    --  Get the default font size according to the display size.
    function Default_Font return BMP_Fonts.BMP_Font is
-     (if STM32.Board.LCD_Natural_Width > 480 then BMP_Fonts.Font12x12 else BMP_Fonts.Font8x8);
+     (if STM32.Board.LCD_Natural_Width > 480 then BMP_Fonts.Font12x12
+      else BMP_Fonts.Font8x8);
 
 end Demos;

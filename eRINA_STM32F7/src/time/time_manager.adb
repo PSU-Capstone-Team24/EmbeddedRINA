@@ -27,17 +27,17 @@ package body Time_Manager is
    --
    --  This operation can be overriden to implement specific actions when an answer is received.
    --  ------------------------------
-   overriding
-   procedure Answer (Request  : in out Client_Type;
-                     Status   : in Net.DNS.Status_Type;
-                     Response : in Net.DNS.Response_Type;
-                     Index    : in Natural) is
+   overriding procedure Answer
+     (Request  : in out Client_Type; Status : in Net.DNS.Status_Type;
+      Response : in     Net.DNS.Response_Type; Index : in Natural)
+   is
       use type Net.DNS.Status_Type;
       use type Net.DNS.RR_Type;
       use type Net.Uint16;
    begin
       if Status = Net.DNS.NOERROR and then Response.Of_Type = Net.DNS.A_RR then
-         Request.Server.Initialize (Demos.Ifnet'Access, Response.Ip, Request.Port);
+         Request.Server.Initialize
+           (Demos.Ifnet'Access, Response.Ip, Request.Port);
       end if;
    end Answer;
 

@@ -43,7 +43,8 @@ package Pinger is
    --  Send the ICMP echo request to each host.
    procedure Do_Ping;
 
-   procedure Receive (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
-                      Packet : in out Net.Buffers.Buffer_Type);
+   procedure Receive
+     (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
+      Packet : in out Net.Buffers.Buffer_Type);
 
 end Pinger;

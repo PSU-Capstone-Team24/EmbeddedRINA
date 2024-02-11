@@ -31,22 +31,20 @@ package Time_Manager is
    --  two times.
    --
    --  This operation can be overriden to implement specific actions when an answer is received.
-   overriding
-   procedure Answer (Request  : in out Client_Type;
-                     Status   : in Net.DNS.Status_Type;
-                     Response : in Net.DNS.Response_Type;
-                     Index    : in Natural);
+   overriding procedure Answer
+     (Request  : in out Client_Type; Status : in Net.DNS.Status_Type;
+      Response : in     Net.DNS.Response_Type; Index : in Natural);
 
    --  NTP client based on the NTP server provided by DHCP option.
-   Client     : aliased Net.NTP.Client;
+   Client : aliased Net.NTP.Client;
 
    --  NTP client to the "ntp.ubuntu.com" server.
    Ubuntu_Ntp : aliased Client_Type;
 
    --  NTP client to the "pool.ntp.org" server (at least one of them).
-   Pool_Ntp   : aliased Client_Type;
+   Pool_Ntp : aliased Client_Type;
 
    --  NTP client to the "ntp.bouyguesbox.fr" server.
-   Bbox_Ntp   : aliased Client_Type;
+   Bbox_Ntp : aliased Client_Type;
 
 end Time_Manager;

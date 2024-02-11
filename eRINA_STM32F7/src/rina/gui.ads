@@ -1,17 +1,25 @@
 with BMP_Fonts;
 with HAL.Bitmap;
+
 package GUI is
-    pragma Warnings(Off);
+   pragma Warnings (Off);
 
-    Large_Font : BMP_Fonts.BMP_Font := BMP_Fonts.Font12x12;
-    Foreground : HAL.Bitmap.Bitmap_Color := HAL.Bitmap.White;
-    Background : HAL.Bitmap.Bitmap_Color := HAL.Bitmap.Black;
+   Large_Font : BMP_Fonts.BMP_Font      := BMP_Fonts.Font12x12;
+   Foreground : HAL.Bitmap.Bitmap_Color := HAL.Bitmap.White;
+   Background : HAL.Bitmap.Bitmap_Color := HAL.Bitmap.Black;
 
-    procedure Print (X : in Natural; Y : in Natural; Msg : in String);
+   type Size is record
+      Width  : Natural;
+      Height : Natural;
+   end record;
 
-    procedure Initialize (Title : in String);
+   Board_Resolution : Size := (480, 272);
 
-    procedure PrintToConsole(Msg : in String);
-
-    procedure CopyLine(SrcLineNumber : in Natural; DstLineNumer : in Natural; DeleteSrc : in Boolean);
+   function ScreenBuffer return HAL.Bitmap.Any_Bitmap_Buffer;
+   procedure Initialize (Title : in String);
+   procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point);
+   
+   function MeasureText
+     (Text : in String; Font : in BMP_Fonts.BMP_Font) return Size;
+   function Scale (Point : in HAL.Bitmap.Point) return HAL.Bitmap.Point;
 end GUI;
