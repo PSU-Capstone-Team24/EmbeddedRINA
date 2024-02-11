@@ -15,9 +15,10 @@ package GUI is
 
    Board_Resolution : Size := (480, 272);
 
-   function ScreenBuffer return HAL.Bitmap.Any_Bitmap_Buffer;
-   procedure Initialize (Title : in String);
+   procedure Initialize;
+   procedure Update;
    procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point);
+   function Screen_Buffer return HAL.Bitmap.Any_Bitmap_Buffer;
 
    function MeasureText
      (Text : in String; Font : in BMP_Fonts.BMP_Font) return Size;

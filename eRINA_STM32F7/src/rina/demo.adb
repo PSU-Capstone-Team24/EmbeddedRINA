@@ -8,20 +8,21 @@ procedure Demo is
    Counter : Natural := 0;
 begin
 
-   GUI.Initialize ("eRINA Debug");
+   GUI.Initialize;
    Network.Initialize;
 
-   Textures.Print (Textures.PSU.Bitmap, (5, 10));
    --  Keep board from immediately terminating
    loop
-      Debug.Print (Debug.Info, "Message " & Counter'Image);
+      Textures.Print (Textures.PSU.Bitmap, (5, 10));
+
+      GUI.Print ("eRINA Debug", (80, 15));
+
+      GUI.Print
+        ("ARP Request Count: " & Network.Get_ARP_Request_Count'Image,
+         (80, 30));
+
+      Debug.Print (Debug.Warning, "Blah " & Counter'Image);
       Counter := Counter + 1;
-      delay 0.5;
-      Debug.Print (Debug.Warning, "Message " & Counter'Image);
-      Counter := Counter + 1;
-      delay 0.5;
-      Debug.Print (Debug.Error, "Message " & Counter'Image);
-      Counter := Counter + 1;
-      delay 0.5;
+      delay 0.2;
    end loop;
 end Demo;

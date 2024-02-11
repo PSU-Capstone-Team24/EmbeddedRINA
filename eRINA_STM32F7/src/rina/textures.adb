@@ -6,11 +6,13 @@ package body Textures is
    begin
       for Row in 0 .. Textures.Texture_Height - 1 loop
          for Column in 0 .. Textures.Texture_Width - 1 loop
-            GUI.ScreenBuffer.Set_Source
+            GUI.Screen_Buffer.Set_Source
               (Bitmap_Color_Conversion.Word_To_Bitmap_Color
                  (HAL.Bitmap.ARGB_1555, HAL.UInt32 (T (Row) (Column))));
-            GUI.ScreenBuffer.Set_Pixel ((Pos.X + Row, Pos.Y + Column));
+            GUI.Screen_Buffer.Set_Pixel ((Pos.X + Row, Pos.Y + Column));
          end loop;
       end loop;
+
+      GUI.Update;
    end Print;
 end Textures;
