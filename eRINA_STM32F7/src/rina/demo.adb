@@ -1,21 +1,24 @@
-with Demos;
--- with CDAP;
--- with EFCP;
-with IPCP_Manager; use IPCP_Manager;
+with GUI;
+with Debug;
+with Textures;
+with Textures.PSU;
 
 procedure Demo is
-
-   procedure Header is
-   begin
-      Demos.Put (0, 0, "eRINA Debug");
-   end Header;
-
-   procedure Initialize is new Demos.Initialize_Blank (Header);
+   Counter : Natural := 0;
 begin
-   Initialize;
+   GUI.Initialize ("eRINA Debug");
 
+   Textures.Print (Textures.PSU.Bitmap, (5, 10));
    --  Keep board from immediately terminating
    loop
-      null;
+      Debug.Print (Debug.Info, "Message " & Counter'Image);
+      Counter := Counter + 1;
+      delay 0.5;
+      Debug.Print (Debug.Warning, "Message " & Counter'Image);
+      Counter := Counter + 1;
+      delay 0.5;
+      Debug.Print (Debug.Error, "Message " & Counter'Image);
+      Counter := Counter + 1;
+      delay 0.5;
    end loop;
 end Demo;

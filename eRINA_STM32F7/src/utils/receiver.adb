@@ -76,6 +76,10 @@ package body Receiver is
               Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
             then
                Net.Protos.Arp.Receive (Demos.Ifnet, Packet);
+            elsif Ether.Ether_Type =
+              Net.Headers.To_Network (Net.Protos.ETHERTYPE_IP)
+            then
+               Net.Protos.Dispatchers.Receive (Demos.Ifnet, Packet);
             end if;
 
             --  For our case, we ignore IP packets

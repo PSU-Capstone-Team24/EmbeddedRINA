@@ -136,14 +136,24 @@ package body Demos is
       STM32.RNG.Interrupts.Initialize_RNG;
       STM32.Board.Display.Initialize;
       STM32.Board.Display.Initialize_Layer (1, HAL.Bitmap.ARGB_1555);
-      
+
       Current_Font := BMP_Fonts.Font16x24;
       Header;
       Current_Font := Default_Font;
-      
+
       STM32.Board.Display.Update_Layer (1);
+
+      --  STMicroelectronics OUI = 00 81 E1
+      Ifnet.Mac := (0, 16#81#, 16#E1#, 5, 5, 1);
+
+      --  Setup some receive buffers and initialize the Ethernet driver.
+      Net.Buffers.Add_Region
+        (STM32.SDRAM.Reserve (Amount => HAL.UInt32 (NET_BUFFER_SIZE)),
+         NET_BUFFER_SIZE);
+      Ifnet.Initialize;
+      Receiver.Start;
    end Initialize_Blank;
-   
+
    --  ------------------------------
    --  Initialize the board and the interface.
    --  ------------------------------
@@ -195,26 +205,6 @@ package body Demos is
          STM32.Board.Display.Hidden_Buffer (1).Set_Source (HAL.Bitmap.Blue);
          STM32.Board.Display.Hidden_Buffer (1).Draw_Horizontal_Line
            (Pt => (X => 0, Y => 84), Width => STM32.Board.LCD_Natural_Width);
-
-         Current_Font := BMP_Fonts.Font16x24;
-         Background   := HAL.Bitmap.Blue;
-         Foreground   := HAL.Bitmap.White;
-         Put (32, STM32.Board.LCD_Natural_Height - 35, "Menu");
-
-         STM32.Board.Display.Hidden_Buffer (1).Set_Source (HAL.Bitmap.Blue);
-         STM32.Board.Display.Hidden_Buffer (1).Fill_Rect
-           ((Position =>
-               (STM32.Board.LCD_Natural_Width - 175 - 16,
-                STM32.Board.LCD_Natural_Height - 40),
-             Width => 175, Height => 20));
-
-         Current_Font := Default_Font;
-         Put
-           (STM32.Board.LCD_Natural_Width - 150 - 37,
-            STM32.Board.LCD_Natural_Height - 35, "Broadcast RINA Packet");
-
-         Background := HAL.Bitmap.Black;
-
          STM32.Board.Display.Update_Layer (1);
       end loop;
    end Initialize;
