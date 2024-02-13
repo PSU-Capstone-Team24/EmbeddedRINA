@@ -43,7 +43,7 @@ package body Protobuf is
       end case;
    end Tag_To_Wire_Type;
 
-   function To_VARINT (V : in Byte_Vector) return Uint64 is
+   function VARINT_To_Uint64 (V : in Byte_Vector) return Uint64 is
       Working_Bit_Array   : Bit_Array (1 .. 64) := (others => 0);
    begin
       --  MT: TODO: dropping this requirement for now
@@ -72,5 +72,37 @@ package body Protobuf is
 
       --  MT: TODO: May need some idiot proofing
       return Bit_Array_To_Uint64 (Working_Bit_Array);
-   end To_VARINT;
+   end VARINT_To_Uint64;
+
+   function VARINT_To_Uint32 (V : in Byte_Vector) return Uint32 is
+      function To_Uint32 is new Ada.Unchecked_Conversion(Uint64, Uint32);
+   begin
+      return To_Uint32 (VARINT_To_Uint64(V));
+   end VARINT_To_Uint32;
+
+   function VARINT_To_Int32 (V : in Byte_Vector) return Int32 is
+      function To_Int32 is new Ada.Unchecked_Conversion(Uint64, Int32);
+   begin
+      return To_Int32 (VARINT_To_Uint64(V));
+   end VARINT_To_Int32;
+
+   function VARINT_To_Int64 (V : in Byte_Vector) return Int64 is
+      function To_Int64 is new Ada.Unchecked_Conversion(Uint64, Int64);
+   begin
+      return To_Int64 (VARINT_To_Uint64(V));
+   end VARINT_To_Int64;
+
+   --  Different signed types, sint32 and sint64 vs int32 or int64, encode negative integers differently
+   --  The implementation of these may be wrong for now...
+   function VARINT_To_SInt32 (V : in Byte_Vector) return Int32 is
+      function To_Int32 is new Ada.Unchecked_Conversion(Uint64, Int32);
+   begin
+      return To_Int32 (VARINT_To_Uint64(V));
+   end VARINT_To_SInt32;
+
+   function VARINT_To_SInt64 (V : in Byte_Vector) return Int64 is
+      function To_Int64 is new Ada.Unchecked_Conversion(Uint64, Int64);
+   begin
+      return To_Int64 (VARINT_To_Uint64(V));
+   end VARINT_To_SInt64;
 end Protobuf;

@@ -29,17 +29,14 @@ package Protobuf is
    --  Variable-width integers, or varints, are at the core of the wire format.
    --  They allow encoding unsigned 64-bit ints using anywhere between 1 and 10 bytes
    --  Where smaller values use fewer bytes
-   function To_VARINT (V : in Byte_Vector) return Uint64;
+   function VARINT_To_Uint64 (V : in Byte_Vector) return Uint64;
+   function VARINT_To_Uint32 (Input : Uint64) return Uint32;
 
-   --  MT: TODO: Implement these
+   function VARINT_To_Int32 (Input : Uint64) return Int32;
+   function VARINT_To_Int64 (Input : Uint64) return Int64;
 
-   -- function VARINT_To_Int32 (Input : Uint64) return Int32;
-   -- function VARINT_To_Int64 (Input : Uint64) return Int64;
-
-   -- Different signed types, sint32 and sint64 vs int32 or int64, encode negative integers differently
-   -- function VARINT_To_SInt32 (Input : Uint64) return Int32;
-   -- function VARINT_To_SInt64 (Input : Uint64) return Int64;
-
-   -- function VARINT_To_Uint32 (Input : Uint64) return Uint32;
-   -- function VARINT_To_Uint64 (Input : Uint64) return Uint64;
+   --  Different signed types, sint32 and sint64 vs int32 or int64, encode negative integers differently
+   --  The implementation of these may be wrong for now...
+   function VARINT_To_SInt32 (Input : Uint64) return Int32;
+   function VARINT_To_SInt64 (Input : Uint64) return Int64;
 end Protobuf;
