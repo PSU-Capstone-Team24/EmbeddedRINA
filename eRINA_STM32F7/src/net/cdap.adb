@@ -183,7 +183,7 @@ package body CDAP is
                   end loop;
 
                   --  Decode and update message
-                  ObjValue.Set_Field (Field_Id, To_VARINT (VARINT_Vector));
+                  ObjValue.Set_Field (Field_Id, VARINT_To_Uint64 (VARINT_Vector));
                end;
             end if;
 
@@ -201,7 +201,7 @@ package body CDAP is
                   end loop;
 
                   --  The VARINT storing the length is an int32
-                  LEN_Length := Natural (To_VARINT (LEN_Vector));
+                  LEN_Length := Natural (VARINT_To_Uint64 (LEN_Vector));
 
                   while C /= Byte_Vectors.No_Element loop
                      Data_Vector.Append (V (C));
@@ -222,14 +222,14 @@ package body CDAP is
    end To_OBJ_Value;
 
    function Tag_To_OBJ_Value_Field (Input : Byte_Vector) return Obj_Value_Field is
-      Value : constant Uint64 := To_VARINT(Input) / 2 ** 3;
+      Value : constant Uint64 := VARINT_To_Uint64(Input) / 2 ** 3;
    begin
       --  MT: TODO: Need to handle weird case when resulting value does not match an enum in Obj_Value
       return Obj_Value_Field'Enum_Val (Value);
    end Tag_To_OBJ_Value_Field;
 
    function Tag_To_CDAP_Field (Input : Byte_Vector) return CDAP_Field is
-      Value : constant Uint64 := To_VARINT(Input) / 2 ** 3;
+      Value : constant Uint64 := VARINT_To_Uint64(Input) / 2 ** 3;
    begin
       --  MT: TODO: Need to handle weird case when resulting value does not match an enum in CDAP_Field
       return CDAP_Field'Enum_Val (Value);
@@ -408,7 +408,7 @@ package body CDAP is
                   end loop;
 
                   --  Decode and update message
-                  Result_Msg.Set_Field (Field_Id, To_VARINT (VARINT_Vector));
+                  Result_Msg.Set_Field (Field_Id, VARINT_To_Uint64 (VARINT_Vector));
                end;
             end if;
 
@@ -429,7 +429,7 @@ package body CDAP is
                   end loop;
 
                   --  The VARINT storing the length is an int32
-                  LEN_Length := Natural (To_VARINT (LEN_Vector));
+                  LEN_Length := Natural (VARINT_To_Uint64 (LEN_Vector));
 
                   while C /= Byte_Vectors.No_Element loop
                      Data_Vector.Append (V (C));
