@@ -331,13 +331,13 @@ package body Net.Protos.Arp is
    is
       Req : constant Net.Headers.Arp_Packet_Access := Packet.Arp;
    begin
-      --  Check for valid hardware length, protocol length, hardware type and protocol type.
+      --  Check for valid hardware length, hardware type and protocol type.
       if Req.Arp.Ea_Hdr.Ar_Hln /= Ifnet.Mac'Length or
-        Req.Arp.Ea_Hdr.Ar_Pln /= Ifnet.Ip'Length or
         Req.Arp.Ea_Hdr.Ar_Hdr /= Net.Headers.To_Network (ARPOP_REQUEST) or
         Req.Arp.Ea_Hdr.Ar_Pro /=
           Net.Headers.To_Network (ETHERTYPE_RINA) --  (ETHERTYPE_IP)
       then
+         --  Ignore any future processing of this ARP message if it's not RINA-related
          Ifnet.Rx_Stats.Ignored := Ifnet.Rx_Stats.Ignored + 1;
          return;
       end if;
