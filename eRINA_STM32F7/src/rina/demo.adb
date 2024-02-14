@@ -1,15 +1,17 @@
 with GUI;
-with Debug;
 with Textures;
 with Textures.PSU;
 with Network;
+with STM32;
+with STM32.Board;
 
 procedure Demo is
-   Counter : Natural := 0;
 begin
-
    GUI.Initialize;
    Network.Initialize;
+   STM32.Board.Configure_User_Button_GPIO;
+   STM32.Board.Initialize_LEDs;
+   STM32.Board.All_LEDs_Off;
 
    --  Keep board from immediately terminating
    loop
@@ -18,11 +20,9 @@ begin
       GUI.Print ("eRINA Debug", (80, 15));
 
       GUI.Print
-        ("ARP Request Count: " & Network.Get_ARP_Request_Count'Image,
+        ("Ignored Packets: " & Network.Ifnet.Rx_Stats.Ignored'Image,
          (80, 30));
 
-      Debug.Print (Debug.Warning, "Blah " & Counter'Image);
-      Counter := Counter + 1;
-      delay 0.2;
+      delay Duration(1 / GUI.Frame_Rate);
    end loop;
 end Demo;
