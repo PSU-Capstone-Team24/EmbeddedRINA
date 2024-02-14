@@ -13,6 +13,7 @@ package body Receiver is
 
    Ready  : Ada.Synchronous_Task_Control.Suspension_Object;
    ONE_US : constant Ada.Real_Time.Time_Span := Ada.Real_Time.Microseconds (1);
+
    --  ------------------------------
    --  Start the receiver loop.
    --  ------------------------------
@@ -33,12 +34,13 @@ package body Receiver is
       Total  : Net.Uint64 := 0;
       Count  : Net.Uint64 := 0;
    begin
-      Debug.Print (Debug.Info, "Initializing Ethernet Controller...");
+
+      Debug.Console.Print (Debug.Info, "Initializing Ethernet Controller...");
 
       --  Wait until the Ethernet driver is ready.
       Ada.Synchronous_Task_Control.Suspend_Until_True (Ready);
 
-      Debug.Print (Debug.Info, "Ethernet Controller Initialized!");
+      Debug.Console.Print (Debug.Info, "Ethernet Controller Initialized!");
 
       --  Loop receiving packets and dispatching them.
       Min_Receive_Time := Us_Time'Last;
@@ -58,8 +60,7 @@ package body Receiver is
             if Ether.Ether_Type =
               Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
             then
-               ARP_Request_Count := ARP_Request_Count + 1;
-               Debug.Print (Debug.Info, "ARP Packet Received");
+               Debug.Console.Print (Debug.Info, "ARP Packet Received");
                Net.Protos.Arp.Receive (Network.Ifnet, Packet);
             elsif Ether.Ether_Type =
               Net.Headers.To_Network (Net.Protos.ETHERTYPE_RINA)

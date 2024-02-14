@@ -4,6 +4,7 @@ with Textures.PSU;
 with Network;
 with STM32;
 with STM32.Board;
+with Debug;
 
 procedure Demo is
 begin
@@ -23,6 +24,14 @@ begin
         ("Ignored Packets: " & Network.Ifnet.Rx_Stats.Ignored'Image,
          (80, 30));
 
-      delay Duration(1 / GUI.Frame_Rate);
+      GUI.Print
+        ("Status: ",
+         (80, 45));
+
+      GUI.Print
+        ("Waiting for enrollment request",
+         (145, 45));
+
+      delay Duration(1.0 / GUI.Frame_Rate);
    end loop;
 end Demo;

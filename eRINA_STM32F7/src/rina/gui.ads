@@ -14,8 +14,8 @@ package GUI is
    end record;
 
    Board_Resolution : Size := (480, 272);
-   Frame_Rate : Natural := 60;
-   
+   Frame_Rate : Natural := 30;
+
    procedure Initialize;
    procedure Update;
    procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point);

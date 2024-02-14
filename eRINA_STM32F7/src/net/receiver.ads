@@ -29,8 +29,6 @@ package Receiver is
    Max_Receive_Time : Us_Time := 0 with
      Atomic;
 
-   ARP_Request_Count : Natural := 0;
-
    --  Start the receiver loop.
    procedure Start;
 
