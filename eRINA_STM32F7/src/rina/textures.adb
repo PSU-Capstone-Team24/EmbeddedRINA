@@ -12,7 +12,5 @@ package body Textures is
             GUI.Screen_Buffer.Set_Pixel ((Pos.X + Row, Pos.Y + Column));
          end loop;
       end loop;
-
-      GUI.Update;
    end Print;
 end Textures;
