@@ -5,7 +5,7 @@ package body Board is
       procedure Pressed is
       begin
          STM32.Board.All_LEDs_On;
-         Debug.Console.Print(Debug.Info, "Button pressed!");
+         Debug.Print(Debug.Info, "Button pressed!");
       end Pressed;
    end Button_Handler;
 end Board;

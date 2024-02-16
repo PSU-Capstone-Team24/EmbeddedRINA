@@ -22,7 +22,7 @@ package body GUI is
 
    procedure Update is
    begin
-      STM32.Board.Display.Update_Layer (1, True);
+      STM32.Board.Display.Update_Layer (1);
    end Update;
 
    procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point) is
@@ -31,8 +31,6 @@ package body GUI is
         (Buffer     => Screen_Buffer.all, Start => Scale ((Pos.X, Pos.Y)),
          Msg => Msg, Font => BMP_Fonts.Font8x8, Foreground => Foreground,
          Background => Background);
-
-      Update;
    end Print;
 
    procedure Initialize is

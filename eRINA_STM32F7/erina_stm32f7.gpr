@@ -1,19 +1,18 @@
 with "config/erina_stm32f7_config.gpr";
 with "config/stm32_hal_config.gpr";
 
-project eRINA_STM32F7 is
+project ERINA_STM32F7 is
 
    for Target use "arm-eabi";
-   for Runtime ("Ada") use "embedded-" & stm32_hal_config.DEVICE & "disco";
-
-   for Source_Dirs use ("src/", "src/rina", "src/net", "src/net/stm32", "config/");
-   for Object_Dir use "obj/" & eRINA_STM32F7_Config.Build_Profile;
+   for Runtime ("ada") use "embedded-" & Stm32_Hal_Config.Device & "disco";
+   for Source_Dirs use ("src", "src/rina", "src/net", "src/net/stm32", "config");
+   for Object_Dir use "obj/" & Erina_Stm32F7_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
    for Main use ("demo.adb");
 
    package Compiler is
-      for Default_Switches ("Ada") use eRINA_STM32F7_Config.Ada_Compiler_Switches & "-mno-unaligned-access";
+      for Default_Switches ("ada") use Erina_Stm32F7_Config.Ada_Compiler_Switches & "-mno-unaligned-access";
    end Compiler;
 
    package Binder is
@@ -25,7 +24,15 @@ project eRINA_STM32F7 is
    end Install;
 
    package Builder is
-     for Global_Configuration_Pragmas use "gnat.adc";
+      for Global_Configuration_Pragmas use "gnat.adc";
    end Builder;
 
-end eRINA_STM32F7;
+   package Ide is
+      for Connection_Tool use "st-util";
+      for Communication_Protocol use "remote";
+      for Connection_Config_File use "../../../../../../usr/share/openocd/scripts/board/stm32f7discovery.cfg";
+      for Program_Host use "localhost:4242";
+   end Ide;
+
+end ERINA_STM32F7;
+

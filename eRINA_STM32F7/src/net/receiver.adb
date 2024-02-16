@@ -6,6 +6,7 @@ with Net.Protos.Dispatchers;
 with Net.Headers;
 with Network;
 with Debug;
+with GUI;
 
 package body Receiver is
 
@@ -35,19 +36,18 @@ package body Receiver is
       Count  : Net.Uint64 := 0;
    begin
 
-      Debug.Console.Print (Debug.Info, "Initializing Ethernet Controller...");
+      Debug.Print (Debug.Info, "Initializing Ethernet Controller...");
 
       --  Wait until the Ethernet driver is ready.
       Ada.Synchronous_Task_Control.Suspend_Until_True (Ready);
 
-      Debug.Console.Print (Debug.Info, "Ethernet Controller Initialized!");
-
+      Debug.Print (Debug.Info, "Ethernet Controller Initialized!");
+      
       --  Loop receiving packets and dispatching them.
       Min_Receive_Time := Us_Time'Last;
       Max_Receive_Time := Us_Time'First;
 
       loop
-
          if Packet.Is_Null then
             Net.Buffers.Allocate (Packet);
          end if;
@@ -60,7 +60,7 @@ package body Receiver is
             if Ether.Ether_Type =
               Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
             then
-               Debug.Console.Print (Debug.Info, "ARP Packet Received");
+               Debug.Print (Debug.Info, "ARP Packet Received (" & Network.Ifnet.Rx_Stats.Ignored'Image & ") total");
                Net.Protos.Arp.Receive (Network.Ifnet, Packet);
             elsif Ether.Ether_Type =
               Net.Headers.To_Network (Net.Protos.ETHERTYPE_RINA)
