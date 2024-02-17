@@ -43,19 +43,19 @@ package Net.Headers is
       Ar_Op  : Uint16;
    end record;
 
-   type Ether_Arp (Appl_Length : Positive) is record
+   type Ether_Arp is record
       Ea_Hdr  : Arp_Header;
       Arp_Sha : Ether_Addr;
-      Arp_Spa : String (1 .. Appl_Length);
+      Arp_Spa : String (1 .. 6);
       Arp_Tha : Ether_Addr;
-      Arp_Tpa : String (1 .. Appl_Length);
+      Arp_Tpa : String (1 .. 6);
    end record;
    type Ether_Arp_Access is access all Ether_Arp;
 
    --  ARP Ethernet packet
-   type Arp_Packet (Appl_Length : Positive) is record
+   type Arp_Packet is record
       Ethernet : Net.Headers.Ether_Header;
-      Arp      : Net.Headers.Ether_Arp (Appl_Length);
+      Arp      : Net.Headers.Ether_Arp;
    end record;
    type Arp_Packet_Access is access all Arp_Packet;
 
@@ -113,7 +113,7 @@ package Net.Headers is
    end record;
 
    type Ether_EFCP is record
-      Ea_Hdr : EFCP_Header;
+      Efcp_Hdr : EFCP_Header;
    end record;
 
    type Ether_EFCP_Access is access all Ether_EFCP;

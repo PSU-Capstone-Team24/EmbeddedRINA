@@ -3,9 +3,9 @@ package body Queues is
    protected body Queue is
 
       --  Queues shouldn't be iterable? Yeah I don't really care
-      function Peek(L : Queue_Index) return T is
+      function Peek (L : Queue_Index) return T is
       begin
-         return A(L);
+         return A (L);
       end Peek;
 
       function Size return Natural is
@@ -13,11 +13,9 @@ package body Queues is
          return N;
       end Size;
 
-      function Empty return Boolean is
-        (N = 0);
+      function Empty return Boolean is (N = 0);
 
-      function Full return Boolean is
-         (N = A'Length);
+      function Full return Boolean is (N = A'Length);
 
       entry Push (V : T) when N <= L is
       begin

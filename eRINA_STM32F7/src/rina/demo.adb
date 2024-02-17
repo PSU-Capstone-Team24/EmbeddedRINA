@@ -4,12 +4,12 @@ with Textures.PSU;
 with Network;
 with STM32;
 with STM32.Board;
-with Debug;
 with Ada.Real_Time; use Ada.Real_Time;
+with Debug;
 
 procedure Demo is
-   Period : constant Time_Span := Milliseconds(1 / GUI.Frame_Rate * 1000);
-   Next_Render : Time := Clock;
+   Period : constant Time_Span := Milliseconds (1 / GUI.Frame_Rate * 1_000);
+   Next_Render : Time               := Clock;
 begin
    GUI.Initialize;
    Network.Initialize;
@@ -19,21 +19,15 @@ begin
 
    --  Render loop keeps the board from immediately terminating
    loop
-      GUI.Print ("eRINA Debug", (80, 15));
-
-      GUI.Print
-      ("Status: ",
-         (80, 45));
-
-      GUI.Print
-      ("Waiting for enrollment request",
-         (145, 45));
-
       Textures.Print (Textures.PSU.Bitmap, (5, 10));
 
+      GUI.Print ("eRINA Debug", (80, 15));
+
+      GUI.Print ("Status: ", (80, 45));
+      GUI.Print ("Waiting for enrollment request", (145, 45));
+
       GUI.Print
-        ("Ignored Packets: " & Network.Ifnet.Rx_Stats.Ignored'Image,
-         (80, 30));
+        ("Ignored Packets: " & Network.Ifnet.Rx_Stats.Ignored'Image, (80, 30));
 
       Debug.Render;
       GUI.Update;

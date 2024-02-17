@@ -1,27 +1,33 @@
 with BMP_Fonts;
-with HAL.Bitmap;
+with HAL.Bitmap; use HAL.Bitmap;
 
 package GUI is
    pragma Warnings (Off);
 
-   Large_Font : BMP_Fonts.BMP_Font      := BMP_Fonts.Font12x12;
-   Foreground : HAL.Bitmap.Bitmap_Color := HAL.Bitmap.White;
-   Background : HAL.Bitmap.Bitmap_Color := HAL.Bitmap.Black;
+   Large_Font : BMP_Fonts.BMP_Font := BMP_Fonts.Font12x12;
+   Foreground : Bitmap_Color       := White;
+   Background : Bitmap_Color       := Black;
 
    type Size is record
       Width  : Natural;
       Height : Natural;
    end record;
 
-   Board_Resolution : Size := (480, 272);
-   Frame_Rate : Natural := 30;
+   type Button is record
+      Position : Point;
+      BSize    : Size;
+   end record;
+
+   Board_Resolution : Size    := (480, 272);
+   Frame_Rate       : Natural := 30;
 
    procedure Initialize;
    procedure Update;
-   procedure Print (Msg : in String; Pos : in HAL.Bitmap.Point);
-   function Screen_Buffer return HAL.Bitmap.Any_Bitmap_Buffer;
+   procedure Print (Msg : in String; Pos : in Point);
+   function Screen_Buffer return Any_Bitmap_Buffer;
+   procedure Draw_Rectangle (P : Point; S : Size);
 
    function MeasureText
      (Text : in String; Font : in BMP_Fonts.BMP_Font) return Size;
-   function Scale (Point : in HAL.Bitmap.Point) return HAL.Bitmap.Point;
+   function Scale (Position : in Point) return Point;
 end GUI;

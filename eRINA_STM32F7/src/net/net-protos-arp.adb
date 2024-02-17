@@ -16,6 +16,7 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Ada.Real_Time;
+with Debug;
 
 with Net.Headers;
 package body Net.Protos.Arp is
@@ -340,6 +341,11 @@ package body Net.Protos.Arp is
          --  Ignore any future processing of this ARP message if it's not RINA-related
          Ifnet.Rx_Stats.Ignored := Ifnet.Rx_Stats.Ignored + 1;
          return;
+      else
+         Debug.Print
+           (Debug.Info,
+            "RINA ARP Request Received " & Req.Arp.Arp_Spa & " => " &
+            Req.Arp.Arp_Tpa);
       end if;
 
       case Net.Headers.To_Host (Req.Arp.Ea_Hdr.Ar_Op) is

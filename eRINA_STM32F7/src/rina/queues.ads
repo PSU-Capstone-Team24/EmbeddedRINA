@@ -18,7 +18,7 @@ package Queues is
       N   : Natural     := 0;
       Idx : Queue_Index := Queue_Array'First;
       A   : Queue_Array;
-      L   : Natural     := Natural(Queue_Array'Last);
+      L   : Positive    := Positive (Queue_Index'Last);
    end Queue;
 
 end Queues;
