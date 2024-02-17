@@ -16,9 +16,10 @@ package Queues is
       entry Pop (V : out T);
    private
       N   : Natural     := 0;
-      Idx : Queue_Index := Queue_Array'First;
       A   : Queue_Array;
+      Idx : Queue_Index := Queue_Array'First;
       L   : Positive    := Positive (Queue_Index'Last);
+      X   : Queue_Index := Queue_Array'First;
    end Queue;
 
 end Queues;

@@ -5,7 +5,7 @@ package body Queues is
       --  Queues shouldn't be iterable? Yeah I don't really care
       function Peek (L : Queue_Index) return T is
       begin
-         return A (L);
+         return A (L + (X mod Queue_Index'Last));
       end Peek;
 
       function Size return Natural is
@@ -28,13 +28,14 @@ package body Queues is
       entry Pop (V : out T) when N > 0 is
       begin
          N := N - 1;
-
          V := A (Idx - Queue_Index (N) - 1);
+         X := ((X + 1) mod Queue_Index'Last);
       end Pop;
 
       entry Pop when N > 0 is
       begin
          N := N - 1;
+         X := ((X + 1) mod Queue_Index'Last);
       end Pop;
 
    end Queue;
