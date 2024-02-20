@@ -68,12 +68,12 @@ package body Debug is
             Starting_Point.Y + I * (Font_Height + Line_Padding));
 
          Foreground :=
-           (case Msg.Level is when Info | Error => HAL.Bitmap.White,
-              when Warning => HAL.Bitmap.Black);
+           (case Msg.Level is when Info => HAL.Bitmap.White,
+              when Warning | Error => HAL.Bitmap.Black);
 
          Background :=
-           (case Msg.Level is when Info => HAL.Bitmap.Blue,
-              when Warning => HAL.Bitmap.Yellow, when Error => HAL.Bitmap.Red);
+           (case Msg.Level is when Info => Info_Color,
+              when Warning => Warning_Color, when Error => Error_Color);
 
          -- Restart X position to start
          Pos.X := Starting_Point.X;

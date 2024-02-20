@@ -10,6 +10,13 @@ package Debug is
    Max_Characters_Per_Line : constant Positive         := 45;
    Line_Padding            : constant Natural          := 4;
    Starting_Point          : constant HAL.Bitmap.Point := (0, 100);
+   
+   --  Debug bitmap colors
+   Info_Color              : constant HAL.Bitmap.Bitmap_Color := (255, 109, 177, 255);
+   Warning_Color           : constant HAL.Bitmap.Bitmap_Color := (255, 255, 227, 066);
+   Error_Color             : constant HAL.Bitmap.Bitmap_Color := (255, 254, 112, 112);
+
+   --  Maximum number of lines of messages in the console output
    Max_Messages            : constant                  := 14;
 
    type Message is record

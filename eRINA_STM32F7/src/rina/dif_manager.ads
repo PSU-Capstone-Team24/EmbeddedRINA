@@ -1,7 +1,7 @@
 with Buffers; use Buffers;
-with Names; use Names.Name_String;
 with Ada.Containers.Vectors;
 with IPCP_Manager; use IPCP_Manager;
+with IPCP_Manager; use IPCP_Manager.IPCP_Name;
 
 package DIF_Manager is
    --  Max of 16 DIFs can exist in the system
@@ -21,6 +21,7 @@ package DIF_Manager is
    end record;
 
    function Get_IPCP (Name : String) return IPCP;
+   function IPCP_Exists (Name : String) return Boolean;
 
    --  Checks the set of all DIFs in the system for a DIF with the matching name and type
    function Get (Name : String; DIF_Type : DIF_Types) return DIF;

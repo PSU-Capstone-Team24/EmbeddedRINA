@@ -1,6 +1,7 @@
 with System;
 with Interfaces; use Interfaces;
 with Ada.Containers.Vectors;
+with System.Storage_Elements;
 
 package Buffers is
 
