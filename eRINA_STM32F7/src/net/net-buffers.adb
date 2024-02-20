@@ -16,8 +16,8 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Ada.Unchecked_Conversion;
-with System.Storage_Elements;  use System.Storage_Elements;
-with Net.Utils;
+with System.Storage_Elements; use System.Storage_Elements;
+with Net.Headers;             use Net.Headers;
 
 package body Net.Buffers is
 
@@ -35,40 +35,54 @@ package body Net.Buffers is
 
    --  function As_Arp is new Ada.Unchecked_Conversion
    --    (Source => System.Address, Target => Net.Headers.Arp_Packet_Access);
-   
+
    function As_Arp_Header is new Ada.Unchecked_Conversion
-      (Source => System.Address, Target => Net.Headers.Arp_Header_Access);
+     (Source => System.Address, Target => Net.Headers.Arp_Header_Access);
 
    type Ether_Addr_Access is access all Ether_Addr;
-   
+
    function As_Ether_Addr is new Ada.Unchecked_Conversion
-      (Source => System.Address, Target => Ether_Addr_Access);
+     (Source => System.Address, Target => Ether_Addr_Access);
 
-   function Address_To_Access_String (Address : System.Address; Length : Positive) return Net.Headers.Length_Delimited_String is
+   function Address_To_Access_String
+     (Address : System.Address; Length : Positive)
+      return Net.Headers.Length_Delimited_String
+   is
       subtype Byte is System.Storage_Elements.Storage_Element;
-      type Byte_Array is array (Positive range <>) of Byte;
+      type Byte_Array is array (1 .. Length) of Byte;
 
-      Temp : Byte_Array(1 .. Length);
+      Temp : Byte_Array;
       for Temp'Address use Address;
 
-      Allocated_String : Net.Headers.Length_Delimited_String := new String'(1 .. Length => ' ');
+      Allocated_String : constant Net.Headers.Length_Delimited_String :=
+        new String'(1 .. Length => ' ');
    begin
       for I in 1 .. Length loop
-         Allocated_String(I) := Character'Val(Temp(I));
+         Allocated_String (I) := Character'Val (Temp (I));
       end loop;
-      
+
       return Allocated_String;
    end Address_To_Access_String;
 
-   function As_Arp (Source : System.Address) return Net.Headers.Arp_Packet_Access is
+   function As_Arp
+     (Source : System.Address) return Net.Headers.Arp_Packet_Access
+   is
       --  Arp packet to be returned
-      Arp : constant Net.Headers.Arp_Packet_Access := new Net.Headers.Arp_Packet;
+      Arp : constant Net.Headers.Arp_Packet_Access :=
+        new Net.Headers.Arp_Packet;
       --  Ethernet header (this can be unchecked converted)
       Ether : constant Net.Headers.Ether_Header_Access := As_Ethernet (Source);
       --  Address starting where ARP packet begins (this can also be unchecked converted)
-      Ea_Hdr : constant Net.Headers.Arp_Header_Access := As_ARP_Header (Source + Storage_Offset(Offsets(ETHER_PACKET)));
+      Ea_Hdr : constant Net.Headers.Arp_Header_Access :=
+        As_Arp_Header (Source + Storage_Offset (Offsets (ETHER_PACKET)));
       --  Source MAC addr
-      Arp_Sha : constant Ether_Addr_Access := As_Ether_Addr (Source + Storage_Offset(Offsets(ARP_PACKET)));
+      Arp_Sha : constant Ether_Addr_Access :=
+        As_Ether_Addr (Source + Storage_Offset (Offsets (ARP_PACKET)));
+      --  Dest MAC addr
+      Arp_Tha : constant Ether_Addr_Access :=
+        As_Ether_Addr
+          (Source +
+           Storage_Offset (Offsets (ARP_PACKET) + Uint16 (Ea_Hdr.Ar_Pln)));
    begin
       Arp.Ethernet := Ether.all;
 
@@ -79,13 +93,23 @@ package body Net.Buffers is
       Arp.Arp.Ea_Hdr.Ar_Pro := Ea_Hdr.Ar_Pro;
       Arp.Arp.Ea_Hdr.Ar_Hln := Ea_Hdr.Ar_Hln;
       Arp.Arp.Ea_Hdr.Ar_Pln := Ea_Hdr.Ar_Pln;
-      Arp.Arp.Ea_Hdr.Ar_Op := Ea_Hdr.Ar_Op;
+      Arp.Arp.Ea_Hdr.Ar_Op  := Ea_Hdr.Ar_Op;
 
       Arp.Arp.Arp_Sha := Arp_Sha.all;
-      Arp.Arp.Arp_Spa := Address_To_Access_String (Source + Storage_Offset(Offsets(ARP_PACKET)), Positive(Arp.Arp.Ea_Hdr.Ar_Pro));
+      Arp.Arp.Arp_Spa :=
+        Address_To_Access_String
+          (Source +
+           Storage_Offset (Offsets (ARP_PACKET) + Uint16 (Ea_Hdr.Ar_Hln)),
+           Positive (Arp.Arp.Ea_Hdr.Ar_Pln));
 
-      --Arp_Tha : Ether_Addr;
-      --Arp_Tpa : Length_Delimited_String;
+      Arp.Arp.Arp_Tha := Arp_Tha.all;
+      Arp.Arp.Arp_Tpa :=
+        Address_To_Access_String
+          (Source +
+           Storage_Offset
+             (Offsets (ARP_PACKET) +
+              Uint16 (Ea_Hdr.Ar_Hln + Ea_Hdr.Ar_Pln + Ea_Hdr.Ar_Hln)),
+           Positive (Arp.Arp.Ea_Hdr.Ar_Pln));
 
       return Arp;
    end As_Arp;
@@ -374,7 +398,6 @@ package body Net.Buffers is
    --  Get access to the ARP packet.
    --  ------------------------------
    function Arp (Buf : in Buffer_Type) return Net.Headers.Arp_Packet_Access is
-      Result : Net.Headers.Arp_Packet_Access;
    begin
       return As_Arp (Buf.Packet.Data (Buf.Packet.Data'First)'Address);
    end Arp;
@@ -382,7 +405,8 @@ package body Net.Buffers is
    --  ------------------------------
    --  Get access to the EFCP packet.
    --  ------------------------------
-   function EFCP (Buf : in Buffer_Type) return Net.Headers.EFCP_Packet_Access is
+   function EFCP (Buf : in Buffer_Type) return Net.Headers.EFCP_Packet_Access
+   is
    begin
       return As_EFCP (Buf.Packet.Data (Buf.Packet.Data'First)'Address);
    end EFCP;

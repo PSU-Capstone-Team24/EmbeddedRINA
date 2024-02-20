@@ -48,55 +48,59 @@ package body Receiver is
       Max_Receive_Time := Us_Time'First;
 
       loop
-         if Packet.Is_Null then
-            Net.Buffers.Allocate (Packet);
-         end if;
+         begin
 
-         if not Packet.Is_Null then
-            Network.Ifnet.Receive (Packet);
-            Now   := Ada.Real_Time.Clock;
-            Ether := Packet.Ethernet;
+            if Packet.Is_Null then
+               Net.Buffers.Allocate (Packet);
+            end if;
 
-            if Ether.Ether_Type = Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP) then
-               begin
+            if not Packet.Is_Null then
+               Network.Ifnet.Receive (Packet);
+               Now   := Ada.Real_Time.Clock;
+               Ether := Packet.Ethernet;
+
+               if Ether.Ether_Type =
+                 Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
+               then
                   Net.Protos.Arp.Receive (Network.Ifnet, Packet);
-               exception
-                  when E : Constraint_Error =>
-                     Debug.Print(Debug.Error, Exception_Message(E));
-                  when P : Program_Error => 
-                     Debug.Print(Debug.Error, Exception_Message(P));
-                  when others =>
-                     Debug.Print(Debug.Error, "Error!");
-               end;
-            elsif Ether.Ether_Type =
-              Net.Headers.To_Network (Net.Protos.ETHERTYPE_RINA)
-            then
-               Net.Protos.Dispatchers.Receive (Network.Ifnet, Packet);
+               elsif Ether.Ether_Type =
+                 Net.Headers.To_Network (Net.Protos.ETHERTYPE_RINA)
+               then
+                  Net.Protos.Dispatchers.Receive (Network.Ifnet, Packet);
+               end if;
+
+               --  For our case, we ignore IP packets
+               --  if Ether.Ether_Type = Net.Headers.To_Network (Net.Protos.ETHERTYPE_IP) then
+               --     Net.Protos.Dispatchers.Receive (Demos.Ifnet, Packet);
+               --  end if;
+
+               --  Compute the time taken to process the packet in microseconds.
+               Dt := Us_Time ((Ada.Real_Time.Clock - Now) / ONE_US);
+
+               --  Compute average, min and max values.
+               Count            := Count + 1;
+               Total            := Total + Net.Uint64 (Dt);
+               Avg_Receive_Time := Us_Time (Total / Count);
+
+               if Dt < Min_Receive_Time then
+                  Min_Receive_Time := Dt;
+               end if;
+
+               if Dt > Max_Receive_Time then
+                  Max_Receive_Time := Dt;
+               end if;
+            else
+               delay until Ada.Real_Time.Clock +
+               Ada.Real_Time.Milliseconds (100);
             end if;
-
-            --  For our case, we ignore IP packets
-            --  if Ether.Ether_Type = Net.Headers.To_Network (Net.Protos.ETHERTYPE_IP) then
-            --     Net.Protos.Dispatchers.Receive (Demos.Ifnet, Packet);
-            --  end if;
-
-            --  Compute the time taken to process the packet in microseconds.
-            Dt := Us_Time ((Ada.Real_Time.Clock - Now) / ONE_US);
-
-            --  Compute average, min and max values.
-            Count            := Count + 1;
-            Total            := Total + Net.Uint64 (Dt);
-            Avg_Receive_Time := Us_Time (Total / Count);
-
-            if Dt < Min_Receive_Time then
-               Min_Receive_Time := Dt;
-            end if;
-
-            if Dt > Max_Receive_Time then
-               Max_Receive_Time := Dt;
-            end if;
-         else
-            delay until Ada.Real_Time.Clock + Ada.Real_Time.Milliseconds (100);
-         end if;
+         exception
+            when E : Constraint_Error =>
+               Debug.Print (Debug.Error, Exception_Message (E));
+            when P : Program_Error =>
+               Debug.Print (Debug.Error, Exception_Message (P));
+            when others =>
+               Debug.Print (Debug.Error, "Error!");
+         end;
       end loop;
    end Controller;
 

@@ -330,80 +330,44 @@ package body Net.Protos.Arp is
 
    use type Net.Headers.Length_Delimited_String;
    use type Net.Headers.Arp_Packet_Access;
+   use type Net.Headers.Arp_Header;
 
    procedure Receive
      (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
       Packet : in out Net.Buffers.Buffer_Type)
    is
-      Req : Net.Headers.Arp_Packet_Access := null;
+      Req : constant Net.Headers.Arp_Packet_Access := Packet.Arp;
    begin
       begin
-         Req := Packet.Arp;
-
-         if Req.Arp.Arp_Spa /= null then
-            Debug.Print (Debug.Warning, Net.Utils.To_String(Req.Arp.Arp_Sha));
-            Debug.Print (Debug.Warning, Req.Arp.Arp_Spa.all);
+         --  Do nothing if parse failed
+         if Req = null then
+            Debug.Print (Debug.Error, "Parse failed!");
+            return;
          end if;
-      exception
-         when E : Constraint_Error =>
-            Debug.Print(Debug.Error, Exception_Message(E));
-         when P : Program_Error => 
-            Debug.Print(Debug.Error, Exception_Message(P));
-         when others =>
-            Debug.Print(Debug.Error, "Error!");
-      end;
 
-      --  Do nothing if parse failed
-      if Req = null then
-         Debug.Print(Debug.Error, "Parse failed!");
-         return;
-      end if;
-
-      --  Check for valid hardware length, hardware type and protocol type.
-      if Req.Arp.Ea_Hdr.Ar_Hln /= Ifnet.Mac'Length or
-        Req.Arp.Ea_Hdr.Ar_Hdr /= Net.Headers.To_Network (ARPOP_REQUEST) or
-        Req.Arp.Ea_Hdr.Ar_Pro /=
-          Net.Headers.To_Network (ETHERTYPE_RINA) --  (ETHERTYPE_IP)
-      then
-         --  Ignore any future processing of this ARP message if it's not RINA-related
-         Ifnet.Rx_Stats.Ignored := Ifnet.Rx_Stats.Ignored + 1;
-         return;
-      else
-         Ifnet.Rx_Stats.Ignored := Ifnet.Rx_Stats.Ignored + 1;
-         if Req.Arp.Arp_Spa /= null and Req.Arp.Arp_Tpa /= null then
+         --  Check for valid hardware length, hardware type and protocol type.
+         if Req.Arp.Ea_Hdr.Ar_Hln /= Ifnet.Mac'Length or
+           Req.Arp.Ea_Hdr.Ar_Hdr /= Net.Headers.To_Network (ARPOP_REQUEST) or
+           Req.Arp.Ea_Hdr.Ar_Pro /=
+             Net.Headers.To_Network (ETHERTYPE_RINA) --  (ETHERTYPE_IP)
+         then
+            --  Ignore any future processing of this ARP message if it's not RINA-related
+            Ifnet.Rx_Stats.Ignored := Ifnet.Rx_Stats.Ignored + 1;
+            return;
+         else
             Debug.Print
-            (Debug.Info,
+              (Debug.Info,
                "RINA ARP Request Received " & Req.Arp.Arp_Spa.all & " => " &
                Req.Arp.Arp_Tpa.all);
          end if;
-      end if;
-
-      case Net.Headers.To_Host (Req.Arp.Ea_Hdr.Ar_Op) is
-         when ARPOP_REQUEST =>
-            null;
-            --  This ARP request is for our IP address.
-            --  Send the corresponding ARP reply with our Ethernet address.
-
-            --if Req.Arp.Arp_Tpa = Ifnet.Ip then
-            --   Req.Ethernet.Ether_Dhost := Req.Arp.Arp_Sha;
-            --   Req.Ethernet.Ether_Shost := Ifnet.Mac;
-            --   Req.Arp.Ea_Hdr.Ar_Op  := Net.Headers.To_Network (ARPOP_REPLY);
-            --   Req.Arp.Arp_Tpa := Req.Arp.Arp_Spa;
-            --   Req.Arp.Arp_Tha := Req.Arp.Arp_Sha;
-            --   Req.Arp.Arp_Sha := Ifnet.Mac;
-            --   Req.Arp.Arp_Spa := Ifnet.Ip;
-            --   Ifnet.Send (Packet);
-            --end if;
-
-         when ARPOP_REPLY =>
-            null;
-            --if Req.Arp.Arp_Tpa = Ifnet.Ip and Req.Arp.Arp_Tha = Ifnet.Mac then
-            --   Update (Ifnet, Req.Arp.Arp_Spa, Req.Arp.Arp_Sha);
-            --end if;
-
+      exception
+         when E : Constraint_Error =>
+            Debug.Print (Debug.Error, Exception_Message (E));
+         when P : Program_Error =>
+            Debug.Print (Debug.Error, Exception_Message (P));
          when others =>
-            Ifnet.Rx_Stats.Ignored := Ifnet.Rx_Stats.Ignored + 1;
-      end case;
+            Debug.Print (Debug.Error, "Error!");
+      end;
    end Receive;
 
 end Net.Protos.Arp;

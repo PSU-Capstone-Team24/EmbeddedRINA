@@ -24,6 +24,6 @@ package Net.Utils is
 
    --  Convert the Ethernet address to a string representation.
    function To_String (Mac : in Ether_Addr) return String;
-   
+
    function Hex (Value : in Uint8) return String;
 end Net.Utils;

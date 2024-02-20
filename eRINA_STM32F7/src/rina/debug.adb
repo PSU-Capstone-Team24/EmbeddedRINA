@@ -81,7 +81,9 @@ package body Debug is
          --  MT: TODO
          --  Draw over anything left over at this location
          --  I don't know why we need to do this since we're not copying in the old buffer?
-         GUI.Draw_Rectangle ((Pos.X, Pos.Y), (GUI.Board_Resolution.Width, Font_Height), HAL.Bitmap.Black);
+         GUI.Draw_Rectangle
+           ((Pos.X, Pos.Y), (GUI.Board_Resolution.Width, Font_Height),
+            HAL.Bitmap.Black);
 
          if not Msg.Cont then
             --  Draw debug prefix

@@ -19,6 +19,7 @@
 with System;
 with Ada.Interrupts.Names;
 with Ada.Unchecked_Conversion;
+with Ada.Exceptions; use Ada.Exceptions;
 
 with STM32.SDRAM;
 with STM32.Eth; use STM32;
@@ -26,6 +27,8 @@ with STM32_SVD.Ethernet;
 
 with HAL;
 with Cortex_M.Cache;
+with Debug;
+
 package body Net.Interfaces.STM32 is
 
    use HAL;
@@ -143,10 +146,19 @@ package body Net.Interfaces.STM32 is
    is
       use type Net.Uint64;
    begin
-      Receive_Queue.Wait_Packet (Buf);
-      Ifnet.Rx_Stats.Packets := Ifnet.Rx_Stats.Packets + 1;
-      Ifnet.Rx_Stats.Bytes   :=
-        Ifnet.Rx_Stats.Bytes + Net.Uint64 (Buf.Get_Length);
+      begin
+         Receive_Queue.Wait_Packet (Buf);
+         Ifnet.Rx_Stats.Packets := Ifnet.Rx_Stats.Packets + 1;
+         Ifnet.Rx_Stats.Bytes   :=
+           Ifnet.Rx_Stats.Bytes + Net.Uint64 (Buf.Get_Length);
+      exception
+         when E : Constraint_Error =>
+            Debug.Print (Debug.Error, Exception_Message (E));
+         when P : Program_Error =>
+            Debug.Print (Debug.Error, Exception_Message (P));
+         when others =>
+            Debug.Print (Debug.Error, "Error!");
+      end;
    end Receive;
 
    --  ------------------------------
