@@ -1,3 +1,4 @@
+with System;
 with Interfaces; use Interfaces;
 with Ada.Containers.Vectors;
 
@@ -15,7 +16,7 @@ package Buffers is
    subtype Int32 is Integer;
    subtype Int64 is Long_Long_Integer;
 
-   type Byte is new Unsigned_8;
+   type Byte is new System.Storage_Elements.Storage_Element;
    type Byte_Buffer is array (Natural range <>) of Byte;
    type Byte_Buffer_Access is access all Byte_Buffer;
    
