@@ -43,12 +43,15 @@ package Net.Headers is
       Ar_Op  : Uint16;
    end record;
 
+   type Arp_Header_Access is access Arp_Header;
+   type Length_Delimited_String is access String;
+
    type Ether_Arp is record
       Ea_Hdr  : Arp_Header;
-      Arp_Sha : Ether_Addr;
-      Arp_Spa : String (1 .. 6);
-      Arp_Tha : Ether_Addr;
-      Arp_Tpa : String (1 .. 6);
+      Arp_Sha : Ether_Addr := (others => 0);
+      Arp_Spa : Length_Delimited_String;
+      Arp_Tha : Ether_Addr := (others => 0);
+      Arp_Tpa : Length_Delimited_String;
    end record;
    type Ether_Arp_Access is access all Ether_Arp;
 
