@@ -4,6 +4,8 @@ pragma Style_Checks (Off);
 package Bindings.Rlite.Msg.IPCP is
 
    type DIF_Types is (Normal, Ethernet);
+   
+   function DIF_To_String (Self : DIF_Types) return String;
 
    --  (Application --> Kernel) message to create a new IPC process.
    type Create is new Rl_Msg_Base with record

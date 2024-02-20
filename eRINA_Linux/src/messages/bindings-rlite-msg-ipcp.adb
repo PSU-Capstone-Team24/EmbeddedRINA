@@ -2,9 +2,17 @@ with Exceptions;
 
 with Names; use Names;
 
-with Ada.Characters.Handling;
-
 package body Bindings.Rlite.Msg.IPCP is
+
+   function DIF_To_String (Self : DIF_Types) return String is
+   begin
+      case Self is
+         when Normal =>
+            return "normal";
+         when Ethernet =>
+            return "shim-eth";
+      end case;
+   end DIF_To_String;
 
    function Serialize (Self : in Create) return Byte_Buffer is
       Hdr_Ptr : constant Byte_Buffer (1 .. Self.Hdr'Size / 8) with
@@ -19,9 +27,8 @@ package body Bindings.Rlite.Msg.IPCP is
 
       IPCP_Name_Ptr : constant Byte_Buffer :=
         To_Packed_Buffer (Self.Ipcp_Name);
-
-      DIF_Type : constant String :=
-        Ada.Characters.Handling.To_Lower (DIF_Types'Image (Self.DIF_Type));
+      
+      DIF_Type : constant String := DIF_To_String (Self.DIF_Type);
 
       DIF_Type_Size : constant Unsigned_16 := Unsigned_16 (DIF_Type'Size / 8);
 
