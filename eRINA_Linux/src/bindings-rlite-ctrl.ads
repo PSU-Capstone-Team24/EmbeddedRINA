@@ -67,6 +67,11 @@ package Bindings.Rlite.Ctrl is
 
    procedure RINA_Destroy_IPCP (Fd : OS.File_Descriptor; Id : Rl_Ipcp_Id_T);
 
+   function RINA_Config_IPCP
+     (Fd       : OS.File_Descriptor; Id : Rl_Ipcp_Id_T;
+      Name : Bounded_String; Value : Bounded_String)
+      return OS.File_Descriptor;
+
    -- struct rl_msg_base *rl_read_next_msg(int rfd, int quiet)
    function Rl_Read_Msg
      (Rfd : OS.File_Descriptor; Quiet : Integer) return Byte_Buffer;

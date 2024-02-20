@@ -45,6 +45,11 @@ package Bindings.Rlite.API is
    -- (This can be looked up via the IPCP hashmap in Ctrl logic)
    procedure RINA_Destroy_IPCP (Fd : OS.File_Descriptor; Id : Rl_Ipcp_Id_T);
 
+  function RINA_Config_IPCP
+     (Fd       : OS.File_Descriptor; Id : Rl_Ipcp_Id_T;
+      Name : String; Value : String)
+      return OS.File_Descriptor;
+
 --  Register the application name local_appl to a DIF in the system.
 --  After a successful registration, flow allocation requests can be received
 --  on fd.

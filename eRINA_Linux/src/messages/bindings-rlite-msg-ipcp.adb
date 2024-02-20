@@ -97,4 +97,39 @@ package body Bindings.Rlite.Msg.IPCP is
       return Serialized_Msg;
    end Serialize;
 
+
+   overriding function Serialize (Self : in Config) return Byte_Buffer is
+      Hdr_Ptr : constant Byte_Buffer (1 .. Self.Hdr'Size / 8) with
+        Address => Self.Hdr'Address, Import, Volatile;
+      
+      IPCP_Id : constant Byte_Buffer (1 .. Self.Ipcp_Id'Size / 8) with
+        Address => Self.Ipcp_Id'Address, Import, Volatile;
+      
+      Pad1 : constant Byte_Buffer (1 .. 3) := (others => 0);
+
+      Name_Size : constant Unsigned_16 :=
+        Unsigned_16 (Used_Size (Self.Name));
+
+      Name_Size_Ptr :
+        constant Byte_Buffer (1 .. Name_Size'Size / 8) with
+        Address => Name_Size'Address, Import, Volatile;
+
+      Name_Ptr : constant Byte_Buffer :=
+        To_Packed_Buffer (Self.Name);
+
+      Value_Size : constant Unsigned_16 :=
+        Unsigned_16 (Used_Size (Self.Value));
+
+      Value_Size_Ptr :
+        constant Byte_Buffer (1 .. Value_Size'Size / 8) with
+        Address => Value_Size'Address, Import, Volatile;
+
+      Value_Ptr : constant Byte_Buffer :=
+        To_Packed_Buffer (Self.Value);
+
+      Serialized_Msg : constant Byte_Buffer := Hdr_Ptr & IPCP_Id & Pad1 & Name_Size_Ptr & Name_Ptr & Value_Size_Ptr & Value_Ptr;
+   begin
+     return Serialized_Msg;
+   end Serialize;
+
 end Bindings.Rlite.Msg.IPCP;

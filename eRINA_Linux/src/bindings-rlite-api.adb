@@ -56,6 +56,16 @@ package body Bindings.Rlite.API is
    begin
       Ctrl.RINA_Destroy_IPCP (Fd, Id);
    end RINA_Destroy_IPCP;
+      
+   function RINA_Config_IPCP
+     (Fd       : OS.File_Descriptor; Id : Rl_Ipcp_Id_T;
+      Name : String; Value : String)
+      return OS.File_Descriptor is
+      Name_Str : constant Bounded_String := To_Bounded_String (Name);
+      Value_Str : constant Bounded_String := To_Bounded_String (Value);
+   begin
+      return Ctrl.RINA_Config_IPCP (Fd, Id, Name_Str, Value_Str);
+   end RINA_Config_IPCP;
 
    function RINA_Register
      (fd    : OS.File_Descriptor; dif_name : String; local_appl : String;
