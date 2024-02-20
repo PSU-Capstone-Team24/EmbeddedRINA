@@ -20,6 +20,8 @@ package DIF_Manager is
       DIF_Type : DIF_Types;
    end record;
 
+   function Get_IPCP (Name : String) return IPCP;
+
    --  Checks the set of all DIFs in the system for a DIF with the matching name and type
    function Get (Name : String; DIF_Type : DIF_Types) return DIF;
 
