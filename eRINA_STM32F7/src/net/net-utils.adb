@@ -18,13 +18,9 @@
 with Interfaces;
 package body Net.Utils is
 
-   function Hex (Value : in Uint8) return String;
    function Image (Value : in Uint8) return String;
 
    Hex_String : constant String := "0123456789ABCDEF";
-
-   --  Get a 32-bit random number.
-   function Random return Uint32 is separate;
 
    function Hex (Value : in Uint8) return String is
       use Interfaces;

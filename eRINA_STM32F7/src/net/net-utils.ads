@@ -17,13 +17,13 @@
 -----------------------------------------------------------------------
 package Net.Utils is
 
+   pragma Preelaborate;
+
    --  Convert the IPv4 address to a dot string representation.
    function To_String (Ip : in Ip_Addr) return String;
 
    --  Convert the Ethernet address to a string representation.
    function To_String (Mac : in Ether_Addr) return String;
-
-   --  Get a 32-bit random number.
-   function Random return Uint32;
-
+   
+   function Hex (Value : in Uint8) return String;
 end Net.Utils;
