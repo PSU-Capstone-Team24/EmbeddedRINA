@@ -25,9 +25,9 @@ package body GUI is
       STM32.Board.Display.Update_Layer (1);
    end Update;
 
-   procedure Draw_Rectangle (P : Point; S : Size) is
+   procedure Draw_Rectangle (P : Point; S : Size; C : Bitmap_Color) is
    begin
-      Set_Source (Buffer => Screen_Buffer.all, ARGB => Red);
+      Set_Source (Buffer => Screen_Buffer.all, ARGB => C);
       Fill_Rect (Buffer => Screen_Buffer.all, Area => (P, S.Width, S.Height));
    end Draw_Rectangle;
 

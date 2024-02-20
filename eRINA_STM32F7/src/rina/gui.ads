@@ -25,7 +25,7 @@ package GUI is
    procedure Update;
    procedure Print (Msg : in String; Pos : in Point);
    function Screen_Buffer return Any_Bitmap_Buffer;
-   procedure Draw_Rectangle (P : Point; S : Size);
+   procedure Draw_Rectangle (P : Point; S : Size; C : Bitmap_Color);
 
    function MeasureText
      (Text : in String; Font : in BMP_Fonts.BMP_Font) return Size;
