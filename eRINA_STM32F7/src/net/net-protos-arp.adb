@@ -16,6 +16,8 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Ada.Real_Time;
+with Net.Utils;
+with Ada.Exceptions; use Ada.Exceptions;
 with Debug;
 
 with Net.Headers;
@@ -319,19 +321,44 @@ package body Net.Protos.Arp is
       Req.Arp.Ea_Hdr.Ar_Op     := Net.Headers.To_Network (ARPOP_REQUEST);
       Req.Arp.Arp_Sha          := Mac;
       --  MT: TODO: Integrate these!
-      Req.Arp.Arp_Spa := "SOURCE_APPLICATION"; --  Source_Ip;
+      --Req.Arp.Arp_Spa := "s.IPCP"; --  Source_Ip;
       Req.Arp.Arp_Tha := (others => 0);
-      Req.Arp.Arp_Tpa := "DESTINATION_APPLICATION"; --  Target_Ip;
+      --Req.Arp.Arp_Tpa := "d.IPCP"; --  Target_Ip;
       Buf.Set_Length ((Req.all'Size) / 8);
       Ifnet.Send (Buf);
    end Request;
+
+   use type Net.Headers.Length_Delimited_String;
+   use type Net.Headers.Arp_Packet_Access;
 
    procedure Receive
      (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
       Packet : in out Net.Buffers.Buffer_Type)
    is
-      Req : constant Net.Headers.Arp_Packet_Access := Packet.Arp;
+      Req : Net.Headers.Arp_Packet_Access := null;
    begin
+      begin
+         Req := Packet.Arp;
+
+         if Req.Arp.Arp_Spa /= null then
+            Debug.Print (Debug.Warning, Net.Utils.To_String(Req.Arp.Arp_Sha));
+            Debug.Print (Debug.Warning, Req.Arp.Arp_Spa.all);
+         end if;
+      exception
+         when E : Constraint_Error =>
+            Debug.Print(Debug.Error, Exception_Message(E));
+         when P : Program_Error => 
+            Debug.Print(Debug.Error, Exception_Message(P));
+         when others =>
+            Debug.Print(Debug.Error, "Error!");
+      end;
+
+      --  Do nothing if parse failed
+      if Req = null then
+         Debug.Print(Debug.Error, "Parse failed!");
+         return;
+      end if;
+
       --  Check for valid hardware length, hardware type and protocol type.
       if Req.Arp.Ea_Hdr.Ar_Hln /= Ifnet.Mac'Length or
         Req.Arp.Ea_Hdr.Ar_Hdr /= Net.Headers.To_Network (ARPOP_REQUEST) or
@@ -342,10 +369,13 @@ package body Net.Protos.Arp is
          Ifnet.Rx_Stats.Ignored := Ifnet.Rx_Stats.Ignored + 1;
          return;
       else
-         Debug.Print
-           (Debug.Info,
-            "RINA ARP Request Received " & Req.Arp.Arp_Spa & " => " &
-            Req.Arp.Arp_Tpa);
+         Ifnet.Rx_Stats.Ignored := Ifnet.Rx_Stats.Ignored + 1;
+         if Req.Arp.Arp_Spa /= null and Req.Arp.Arp_Tpa /= null then
+            Debug.Print
+            (Debug.Info,
+               "RINA ARP Request Received " & Req.Arp.Arp_Spa.all & " => " &
+               Req.Arp.Arp_Tpa.all);
+         end if;
       end if;
 
       case Net.Headers.To_Host (Req.Arp.Ea_Hdr.Ar_Op) is
@@ -353,6 +383,7 @@ package body Net.Protos.Arp is
             null;
             --  This ARP request is for our IP address.
             --  Send the corresponding ARP reply with our Ethernet address.
+
             --if Req.Arp.Arp_Tpa = Ifnet.Ip then
             --   Req.Ethernet.Ether_Dhost := Req.Arp.Arp_Sha;
             --   Req.Ethernet.Ether_Shost := Ifnet.Mac;
@@ -372,7 +403,6 @@ package body Net.Protos.Arp is
 
          when others =>
             Ifnet.Rx_Stats.Ignored := Ifnet.Rx_Stats.Ignored + 1;
-
       end case;
    end Receive;
 
