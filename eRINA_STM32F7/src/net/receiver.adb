@@ -1,4 +1,5 @@
 with Ada.Real_Time;
+with Ada.Exceptions; use Ada.Exceptions;
 with Ada.Synchronous_Task_Control;
 with Net.Buffers;
 with Net.Protos.Arp;
@@ -56,10 +57,17 @@ package body Receiver is
             Now   := Ada.Real_Time.Clock;
             Ether := Packet.Ethernet;
 
-            if Ether.Ether_Type =
-              Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
-            then
-               Net.Protos.Arp.Receive (Network.Ifnet, Packet);
+            if Ether.Ether_Type = Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP) then
+               begin
+                  Net.Protos.Arp.Receive (Network.Ifnet, Packet);
+               exception
+                  when E : Constraint_Error =>
+                     Debug.Print(Debug.Error, Exception_Message(E));
+                  when P : Program_Error => 
+                     Debug.Print(Debug.Error, Exception_Message(P));
+                  when others =>
+                     Debug.Print(Debug.Error, "Error!");
+               end;
             elsif Ether.Ether_Type =
               Net.Headers.To_Network (Net.Protos.ETHERTYPE_RINA)
             then
