@@ -3,8 +3,10 @@ pragma Style_Checks (Off);
 
 --  Debug
 with Debug;
-
-with Names; use Names;
+with Ada.Exceptions; use Ada.Exceptions;
+with Names;          use Names;
+with Ada.Streams;
+use type Ada.Streams.Stream_Element_Count;
 
 with Exceptions;
 
@@ -142,10 +144,10 @@ package body Bindings.Rlite.Ctrl is
       end if;
    end RINA_Destroy_IPCP;
 
-   function RINA_Config_IPCP
-     (Fd       : OS.File_Descriptor; Id : Rl_Ipcp_Id_T;
-      Name : Bounded_String; Value : Bounded_String)
-      return OS.File_Descriptor is
+   procedure RINA_Config_IPCP
+     (Fd    : OS.File_Descriptor; Id : Rl_Ipcp_Id_T; Name : Bounded_String;
+      Value : Bounded_String)
+   is
       Config : IPCP.Config;
    begin
       Config.Hdr.Msg_Type := RLITE_KER_IPCP_CONFIG;
@@ -155,16 +157,60 @@ package body Bindings.Rlite.Ctrl is
       Config.Value        := Value;
 
       Rl_Write_Msg (Fd, Config.Serialize, 0);
-
-      return Fd;
    end RINA_Config_IPCP;
+
+   procedure RINA_Enroll_IPCP
+     (Fd            : OS.File_Descriptor; IPCP_Name : Bounded_String;
+      Neigh_Name    : Bounded_String; DIF_Name : Bounded_String;
+      Supp_DIF_Name : Bounded_String)
+   is
+      Client  : Socket_Type;
+      Address : Sock_Addr_Type;
+      Channel : Stream_Access;
+      Enroll  : IPCP.Enroll;
+   begin
+      Enroll.Hdr.Msg_Type  := RLITE_KER_IPCP_CREATE_RESP;
+      Enroll.Hdr.Event_Id  := 0;
+      Enroll.IPCP_Name     := IPCP_Name;
+      Enroll.DIF_Name      := DIF_Name;
+      Enroll.Neigh_Name    := Neigh_Name;
+      Enroll.Supp_DIF_Name := Supp_DIF_Name;
+
+      declare
+         Buffer : Byte_Buffer := Enroll.Serialize;
+         Data   : Ada.Streams.Stream_Element_Array (1 .. Buffer'Length) with
+           Address => Buffer'Address;
+      begin
+         Create_Socket (Client);
+         Address.Addr := Inet_Addr ("127.0.0.1");
+         Address.Port := 6_220;
+         Connect_Socket (Client, Address);
+         Channel := Stream (Client);
+         Ada.Streams.Write (Channel.all, Data);
+      exception
+         when E : others =>
+            Debug.Print
+              ("RINA_Enroll_IPCP", Exception_Message (E), Debug.Error);
+      end;
+
+      --  MT: TODO:
+      --  below is wrong! This is really RLITE_U_IPCP_ENROLL
+      --Enroll.Hdr.Msg_Type  := RLITE_KER_IPCP_CREATE_RESP;
+      --Enroll.Hdr.Event_Id  := 0;
+      --Enroll.Ipcp_Name     := IPCP_Name;
+      --Enroll.DIF_Name      := DIF_Name;
+      --Enroll.Neigh_Name    := Neigh_Name;
+      --Enroll.Supp_DIF_Name := Supp_DIF_Name;
+
+      --Rl_Write_Msg (Fd, Enroll.Serialize, 0);
+   end RINA_Enroll_IPCP;
 
    function RINA_Register_Wait
      (Fd : OS.File_Descriptor; Wfd : OS.File_Descriptor)
       return OS.File_Descriptor
    is
-      Resp       : Register.Response;
-      Move       : Register.Move;
+      Resp : Register.Response;
+      Move : Register.Move;
    begin
       Register.Deserialize (Resp, Fd);
 
@@ -268,7 +314,7 @@ package body Bindings.Rlite.Ctrl is
       Resp                   : Flow.Response;
       Req                    : Flow.Request_Arrived;
       Spi                    : Sa_Pending_Item;
-      Bits_Other_Than_NoResp : constant Unsigned_32     :=
+      Bits_Other_Than_NoResp : constant Unsigned_32 :=
         Unsigned_32 (flags) and not Unsigned_32 (API.RINA_F_NORESP);
       Has_NoResp_Flag : constant Unsigned_32 :=
         Unsigned_32 (flags) and Unsigned_32 (API.RINA_F_NORESP);
@@ -398,8 +444,8 @@ package body Bindings.Rlite.Ctrl is
       spi    : Sa_Pending_Item_Base;
       req    : Flow.Request_Arrived;
       resp   : Flow.Response;
-      ffd    : OS.File_Descriptor       := OS.Invalid_FD;
-      cursor : Sig_Action_List.Cursor   := Sa_Pending.First;
+      ffd    : OS.File_Descriptor     := OS.Invalid_FD;
+      cursor : Sig_Action_List.Cursor := Sa_Pending.First;
    begin
    --  List of pending signal actions, contains a nested doubly linked list...
       while Sig_Action_List.Has_Element (cursor) loop

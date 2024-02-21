@@ -36,11 +36,21 @@ package Bindings.Rlite.Msg.IPCP is
 
    type Config is new Rl_Msg_Base with record
       Ipcp_Id : Rl_Ipcp_Id_T;
-      Name : Bounded_String;
-      Value : Bounded_String;
+      Name    : Bounded_String;
+      Value   : Bounded_String;
    end record;
    pragma Pack (Config);
 
    overriding function Serialize (Self : in Config) return Byte_Buffer;
+
+   type Enroll is new Rl_Msg_Base with record
+      IPCP_Name     : Bounded_String;
+      Neigh_Name    : Bounded_String;
+      DIF_Name      : Bounded_String;
+      Supp_DIF_Name : Bounded_String;
+   end record;
+   pragma Pack (Enroll);
+
+   overriding function Serialize (Self : in Enroll) return Byte_Buffer;
 
 end Bindings.Rlite.Msg.IPCP;

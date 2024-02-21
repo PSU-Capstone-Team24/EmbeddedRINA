@@ -43,8 +43,13 @@ procedure Test_Server is
    Counter_Msg : Integer := 0;
 
    --  Strings used to create the initial IPCP
-   IPCP_Name     : constant String := "test.IPCP";
-   IPCP_DIF_Name : constant String := "test.DIF";
+   IPCP_Name : constant String := "a.IPCP";
+   DIF_N     : constant String := "n.DIF";
+
+   Eth_IPCP_Name : constant String := "ethAB.IPCP";
+   Eth_DIF_Name  : constant String := "ethAB.DIF";
+
+   Target_IPCP : constant String := "b.IPCP";
 
    Ipcp_Ret : Rl_Ipcp_Id_T;
 begin
@@ -61,11 +66,25 @@ begin
    end if;
 
    Ipcp_Ret :=
-     RINA_Create_IPCP (RINA_Dev_FD, IPCP_Name, Normal, IPCP_DIF_Name);
+     RINA_Create_IPCP (RINA_Dev_FD, Eth_IPCP_Name, Ethernet, Eth_DIF_Name);
 
    Ada.Text_IO.Put_Line
-     ("Created IPCP '" & IPCP_Name & "' with DIF '" & IPCP_DIF_Name &
+     ("Created IPCP '" & Eth_IPCP_Name & "' with DIF '" & Eth_DIF_Name &
+      "' of type Ethernet - IPCP_ID = " & Rl_Ipcp_Id_T'Image (Ipcp_Ret));
+
+   --  sudo rlite-ctl ipcp-config ethAB.IPCP netdev enp0s3
+   RINA_Config_IPCP (RINA_Dev_FD, Ipcp_Ret, "netdev", "enp0s3");
+
+   Ipcp_Ret := RINA_Create_IPCP (RINA_Dev_FD, IPCP_Name, Normal, DIF_N);
+
+   Ada.Text_IO.Put_Line
+     ("Created IPCP '" & IPCP_Name & "' with DIF '" & DIF_N &
       "' of type Normal - IPCP_ID = " & Rl_Ipcp_Id_T'Image (Ipcp_Ret));
+
+   Register_UIPCPS (Eth_DIF_Name, IPCP_Name);
+
+   -- sudo rlite-ctl ipcp-enroll a.IPCP n.DIF ethAB.DIF b.IPCP
+   RINA_Enroll_IPCP (RINA_Dev_FD, IPCP_Name, Target_IPCP, DIF_N, Eth_DIF_Name);
 
    Ada.Text_IO.Put ("Enter name of server application to register: ");
    Ada.Text_IO.Get_Line (Application_Name, Application_Name_Last);

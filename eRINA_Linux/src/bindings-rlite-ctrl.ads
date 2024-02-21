@@ -11,7 +11,8 @@ with Bindings.Rlite.Common;
 with Bindings.Rlite.List; use Bindings.Rlite.List;
 
 with System;
-with GNAT.OS_Lib; use GNAT.OS_Lib;
+with GNAT.OS_Lib;  use GNAT.OS_Lib;
+with GNAT.Sockets; use GNAT.Sockets;
 
 with Buffers; use Buffers;
 
@@ -65,12 +66,16 @@ package Bindings.Rlite.Ctrl is
       DIF_Type : Bindings.Rlite.Msg.IPCP.DIF_Types; DIF_Name : Bounded_String)
       return Rl_Ipcp_Id_T;
 
+   procedure RINA_Enroll_IPCP
+     (Fd            : OS.File_Descriptor; IPCP_Name : Bounded_String;
+      Neigh_Name    : Bounded_String; DIF_Name : Bounded_String;
+      Supp_DIF_Name : Bounded_String);
+
    procedure RINA_Destroy_IPCP (Fd : OS.File_Descriptor; Id : Rl_Ipcp_Id_T);
 
-   function RINA_Config_IPCP
-     (Fd       : OS.File_Descriptor; Id : Rl_Ipcp_Id_T;
-      Name : Bounded_String; Value : Bounded_String)
-      return OS.File_Descriptor;
+   procedure RINA_Config_IPCP
+     (Fd    : OS.File_Descriptor; Id : Rl_Ipcp_Id_T; Name : Bounded_String;
+      Value : Bounded_String);
 
    -- struct rl_msg_base *rl_read_next_msg(int rfd, int quiet)
    function Rl_Read_Msg

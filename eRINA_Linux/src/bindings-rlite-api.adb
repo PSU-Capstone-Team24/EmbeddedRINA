@@ -3,9 +3,15 @@ pragma Style_Checks (Off);
 
 --  Bindings
 with Bindings.Rlite.Ctrl;
+with GNAT.Sockets; use GNAT.Sockets;
+with Ada.Streams;
+use type Ada.Streams.Stream_Element_Count;
 
 --  Exceptions
+with Ada.Exceptions; use Ada.Exceptions;
+with Buffers;        use Buffers;
 with Exceptions;
+with Debug;
 
 package body Bindings.Rlite.API is
 
@@ -56,16 +62,26 @@ package body Bindings.Rlite.API is
    begin
       Ctrl.RINA_Destroy_IPCP (Fd, Id);
    end RINA_Destroy_IPCP;
-      
-   function RINA_Config_IPCP
-     (Fd       : OS.File_Descriptor; Id : Rl_Ipcp_Id_T;
-      Name : String; Value : String)
-      return OS.File_Descriptor is
-      Name_Str : constant Bounded_String := To_Bounded_String (Name);
+
+   procedure RINA_Config_IPCP
+     (Fd    : OS.File_Descriptor; Id : Rl_Ipcp_Id_T; Name : String;
+      Value : String)
+   is
+      Name_Str  : constant Bounded_String := To_Bounded_String (Name);
       Value_Str : constant Bounded_String := To_Bounded_String (Value);
    begin
-      return Ctrl.RINA_Config_IPCP (Fd, Id, Name_Str, Value_Str);
+      Ctrl.RINA_Config_IPCP (Fd, Id, Name_Str, Value_Str);
    end RINA_Config_IPCP;
+
+   procedure RINA_Enroll_IPCP
+     (Fd       : OS.File_Descriptor; IPCP_Name : String; Neigh_Name : String;
+      DIF_Name : String; Supp_DIF_Name : String)
+   is
+   begin
+      Ctrl.RINA_Enroll_IPCP
+        (Fd, To_Bounded_String (IPCP_Name), To_Bounded_String (Neigh_Name),
+         To_Bounded_String (DIF_Name), To_Bounded_String (Supp_DIF_Name));
+   end RINA_Enroll_IPCP;
 
    function RINA_Register
      (fd    : OS.File_Descriptor; dif_name : String; local_appl : String;
@@ -151,5 +167,33 @@ package body Bindings.Rlite.API is
    begin
       return Ctrl.RINA_Flow_Respond (Fd, Handle, Response);
    end RINA_Flow_Respond;
+
+   procedure Register_UIPCPS (DIF_Name : String; IPCP_Name : String) is
+      Client  : Socket_Type;
+      Address : Sock_Addr_Type;
+      Channel : Stream_Access;
+      Buffer  : Byte_Buffer :=
+        (16#08#, 16#00#, 16#01#, 16#00#, 16#00#, 16#00#, 16#00#, 16#00#,
+         16#01#, 16#43#, 16#48#, 16#17#, 16#e6#, 16#06#, 16#25#, 16#fb#,
+         16#06#, 16#00#, 16#61#, 16#2E#, 16#49#, 16#50#, 16#43#, 16#50#,
+         16#09#, 16#00#, 16#65#, 16#74#, 16#68#, 16#41#, 16#42#, 16#2E#,
+         16#44#, 16#49#, 16#46#);
+      Data : Ada.Streams.Stream_Element_Array (1 .. Buffer'Length) with
+        Address => Buffer'Address;
+   begin
+      begin
+         delay 1.0;
+         Create_Socket (Client);
+         Address.Addr := Inet_Addr ("127.0.0.1");
+         Address.Port := 6_220;
+         Connect_Socket (Client, Address);
+         Channel := Stream (Client);
+         Ada.Streams.Write (Channel.all, Data);
+         delay 1.0;
+      exception
+         when E : others =>
+            Debug.Print ("Connect_UIPCPS", Exception_Message (E), Debug.Error);
+      end;
+   end Register_UIPCPS;
 
 end Bindings.Rlite.API;
