@@ -30,11 +30,25 @@ package body DIF_Manager is
         IPC_Process : IPCP;
     begin
         IPC_Process := Get_IPCP (Name);
-        exception
-            when others =>
-                return false;
-
         return true;
+        exception
+            when Element_Not_Found =>
+                return false;
     end IPCP_Exists;
+
+    function Create (Name : String; DIF_Type : DIF_Types) return DIF is
+        New_DIF : DIF;
+    begin
+        New_DIF.Name := To_Bounded_String (Name);
+        New_DIF.DIF_Type := DIF_Type;
+        
+        DIF_List.Append (New_DIF);
+        return New_DIF;
+    end Create;
+
+    procedure Enroll (Self : in out DIF; IPC_Process : IPCP) is -- Flow_Req : Flow) is
+    begin
+        Self.IPCPs.Append (IPC_Process);
+    end Enroll;
 
 end DIF_Manager;

@@ -68,7 +68,7 @@ package body Debug is
             Starting_Point.Y + I * (Font_Height + Line_Padding));
 
          Foreground :=
-           (case Msg.Level is when Info => HAL.Bitmap.White,
+           (case Msg.Level is when Info => HAL.Bitmap.Black,
               when Warning | Error => HAL.Bitmap.Black);
 
          Background :=
@@ -82,8 +82,8 @@ package body Debug is
          --  Draw over anything left over at this location
          --  I don't know why we need to do this since we're not copying in the old buffer?
          GUI.Draw_Rectangle
-           ((Pos.X, Pos.Y), (GUI.Board_Resolution.Width, Font_Height),
-            HAL.Bitmap.Black);
+           ((Pos.X, Pos.Y), (GUI.Board_Resolution.Width - 20, Font_Height),
+            HAL.Bitmap.White);
 
          if not Msg.Cont then
             --  Draw debug prefix
@@ -104,8 +104,8 @@ package body Debug is
          Bitmapped_Drawing.Draw_String
            (Buffer     => GUI.Screen_Buffer.all,
             Start      => GUI.Scale ((Pos.X, Pos.Y)), Msg => Msg.Msg,
-            Font       => BMP_Fonts.Font8x8, Foreground => HAL.Bitmap.White,
-            Background => HAL.Bitmap.Black);
+            Font       => BMP_Fonts.Font8x8, Foreground => HAL.Bitmap.Black,
+            Background => HAL.Bitmap.White);
       end loop;
    end Render;
 end Debug;
