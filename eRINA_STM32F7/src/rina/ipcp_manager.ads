@@ -1,5 +1,5 @@
 with Ada.Strings.Bounded;
-with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
+with Ada.Containers.Vectors;
 with Net;
 
 package IPCP_Manager is
@@ -21,14 +21,23 @@ package IPCP_Manager is
       IO_Buffer  : Data_Buffer := (others => 0);
    end record;
 
+   function Create (Name : String; Executable : Task_Procedure) return IPCP;
+
    --  TBD ::
    --  Port Id exists here so that we can have the same application names
    --  The port identifier allows us to address individual instances of the same application
    type Flow is record
-      Source_Application : Unbounded_String;
+      Source_Application : Bounded_String;
       Source_Port_Id : Net.Uint8;
-      Destination_Application : Unbounded_String;
+      Destination_Application : Bounded_String;
       Destination_Port_Id : Net.Uint8;
    end record;
+
+   --  Stores all DIFs in the system
+   package IPCP_Vectors is new Ada.Containers.Vectors
+     (Index_Type => Positive,
+      Element_Type => IPCP);
+
+   subtype IPCP_Vector is IPCP_Vectors.Vector;
 
 end IPCP_Manager;
