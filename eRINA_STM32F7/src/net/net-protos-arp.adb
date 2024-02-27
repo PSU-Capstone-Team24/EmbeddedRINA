@@ -258,7 +258,8 @@ package body Net.Protos.Arp is
       for I in 1 .. Count loop
          Ip           := Ifnet.Ip;
          Ip (Ip'Last) := Refresh (I);
-         Request (Ifnet, Ifnet.Ip, Ip, Ifnet.Mac);
+         --  MT: TODO: Update me to use IPCP names instead of IP
+         --  Request (Ifnet, Ifnet.Ip, Ip, Ifnet.Mac);
       end loop;
    end Timeout;
 
@@ -275,7 +276,9 @@ package body Net.Protos.Arp is
    begin
       Database.Resolve (Ifnet, Target_Ip, Mac, Packet, Status);
       if Status = ARP_NEEDED then
-         Request (Ifnet, Ifnet.Ip, Target_Ip, Ifnet.Mac);
+         null;
+         --  MT: TODO: Update me to use IPCP names instead of IP
+         --  Request (Ifnet, Ifnet.Ip, Target_Ip, Ifnet.Mac);
       end if;
    end Resolve;
 
@@ -299,43 +302,16 @@ package body Net.Protos.Arp is
       end loop;
    end Update;
 
-   procedure Request
-     (Ifnet : in out Net.Interfaces.Ifnet_Type'Class; Source_Ip : in Ip_Addr;
-      Target_Ip : in     Ip_Addr; Mac : in Ether_Addr)
-   is
-      Buf : Net.Buffers.Buffer_Type;
-      Req : Net.Headers.Arp_Packet_Access;
-   begin
-      Net.Buffers.Allocate (Buf);
-      if Buf.Is_Null then
-         return;
-      end if;
-      Req                      := Buf.Arp;
-      Req.Ethernet.Ether_Dhost := Broadcast_Mac;
-      Req.Ethernet.Ether_Shost := Mac;
-      Req.Ethernet.Ether_Type  := Net.Headers.To_Network (ETHERTYPE_ARP);
-      Req.Arp.Ea_Hdr.Ar_Hdr    := Net.Headers.To_Network (ARPOP_REQUEST);
-      Req.Arp.Ea_Hdr.Ar_Pro    := Net.Headers.To_Network (ETHERTYPE_RINA);
-      Req.Arp.Ea_Hdr.Ar_Hln    := Mac'Length;
-      Req.Arp.Ea_Hdr.Ar_Pln    := Source_Ip'Length;
-      Req.Arp.Ea_Hdr.Ar_Op     := Net.Headers.To_Network (ARPOP_REQUEST);
-      Req.Arp.Arp_Sha          := Mac;
-      --  MT: TODO: Integrate these!
-      --Req.Arp.Arp_Spa := "s.IPCP"; --  Source_Ip;
-      Req.Arp.Arp_Tha := (others => 0);
-      --Req.Arp.Arp_Tpa := "d.IPCP"; --  Target_Ip;
-      Buf.Set_Length ((Req.all'Size) / 8);
-      Ifnet.Send (Buf);
-   end Request;
-
    use type Net.Headers.Length_Delimited_String;
    use type Net.Headers.Arp_Packet_Access;
-
+   
    procedure Receive
      (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
       Packet : in out Net.Buffers.Buffer_Type)
    is
       Req : constant Net.Headers.Arp_Packet_Access := Packet.Arp;
+      Pac : Net.Buffers.Buffer_Type;
+      Str_Fixed_Length : Uint8 := 0;
    begin
       begin
          --  Do nothing if parse failed
@@ -355,26 +331,51 @@ package body Net.Protos.Arp is
                         "RINA ARP Request Received " & Req.Arp.Arp_Spa.all & " => " &
                         Req.Arp.Arp_Tpa.all);
 
+                  Debug.Print(Debug.Info, "Searching for: " & Req.Arp.Arp_Tpa.all);
+
                   --  Check if the requested IPCP exists in any of our local DIFs
                   if DIF_Manager.IPCP_Exists (Req.Arp.Arp_Tpa.all) then
+                     Net.Buffers.Allocate (Pac);
+                     
+                     if Pac.Is_Null then
+                        Debug.Print(Debug.Error, "Buf is NULL");
+                        return;
+                     end if;
+
+                     --  Packet.Set_Type (Net.Buffers.ARP_PACKET);
+                     Pac.Set_Type (Net.Buffers.ETHER_PACKET);
+
+                     --  Where packet will be routed
+                     Pac.Ethernet.Ether_Dhost := Broadcast_Mac; -- Req.Ethernet.Ether_Shost;
+                     Pac.Ethernet.Ether_Shost := Ifnet.Mac;
+                     Pac.Ethernet.Ether_Type  := Net.Headers.To_Network (ETHERTYPE_ARP);
+
+                     Pac.Put_Uint16 (ARPHRD_ETHER);
+                     Pac.Put_Uint16 (Net.Protos.ETHERTYPE_RINA);
+                     Pac.Put_Uint8 (Ifnet.Mac'Length);
+                     
+                     Str_Fixed_Length := Uint8'Max(Req.Arp.Arp_Tpa.all'Length, Req.Arp.Arp_Spa.all'Length);
+                     Pac.Put_Uint8 (Str_Fixed_Length);
+                     Pac.Put_Uint16 (ARPOP_REPLY);
+
+                     Pac.Put_Ether_Addr (Ifnet.Mac);
+                     Pac.Put_String (Req.Arp.Arp_Tpa.all, Str_Fixed_Length);
+
+                     Pac.Put_Ether_Addr (Req.Ethernet.Ether_Shost);
+                     Pac.Put_String (Req.Arp.Arp_Spa.all, Str_Fixed_Length);
+
                      --  Send the corresponding ARP reply with our Ethernet address.
-                     --if Req.Arp.Arp_Tpa = Ifnet.Ip then
-                     --   Req.Ethernet.Ether_Dhost := Req.Arp.Arp_Sha;
-                     --   Req.Ethernet.Ether_Shost := Ifnet.Mac;
-                     --   Req.Arp.Ea_Hdr.Ar_Op  := Net.Headers.To_Network (ARPOP_REPLY);
-                     --   Req.Arp.Arp_Tpa := Req.Arp.Arp_Spa;
-                     --   Req.Arp.Arp_Tha := Req.Arp.Arp_Sha;
-                     --   Req.Arp.Arp_Sha := Ifnet.Mac;
-                     --   Req.Arp.Arp_Spa := Ifnet.Ip;
-                     --   Ifnet.Send (Packet);
-                     --end if;
-                     null;
+                     Pac.Set_Length (Net.Buffers.Offsets(Net.Buffers.ETHER_PACKET) + 20 + 2 * Uint16(Str_Fixed_Length));
+
+                     Ifnet.Send (Pac);
+                     
+                     Debug.Print(Debug.Info, "Matching local IPCP found! ARP response sent");
                   else
                      Debug.Print (Debug.Warning, "No matching local IPCP, ignoring ARP request");
                   end if;
 
                when ARPOP_REPLY =>
-                  null;
+                  Debug.Print (Debug.Warning, "ARPOP_REPLY");
                   --if Req.Arp.Arp_Tpa = Ifnet.Ip and Req.Arp.Arp_Tha = Ifnet.Mac then
                   --   Update (Ifnet, Req.Arp.Arp_Spa, Req.Arp.Arp_Sha);
                   --end if;
