@@ -106,6 +106,12 @@ package Net.Buffers is
    --  The packet type identifies the content of the packet for the serialization/deserialization.
    type Packet_Type is (RAW_PACKET, ETHER_PACKET, ARP_PACKET, EFCP_PACKET);
 
+   type Offset_Table is array (Packet_Type) of Uint16;
+
+   Offsets : constant Offset_Table :=
+     (RAW_PACKET  => 0, ETHER_PACKET => 14, ARP_PACKET => 14 + 8,
+      EFCP_PACKET => 14 + 28);
+
    type Data_Type is
      array (Net.Uint16 range 0 .. 1_500 + 31) of aliased Uint8 with
      Alignment => 32;
@@ -159,17 +165,25 @@ package Net.Buffers is
    procedure Put_Uint16 (Buf : in out Buffer_Type; Value : in Net.Uint16) with
      Pre => not Buf.Is_Null;
 
+   --  Add a 48-bit MAC address value in network byte order to the buffer data,
+   --  moving the buffer write position.
+   procedure Put_Ether_Addr (Buf : in out Buffer_Type; Value : in Net.Ether_Addr) with
+     Pre => not Buf.Is_Null;
+
    --  Add a 32-bit value in network byte order to the buffer data,
    --  moving the buffer write position.
    procedure Put_Uint32 (Buf : in out Buffer_Type; Value : in Net.Uint32) with
      Pre => not Buf.Is_Null;
 
    --  Add a string to the buffer data, moving the buffer write position.
-   --  When <tt>With_Null</tt> is set, a NUL byte is added after the string.
+   --  Pad_Length specifices the number of NUL bytes added after the string.
    procedure Put_String
-     (Buf       : in out Buffer_Type; Value : in String;
-      With_Null : in     Boolean := False) with
+     (Buf        : in out Buffer_Type; Value : in String;
+      Pad_Length : in     Uint8 := 0) with
      Pre => not Buf.Is_Null;
+
+   function To_String (Buf : in Buffer_Type) return String with
+    Pre => not Buf.Is_Null;
 
    --  Add an IP address to the buffer data, moving the buffer write position.
    procedure Put_Ip (Buf : in out Buffer_Type; Value : in Ip_Addr) with
@@ -261,6 +275,8 @@ private
       Size : Uint16;
       Data : aliased Data_Type;
    end record;
+
+   function Data_Type_To_String (Buffer : Data_Type; Size : Natural) return String;
 
    type Buffer_Type is tagged limited record
       Kind   : Packet_Type := RAW_PACKET;

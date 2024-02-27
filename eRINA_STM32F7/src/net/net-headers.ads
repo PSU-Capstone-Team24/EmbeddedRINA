@@ -48,9 +48,9 @@ package Net.Headers is
 
    type Ether_Arp is record
       Ea_Hdr  : Arp_Header;
-      Arp_Sha : Ether_Addr := (others => 0);
+      Arp_Sha : Ether_Addr := (0, 16#81#, 16#E1#, 5, 5, 1);
       Arp_Spa : Length_Delimited_String;
-      Arp_Tha : Ether_Addr := (others => 0);
+      Arp_Tha : Ether_Addr := (others => 16#00#);
       Arp_Tpa : Length_Delimited_String;
    end record;
    type Ether_Arp_Access is access all Ether_Arp;

@@ -18,14 +18,10 @@
 with Ada.Unchecked_Conversion;
 with System.Storage_Elements; use System.Storage_Elements;
 with Net.Headers;             use Net.Headers;
+with Buffers;                 use Buffers;
+with Net.Utils;
 
 package body Net.Buffers is
-
-   type Offset_Table is array (Packet_Type) of Uint16;
-
-   Offsets : constant Offset_Table :=
-     (RAW_PACKET  => 0, ETHER_PACKET => 14, ARP_PACKET => 14 + 8,
-      EFCP_PACKET => 14 + 28);
 
    function As_Ethernet is new Ada.Unchecked_Conversion
      (Source => System.Address, Target => Net.Headers.Ether_Header_Access);
@@ -134,6 +130,26 @@ package body Net.Buffers is
       Free_List : Packet_Buffer_Access;
    end Manager;
 
+   function Data_Type_To_String (Buffer : Data_Type; Size : Natural) return String is
+      -- 3 characters per byte [XX ]
+      Hex_String : String(1 .. Size * 3) := (others => ' ');
+      Hex_Index : Natural := 1;
+   begin
+      for I in 0 .. Size loop
+         if I < Natural(Buffer'Size / 8) then
+            declare
+               Hex : String := Net.Utils.Hex(Buffer(Interfaces.Unsigned_16(I)));
+            begin
+               Hex_String(Hex_Index .. Hex_Index + 1) := Hex;
+               Hex_String(Hex_Index + 2) := ' ';
+               Hex_Index := Hex_Index + 3;
+            end;
+         end if;
+      end loop;
+
+      return Hex_String;
+   end Data_Type_To_String;
+
    --  ------------------------------
    --  Returns true if the buffer is null (allocation failed).
    --  ------------------------------
@@ -159,6 +175,8 @@ package body Net.Buffers is
    begin
       if Buf.Packet /= null then
          Manager.Release (Buf.Packet);
+      else
+         raise Constraint_Error with "Release packet null";
       end if;
    end Release;
 
@@ -255,6 +273,20 @@ package body Net.Buffers is
    end Put_Uint16;
 
    --  ------------------------------
+   --  Add a 48-bit MAC address in network byte order to the buffer data,
+   --  moving the buffer write position.
+   --  ------------------------------
+   procedure Put_Ether_Addr (Buf : in out Buffer_Type; Value : in Net.Ether_Addr) is
+   begin
+      Buf.Put_Uint8 (Value(1));
+      Buf.Put_Uint8 (Value(2));
+      Buf.Put_Uint8 (Value(3));
+      Buf.Put_Uint8 (Value(4));
+      Buf.Put_Uint8 (Value(5));
+      Buf.Put_Uint8 (Value(6));
+   end Put_Ether_Addr;
+
+   --  ------------------------------
    --  Add a 32-bit value in network byte order to the buffer data,
    --  moving the buffer write position.
    --  ------------------------------
@@ -275,8 +307,8 @@ package body Net.Buffers is
    --  When <tt>With_Null</tt> is set, a NUL byte is added after the string.
    --  ------------------------------
    procedure Put_String
-     (Buf       : in out Buffer_Type; Value : in String;
-      With_Null : in     Boolean := False)
+     (Buf        : in out Buffer_Type; Value : in String;
+      Pad_Length : in     Uint8 := 0)
    is
       Pos : Uint16 := Buf.Pos;
    begin
@@ -284,12 +316,19 @@ package body Net.Buffers is
          Buf.Packet.Data (Pos) := Character'Pos (C);
          Pos                   := Pos + 1;
       end loop;
-      if With_Null then
-         Buf.Packet.Data (Pos) := 0;
-         Pos                   := Pos + 1;
+      if Pad_Length > 0 and Value'Length > Pad_Length then
+         for I in 0 .. (Value'Length - Pad_Length) loop
+            Buf.Packet.Data (Pos) := 0;
+            Pos                   := Pos + 1;
+         end loop;
       end if;
       Buf.Pos := Pos;
    end Put_String;
+
+   function To_String (Buf : in Buffer_Type) return String is
+   begin
+      return Data_Type_To_String (Buf.Packet.Data, Natural (Buf.Get_Length));
+   end To_String;
 
    --  ------------------------------
    --  Add an IP address to the buffer data, moving the buffer write position.
