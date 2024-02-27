@@ -295,8 +295,8 @@ package body CDAP is
       case Self.ObjValue.Byteval.Length is
          when 0 =>
             Put_Line("N/A");
-         when others =>
-            Put_Bytes(Byte_Vector_To_Buffer (Self.ObjValue.Byteval));
+         when others => null;
+            --  Put_Bytes(Byte_Vector_To_Buffer (Self.ObjValue.Byteval));
       end case;
 
       --  Obj_Value.Floatval

@@ -4,7 +4,8 @@ with Ada.Containers.Vectors;
 with System.Storage_Elements;
 
 package Buffers is
-
+  pragma Preelaborate;
+  
    --  unsigned subtypes copied from ada_enet
    subtype Uint8 is Unsigned_8;
    subtype Uint16 is Unsigned_16;
@@ -29,8 +30,7 @@ package Buffers is
      Size => 1;
    type Bit_Array is array (Positive range <>) of Bit;
    pragma Pack (Bit_Array);
-
-   procedure Put_Bytes (Input : Byte_Buffer);
+  
    function Buffer_To_String (Buffer : Byte_Buffer) return String;
    function Byte_Vector_To_Buffer (Vector : Byte_Vector) return Byte_Buffer;
    function Buffer_Reverse (Buffer : in Byte_Buffer) return Byte_Buffer;
