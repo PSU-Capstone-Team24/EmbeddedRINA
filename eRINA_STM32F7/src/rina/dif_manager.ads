@@ -20,6 +20,8 @@ package DIF_Manager is
       IPCP_Count : Natural := 0;
    end record;
 
+   type DIF_Access is access all DIF;
+
    --  Enrollment is the procedure by which an IPCP joins an existing DIF and is initialized
    --  with enough information to become a fully operational DIF member. 
    procedure Enroll (Self : in out DIF; IPC_Process : IPCP); -- Flow_Req : Flow);
@@ -31,13 +33,13 @@ package DIF_Manager is
    function Get (Name : String; DIF_Type : DIF_Types) return DIF;
 
    --  MT: TODO: Implement these
-   function Create (Name : String; DIF_Type : DIF_Types) return DIF;
+   function Create (Name : String; DIF_Type : DIF_Types) return DIF_Access;
    procedure Register (Appl_Name : String; DIF_Name : String; IO_Buf : access Byte_Buffer) is null;
 
    --  Stores all DIFs in the system
    package DIF_Vectors is new Ada.Containers.Vectors
      (Index_Type => Positive,
-      Element_Type => DIF);
+      Element_Type => DIF_Access);
 
    subtype DIF_Vector is DIF_Vectors.Vector;
 

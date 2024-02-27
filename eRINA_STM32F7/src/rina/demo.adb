@@ -14,7 +14,7 @@ with Debug;
 procedure Demo is
    Period : constant Time_Span := Milliseconds (1 / GUI.Frame_Rate * 1_000);
    Next_Render : Time               := Clock;
-   This_DIF : DIF;
+   This_DIF : DIF_Access;
    This_IPCP : IPCP;
 begin
    GUI.Initialize;
@@ -25,9 +25,10 @@ begin
 
    --  Create a new DIF
    This_DIF := DIF_Manager.Create ("ethAB.DIF", Normal);
+   DIF_Manager.DIF_List.Append (This_DIF);
 
    --  Create the IPC process we want to enroll into the DIF
-   This_IPCP := IPCP_Manager.Create ("a.IPCP", Demo_IPCP'Access);
+   This_IPCP := IPCP_Manager.Create ("b.IPCP", Demo_IPCP'Access);
 
    --  Enroll this IPCP into the DIF
    This_DIF.Enroll (This_IPCP);
