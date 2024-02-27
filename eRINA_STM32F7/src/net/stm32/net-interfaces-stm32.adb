@@ -135,10 +135,21 @@ package body Net.Interfaces.STM32 is
    is
       use type Net.Uint64;
    begin
-      Ifnet.Tx_Stats.Packets := Ifnet.Tx_Stats.Packets + 1;
-      Ifnet.Tx_Stats.Bytes   :=
-        Ifnet.Tx_Stats.Bytes + Net.Uint64 (Buf.Get_Length);
-      Transmit_Queue.Send (Buf);
+      begin
+         Ifnet.Tx_Stats.Packets := Ifnet.Tx_Stats.Packets + 1;
+         Ifnet.Tx_Stats.Bytes   :=
+           Ifnet.Tx_Stats.Bytes + Net.Uint64 (Buf.Get_Length);
+         
+         Debug.Print(Debug.Info, "Ethernet frame transmitted with" & Buf.Get_Length'Image & " Bytes");
+         Transmit_Queue.Send (Buf);
+      exception
+         when E : Constraint_Error =>
+            Debug.Print (Debug.Error, Exception_Message (E));
+         when P : Program_Error =>
+            Debug.Print (Debug.Error, Exception_Message (P));
+         when others =>
+            Debug.Print (Debug.Error, "Error!");
+      end;
    end Send;
 
    overriding procedure Receive
