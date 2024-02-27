@@ -2,12 +2,12 @@ with HAL.Bitmap;
 with BMP_Fonts;
 with Queues;
 
-package Debug is
+package Debug is   
    type Debug is (Error, Warning, Info);
 
    Font_Height : constant Natural :=
      BMP_Fonts.Char_Height (Font => BMP_Fonts.Font8x8);
-   Max_Characters_Per_Line : constant Positive         := 45;
+   Max_Characters_Per_Line : constant Positive         := 52;
    Line_Padding            : constant Natural          := 4;
    Starting_Point          : constant HAL.Bitmap.Point := (10, 110);
    
