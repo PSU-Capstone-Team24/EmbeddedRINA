@@ -31,7 +31,9 @@ package Buffers is
    type Bit_Array is array (Positive range <>) of Bit;
    pragma Pack (Bit_Array);
   
+   function Buffer_To_Byte_String (Buffer: Byte_Buffer) return String;
    function Buffer_To_String (Buffer : Byte_Buffer) return String;
    function Byte_Vector_To_Buffer (Vector : Byte_Vector) return Byte_Buffer;
+   function Byte_Buffer_To_Vector (Buffer : in Byte_Buffer) return Byte_Vector;
    function Buffer_Reverse (Buffer : in Byte_Buffer) return Byte_Buffer;
 end Buffers;

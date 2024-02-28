@@ -1,3 +1,5 @@
+with Net.Utils;
+
 package body Buffers is
 
    function Buffer_To_String (Buffer : Byte_Buffer) return String is
@@ -26,6 +28,34 @@ package body Buffers is
 
       return Buffer;
    end Byte_Vector_To_Buffer;
+
+   function Byte_Buffer_To_Vector (Buffer : in Byte_Buffer) return Byte_Vector is
+      Vector : Byte_Vector;
+   begin
+      for E of Buffer loop
+         Vector.Append(E);
+      end loop;
+
+      return Vector;
+   end Byte_Buffer_To_Vector;
+
+   function Buffer_To_Byte_String (Buffer : Byte_Buffer) return String is
+      -- 3 characters per byte [XX ]
+      Hex_String : String(1 .. Buffer'Length * 3) := (others => ' ');
+      Hex_Index : Natural := 1;
+   begin
+      for I in Buffer'First .. Buffer'Last loop
+         declare
+            Hex : String := Net.Utils.Hex(Unsigned_8(Buffer(I)));
+         begin
+            Hex_String(Hex_Index .. Hex_Index + 1) := Hex;
+            Hex_String(Hex_Index + 2) := ' ';
+            Hex_Index := Hex_Index + 3;
+         end;
+      end loop;
+
+      return Hex_String;
+   end Buffer_To_Byte_String;
 
    function Buffer_Reverse (Buffer : in Byte_Buffer) return Byte_Buffer is
       Return_Buffer : Byte_Buffer (Buffer'First .. Buffer'Last) :=
