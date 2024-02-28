@@ -1,8 +1,11 @@
-with Net.Headers;
 with Net.Interfaces;
 with Net.Buffers;
 
 package Net.Protos.EFCP is
+
+   procedure Receive
+     (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
+      Packet : in out Net.Buffers.Buffer_Type);
 
    --  MT: TODO: Implement me!
    procedure Make_Ident is null;
