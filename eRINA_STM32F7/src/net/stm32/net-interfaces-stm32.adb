@@ -143,12 +143,8 @@ package body Net.Interfaces.STM32 is
          Debug.Print(Debug.Info, "Ethernet frame transmitted with" & Buf.Get_Length'Image & " Bytes");
          Transmit_Queue.Send (Buf);
       exception
-         when E : Constraint_Error =>
+         when E : others =>
             Debug.Print (Debug.Error, Exception_Message (E));
-         when P : Program_Error =>
-            Debug.Print (Debug.Error, Exception_Message (P));
-         when others =>
-            Debug.Print (Debug.Error, "Error!");
       end;
    end Send;
 

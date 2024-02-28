@@ -3,6 +3,7 @@
 --  https://protobuf.dev/programming-guides/encoding/
 with Ada.Unchecked_Conversion;
 with Ada.Containers;
+with Debug;
 
 package body Protobuf is
    use type Ada.Containers.Count_Type;
@@ -17,7 +18,7 @@ package body Protobuf is
    end Has_MSB;
 
    function Get_Bit_At (Input : Byte; Pos : Natural) return Bit is
-      Shifted : constant Byte := Shift_Right (Input, Pos) and 2#0000_0001#;
+      Shifted : constant Byte := (Input / 2 ** Pos) and 2#0000_0001#;
    begin
       return Bit (Shifted);
    end Get_Bit_At;
