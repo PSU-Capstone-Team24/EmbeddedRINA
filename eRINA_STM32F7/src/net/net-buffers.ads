@@ -91,7 +91,7 @@ with Net.Headers;
 --
 --  After a packet is serialized, the length get be obtained by using the
 --
---    Len : Net.Uint16 := Packet.Get_Data_Length;
+--    Len : Net.Uint16 := Packet.Get_Data_Size;
 package Net.Buffers is
 
    pragma Preelaborate;
@@ -142,7 +142,7 @@ package Net.Buffers is
      Post => not From.Is_Null and not To.Is_Null;
 
    --
-   function Get_Data_Address (Buf : in Buffer_Type) return System.Address;
+   function Get_Data_Address (Buf : in Buffer_Type; Offset : in Uint16 := 0) return System.Address;
 
    function Get_Data_Size
      (Buf : in Buffer_Type; Kind : in Packet_Type) return Uint16;

@@ -209,9 +209,9 @@ package body Net.Buffers is
       From.Packet := Packet;
    end Switch;
 
-   function Get_Data_Address (Buf : in Buffer_Type) return System.Address is
+   function Get_Data_Address (Buf : in Buffer_Type; Offset : in Uint16 := 0) return System.Address is
    begin
-      return Buf.Packet.Data (Buf.Packet.Data'First)'Address;
+      return Buf.Packet.Data (Buf.Packet.Data'First + Offset)'Address;
    end Get_Data_Address;
 
    function Get_Data_Size

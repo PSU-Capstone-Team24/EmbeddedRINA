@@ -2,6 +2,7 @@ with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Protobuf;    use Protobuf;
 with Interfaces;  use Interfaces;
+with Debug;
 
 package body CDAP is
 
@@ -166,7 +167,7 @@ package body CDAP is
                end loop;
 
                Field_Id  := Tag_To_OBJ_Value_Field (Tag_Vector);
-               Wire_Type := Tag_To_Wire_Type (V (C));
+               Wire_Type := Tag_To_Wire_Type (Tag_Vector.First_Element);
             end;
 
             Is_Tag_Field      := False;
@@ -203,14 +204,18 @@ package body CDAP is
                   --  The VARINT storing the length is an int32
                   LEN_Length := Natural (VARINT_To_Uint64 (LEN_Vector));
 
-                  while C /= Byte_Vectors.No_Element loop
-                     Data_Vector.Append (V (C));
-                     LEN_Iterator := LEN_Iterator + 1;
-                     exit when (LEN_Iterator = LEN_Length);
-                     C := Byte_Vectors.Next (C);
-                  end loop;
+                  if LEN_Length > 0 then
+                     while C /= Byte_Vectors.No_Element loop
+                        Data_Vector.Append (V (C));
+                        LEN_Iterator := LEN_Iterator + 1;
+                        exit when (LEN_Iterator = LEN_Length);
+                        C := Byte_Vectors.Next (C);
+                     end loop;
 
-                  ObjValue.Set_Field (Field_Id, Data_Vector);
+                     ObjValue.Set_Field (Field_Id, Data_Vector);
+                  else
+                     C := Byte_Vectors.Next (C);
+                  end if;
                end;
             end if;
          end if;
@@ -224,6 +229,7 @@ package body CDAP is
    function Tag_To_OBJ_Value_Field (Input : Byte_Vector) return Obj_Value_Field is
       Value : constant Uint64 := VARINT_To_Uint64(Input) / 2 ** 3;
    begin
+      Debug.Print(Debug.Info, "Obj_Value_Field: " & VARINT_To_Uint64(Input)'Image);
       --  MT: TODO: Need to handle weird case when resulting value does not match an enum in Obj_Value
       return Obj_Value_Field'Enum_Val (Value);
    end Tag_To_OBJ_Value_Field;
@@ -231,6 +237,8 @@ package body CDAP is
    function Tag_To_CDAP_Field (Input : Byte_Vector) return CDAP_Field is
       Value : constant Uint64 := VARINT_To_Uint64(Input) / 2 ** 3;
    begin
+      Debug.Print(Debug.Info, Input.First_Element'Image);
+      Debug.Print(Debug.Info, "Tag_To_CDAP_Field: " & VARINT_To_Uint64(Input)'Image);
       --  MT: TODO: Need to handle weird case when resulting value does not match an enum in CDAP_Field
       return CDAP_Field'Enum_Val (Value);
    end Tag_To_CDAP_Field;
@@ -391,7 +399,9 @@ package body CDAP is
                end loop;
 
                Field_Id  := Tag_To_CDAP_Field (Tag_Vector);
-               Wire_Type := Tag_To_Wire_Type (V (C));
+               Wire_Type := Tag_To_Wire_Type (Tag_Vector.First_Element);
+
+               Debug.Print(Debug.Info, "Field_Id " & Field_Id'Image & " Wire_Type " & Wire_Type'Image);
             end;
 
             Is_Tag_Field      := False;
@@ -409,6 +419,7 @@ package body CDAP is
 
                   --  Decode and update message
                   Result_Msg.Set_Field (Field_Id, VARINT_To_Uint64 (VARINT_Vector));
+                  Debug.Print(Debug.Info, "VARINT Done!");
                end;
             end if;
 
@@ -430,15 +441,20 @@ package body CDAP is
 
                   --  The VARINT storing the length is an int32
                   LEN_Length := Natural (VARINT_To_Uint64 (LEN_Vector));
+                  
+                  if LEN_Length > 0 then
+                     while C /= Byte_Vectors.No_Element loop
+                        Data_Vector.Append (V (C));
+                        LEN_Iterator := LEN_Iterator + 1;
+                        exit when (LEN_Iterator = LEN_Length);
+                        C := Byte_Vectors.Next (C);
+                     end loop;
 
-                  while C /= Byte_Vectors.No_Element loop
-                     Data_Vector.Append (V (C));
-                     LEN_Iterator := LEN_Iterator + 1;
-                     exit when (LEN_Iterator = LEN_Length);
+                     Result_Msg.Set_Field (Field_Id, Data_Vector);
+                     Debug.Print(Debug.Info, "LEN Done!");
+                  else
                      C := Byte_Vectors.Next (C);
-                  end loop;
-
-                  Result_Msg.Set_Field (Field_Id, Data_Vector);
+                  end if;
                end;
             end if;
 
