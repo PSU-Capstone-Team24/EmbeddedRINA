@@ -142,7 +142,8 @@ package Net.Buffers is
      Post => not From.Is_Null and not To.Is_Null;
 
    --
-   function Get_Data_Address (Buf : in Buffer_Type; Offset : in Uint16 := 0) return System.Address;
+   function Get_Data_Address
+     (Buf : in Buffer_Type; Offset : in Uint16 := 0) return System.Address;
 
    function Get_Data_Size
      (Buf : in Buffer_Type; Kind : in Packet_Type) return Uint16;
@@ -167,7 +168,8 @@ package Net.Buffers is
 
    --  Add a 48-bit MAC address value in network byte order to the buffer data,
    --  moving the buffer write position.
-   procedure Put_Ether_Addr (Buf : in out Buffer_Type; Value : in Net.Ether_Addr) with
+   procedure Put_Ether_Addr
+     (Buf : in out Buffer_Type; Value : in Net.Ether_Addr) with
      Pre => not Buf.Is_Null;
 
    --  Add a 32-bit value in network byte order to the buffer data,
@@ -183,7 +185,7 @@ package Net.Buffers is
      Pre => not Buf.Is_Null;
 
    function To_String (Buf : in Buffer_Type) return String with
-    Pre => not Buf.Is_Null;
+     Pre => not Buf.Is_Null;
 
    --  Add an IP address to the buffer data, moving the buffer write position.
    procedure Put_Ip (Buf : in out Buffer_Type; Value : in Ip_Addr) with
@@ -276,7 +278,8 @@ private
       Data : aliased Data_Type;
    end record;
 
-   function Data_Type_To_String (Buffer : Data_Type; Size : Natural) return String;
+   function Data_Type_To_String
+     (Buffer : Data_Type; Size : Natural) return String;
 
    type Buffer_Type is tagged limited record
       Kind   : Packet_Type := RAW_PACKET;

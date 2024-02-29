@@ -1,6 +1,6 @@
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
-with Protobuf;    use Protobuf;
-with Interfaces;  use Interfaces;
+with Protobuf;          use Protobuf;
+with Interfaces;        use Interfaces;
 with Debug;
 
 package body CDAP is
@@ -31,7 +31,8 @@ package body CDAP is
    end Set_Field;
 
    procedure Set_Field
-     (Self : in out Obj_Value; Field : Obj_Value_Field; Val : Uint64) is
+     (Self : in out Obj_Value; Field : Obj_Value_Field; Val : Uint64)
+   is
    begin
       case Field is
          when Intval =>
@@ -55,11 +56,12 @@ package body CDAP is
    procedure Set_Field
      (Self : in out Obj_Value; Field : Obj_Value_Field; Val : Byte_Vector)
    is
-      Final_String           : constant String := Buffer_To_String (Byte_Vector_To_Buffer (Val));
+      Final_String : constant String :=
+        Buffer_To_String (Byte_Vector_To_Buffer (Val));
       Final_String_Unbounded : constant Unbounded_String :=
         To_Unbounded_String (Final_String);
    begin
-      
+
       if Field = Strval then
          Self.Strval := Final_String_Unbounded;
       elsif Field = Byteval then
@@ -71,11 +73,12 @@ package body CDAP is
    procedure Set_Field
      (Self : in out CDAPMessage; Field : CDAP_Field; Val : Byte_Vector)
    is
-      Final_String           : constant String := Buffer_To_String (Byte_Vector_To_Buffer (Val));
+      Final_String : constant String :=
+        Buffer_To_String (Byte_Vector_To_Buffer (Val));
       Final_String_Unbounded : constant Unbounded_String :=
         To_Unbounded_String (Final_String);
    begin
-      
+
       if Field = ObjValue then
          Self.ObjValue := To_OBJ_Value (Val);
       end if;
@@ -133,13 +136,15 @@ package body CDAP is
    end Set_Field;
 
    procedure Set_Field
-     (Self : in out Obj_Value; Field : Obj_Value_Field; Val : Unbounded_String) is
+     (Self : in out Obj_Value; Field : Obj_Value_Field; Val : Unbounded_String)
+   is
    begin
       null;
    end Set_Field;
 
    procedure Set_Field
-     (Self : in out Obj_Value; Field : Obj_Value_Field; Val : Boolean) is
+     (Self : in out Obj_Value; Field : Obj_Value_Field; Val : Boolean)
+   is
    begin
       null;
    end Set_Field;
@@ -160,8 +165,8 @@ package body CDAP is
                Tag_Vector : Byte_Vector;
             begin
                while C /= Byte_Vectors.No_Element loop
-                  Tag_Vector.Append (V(C));
-                  exit when (not Has_MSB (V(C)));
+                  Tag_Vector.Append (V (C));
+                  exit when (not Has_MSB (V (C)));
                   C := Byte_Vectors.Next (C);
                end loop;
 
@@ -169,7 +174,7 @@ package body CDAP is
                Wire_Type := Tag_To_Wire_Type (Tag_Vector.First_Element);
             end;
 
-            Is_Tag_Field      := False;
+            Is_Tag_Field := False;
          else
             if Wire_Type = VARINT then
                declare
@@ -183,7 +188,8 @@ package body CDAP is
                   end loop;
 
                   --  Decode and update message
-                  ObjValue.Set_Field (Field_Id, VARINT_To_Uint64 (VARINT_Vector));
+                  ObjValue.Set_Field
+                    (Field_Id, VARINT_To_Uint64 (VARINT_Vector));
                end;
             end if;
 
@@ -216,50 +222,60 @@ package body CDAP is
                end;
             end if;
          end if;
-         
+
          C := Byte_Vectors.Next (C);
       end loop;
 
       return ObjValue;
    end To_OBJ_Value;
 
-   function Tag_To_OBJ_Value_Field (Input : Byte_Vector) return Obj_Value_Field is
-      Value : constant Uint64 := VARINT_To_Uint64(Input) / 2 ** 3;
+   function Tag_To_OBJ_Value_Field (Input : Byte_Vector) return Obj_Value_Field
+   is
+      Value : constant Uint64 := VARINT_To_Uint64 (Input) / 2**3;
    begin
       --  MT: TODO: Need to handle weird case when resulting value does not match an enum in Obj_Value
       return Obj_Value_Field'Enum_Val (Value);
    end Tag_To_OBJ_Value_Field;
 
    function Tag_To_CDAP_Field (Input : Byte_Vector) return CDAP_Field is
-      Value : constant Uint64 := VARINT_To_Uint64(Input) / 2 ** 3;
+      Value : constant Uint64 := VARINT_To_Uint64 (Input) / 2**3;
    begin
       --  MT: TODO: Need to handle weird case when resulting value does not match an enum in CDAP_Field
       return CDAP_Field'Enum_Val (Value);
    end Tag_To_CDAP_Field;
 
-   procedure Put (Self : CDAPMessage) is begin
+   procedure Put (Self : CDAPMessage) is
+   begin
       Debug.Print (Debug.Info, "Message Contents:");
-      
+
       --  Abs_Syntax
-      Debug.Print (Debug.Info, Head ("Abs_Syntax:", 15, ' ') & Self.Abs_Syntax'Image);
+      Debug.Print
+        (Debug.Info, Head ("Abs_Syntax:", 15, ' ') & Self.Abs_Syntax'Image);
 
       --  OpCode
       Debug.Print (Debug.Info, Head ("OpCode:", 16, ' ') & Self.OpCode'Image);
 
       --  Invoke_Id
-      Debug.Print (Debug.Info, Head ("Invoke_Id:", 15, ' ') & Self.Invoke_Id'Image);
+      Debug.Print
+        (Debug.Info, Head ("Invoke_Id:", 15, ' ') & Self.Invoke_Id'Image);
 
       --  Flags
       Debug.Print (Debug.Info, Head ("Flags:", 16, ' ') & Self.Flags'Image);
 
       --  Obj_Class
-      Debug.Print (Debug.Info, Head ("Obj_Class:", 16, ' ') & "'" & To_String(Self.Obj_Class) & "'");
+      Debug.Print
+        (Debug.Info,
+         Head ("Obj_Class:", 16, ' ') & "'" & To_String (Self.Obj_Class) &
+         "'");
 
       --  Obj_Name
-      Debug.Print (Debug.Info, Head ("Obj_Name:", 16, ' ') & "'" & To_String(Self.Obj_Name) & "'");
+      Debug.Print
+        (Debug.Info,
+         Head ("Obj_Name:", 16, ' ') & "'" & To_String (Self.Obj_Name) & "'");
 
       --  Obj_Inst
-      Debug.Print (Debug.Info, Head ("Obj_Inst:", 15, ' ') & Self.Obj_Inst'Image);
+      Debug.Print
+        (Debug.Info, Head ("Obj_Inst:", 15, ' ') & Self.Obj_Inst'Image);
 
       --  Obj_Value
       --  Debug.Print (Debug.Info, "Obj_Value:");
@@ -317,34 +333,62 @@ package body CDAP is
       --  Put_Line ("'" & To_String(Self.Auth_Mech) & "'");
 
       --  Dest_Ae_Inst
-      Debug.Print (Debug.Info, Head ("Dest_Ae_Inst:", 16, ' ') & "'" & To_String(Self.Dest_Ae_Inst) & "'");
+      Debug.Print
+        (Debug.Info,
+         Head ("Dest_Ae_Inst:", 16, ' ') & "'" &
+         To_String (Self.Dest_Ae_Inst) & "'");
 
       --  Dest_Ae_Name
-      Debug.Print (Debug.Info, Head ("Dest_Ae_Name:", 16, ' ') & "'" & To_String(Self.Dest_Ae_Name & "'"));
+      Debug.Print
+        (Debug.Info,
+         Head ("Dest_Ae_Name:", 16, ' ') & "'" &
+         To_String (Self.Dest_Ae_Name & "'"));
 
       --  Dest_Ap_Inst
-      Debug.Print (Debug.Info, Head ("Dest_Ap_Inst:", 16, ' ') & "'" & To_String(Self.Dest_Ap_Inst & "'"));
+      Debug.Print
+        (Debug.Info,
+         Head ("Dest_Ap_Inst:", 16, ' ') & "'" &
+         To_String (Self.Dest_Ap_Inst & "'"));
 
       --  Dest_Ap_Name
-      Debug.Print (Debug.Info, Head ("Dest_Ap_Name:", 16, ' ') & "'" & To_String(Self.Dest_Ap_Name & "'"));
+      Debug.Print
+        (Debug.Info,
+         Head ("Dest_Ap_Name:", 16, ' ') & "'" &
+         To_String (Self.Dest_Ap_Name & "'"));
 
       --  Src_Ae_Inst
-      Debug.Print (Debug.Info, Head ("Src_Ae_Inst:", 16, ' ') & "'" & To_String(Self.Src_Ae_Inst & "'"));
+      Debug.Print
+        (Debug.Info,
+         Head ("Src_Ae_Inst:", 16, ' ') & "'" &
+         To_String (Self.Src_Ae_Inst & "'"));
 
       --  Src_Ae_Name
-      Debug.Print (Debug.Info, Head ("Src_Ae_Name:", 16, ' ') & "'" & To_String(Self.Src_Ae_Name & "'"));
+      Debug.Print
+        (Debug.Info,
+         Head ("Src_Ae_Name:", 16, ' ') & "'" &
+         To_String (Self.Src_Ae_Name & "'"));
 
       --  Src_Ap_Inst
-      Debug.Print (Debug.Info, Head ("Src_Ap_Inst:", 16, ' ') & "'" & To_String(Self.Src_Ap_Inst & "'"));
+      Debug.Print
+        (Debug.Info,
+         Head ("Src_Ap_Inst:", 16, ' ') & "'" &
+         To_String (Self.Src_Ap_Inst & "'"));
 
       --  Src_Ap_Name
-      Debug.Print (Debug.Info, Head ("Src_Ap_Name:", 16, ' ') & "'" & To_String(Self.Src_Ap_Name & "'"));
+      Debug.Print
+        (Debug.Info,
+         Head ("Src_Ap_Name:", 16, ' ') & "'" &
+         To_String (Self.Src_Ap_Name & "'"));
 
       --  Result_Reason
-      Debug.Print (Debug.Info, Head ("Result_Reason:", 16, ' ') & "'" & To_String(Self.Result_Reason & "'"));
+      Debug.Print
+        (Debug.Info,
+         Head ("Result_Reason:", 16, ' ') & "'" &
+         To_String (Self.Result_Reason & "'"));
 
       --  Result_Reason
-      Debug.Print (Debug.Info, Head ("Version:", 15, ' ') & Self.Version'Image);
+      Debug.Print
+        (Debug.Info, Head ("Version:", 15, ' ') & Self.Version'Image);
 
    end Put;
 
@@ -363,8 +407,8 @@ package body CDAP is
                Tag_Vector : Byte_Vector;
             begin
                while C /= Byte_Vectors.No_Element loop
-                  Tag_Vector.Append (V(C));
-                  exit when (not Has_MSB (V(C)));
+                  Tag_Vector.Append (V (C));
+                  exit when (not Has_MSB (V (C)));
                   C := Byte_Vectors.Next (C);
                end loop;
 
@@ -372,7 +416,7 @@ package body CDAP is
                Wire_Type := Tag_To_Wire_Type (Tag_Vector.First_Element);
             end;
 
-            Is_Tag_Field      := False;
+            Is_Tag_Field := False;
          else
             if Wire_Type = VARINT then
                declare
@@ -403,7 +447,7 @@ package body CDAP is
                   while C /= Byte_Vectors.No_Element loop
                      LEN_Vector.Append (V (C));
                      --  Debug.Print(Debug.Info, "Appending to LEN_Vec " & Img(V.Last_Element) & " Has_MSB: " & Has_MSB (V.Last_Element)'Image);
-                     exit when (not Has_MSB (V(C)));
+                     exit when (not Has_MSB (V (C)));
                      C := Byte_Vectors.Next (C);
                   end loop;
 

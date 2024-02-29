@@ -18,7 +18,7 @@ package body Protobuf is
    end Has_MSB;
 
    function Get_Bit_At (Input : Byte; Pos : Natural) return Bit is
-      Shifted : constant Byte := (Input / 2 ** Pos) and 2#0000_0001#;
+      Shifted : constant Byte := (Input / 2**Pos) and 2#0000_0001#;
    begin
       return Bit (Shifted);
    end Get_Bit_At;
@@ -45,7 +45,7 @@ package body Protobuf is
    end Tag_To_Wire_Type;
 
    function VARINT_To_Uint64 (V : in Byte_Vector) return Uint64 is
-      Working_Bit_Array   : Bit_Array (1 .. 64) := (others => 0);
+      Working_Bit_Array : Bit_Array (1 .. 64) := (others => 0);
    begin
       --  MT: TODO: dropping this requirement for now
       --  Note we are checking vector capacity (max elements), not length (total elements)
@@ -76,34 +76,34 @@ package body Protobuf is
    end VARINT_To_Uint64;
 
    function VARINT_To_Uint32 (V : in Byte_Vector) return Uint32 is
-      function To_Uint32 is new Ada.Unchecked_Conversion(Uint64, Uint32);
+      function To_Uint32 is new Ada.Unchecked_Conversion (Uint64, Uint32);
    begin
-      return To_Uint32 (VARINT_To_Uint64(V));
+      return To_Uint32 (VARINT_To_Uint64 (V));
    end VARINT_To_Uint32;
 
    function VARINT_To_Int32 (V : in Byte_Vector) return Int32 is
-      function To_Int32 is new Ada.Unchecked_Conversion(Uint64, Int32);
+      function To_Int32 is new Ada.Unchecked_Conversion (Uint64, Int32);
    begin
-      return To_Int32 (VARINT_To_Uint64(V));
+      return To_Int32 (VARINT_To_Uint64 (V));
    end VARINT_To_Int32;
 
    function VARINT_To_Int64 (V : in Byte_Vector) return Int64 is
-      function To_Int64 is new Ada.Unchecked_Conversion(Uint64, Int64);
+      function To_Int64 is new Ada.Unchecked_Conversion (Uint64, Int64);
    begin
-      return To_Int64 (VARINT_To_Uint64(V));
+      return To_Int64 (VARINT_To_Uint64 (V));
    end VARINT_To_Int64;
 
    --  Different signed types, sint32 and sint64 vs int32 or int64, encode negative integers differently
    --  The implementation of these may be wrong for now...
    function VARINT_To_SInt32 (V : in Byte_Vector) return Int32 is
-      function To_Int32 is new Ada.Unchecked_Conversion(Uint64, Int32);
+      function To_Int32 is new Ada.Unchecked_Conversion (Uint64, Int32);
    begin
-      return To_Int32 (VARINT_To_Uint64(V));
+      return To_Int32 (VARINT_To_Uint64 (V));
    end VARINT_To_SInt32;
 
    function VARINT_To_SInt64 (V : in Byte_Vector) return Int64 is
-      function To_Int64 is new Ada.Unchecked_Conversion(Uint64, Int64);
+      function To_Int64 is new Ada.Unchecked_Conversion (Uint64, Int64);
    begin
-      return To_Int64 (VARINT_To_Uint64(V));
+      return To_Int64 (VARINT_To_Uint64 (V));
    end VARINT_To_SInt64;
 end Protobuf;

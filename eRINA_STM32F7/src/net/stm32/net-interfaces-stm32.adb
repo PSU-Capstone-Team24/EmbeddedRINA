@@ -139,8 +139,11 @@ package body Net.Interfaces.STM32 is
          Ifnet.Tx_Stats.Packets := Ifnet.Tx_Stats.Packets + 1;
          Ifnet.Tx_Stats.Bytes   :=
            Ifnet.Tx_Stats.Bytes + Net.Uint64 (Buf.Get_Length);
-         
-         Debug.Print(Debug.Info, "Ethernet frame transmitted with" & Buf.Get_Length'Image & " Bytes");
+
+         Debug.Print
+           (Debug.Info,
+            "Ethernet frame transmitted with" & Buf.Get_Length'Image &
+            " Bytes");
          Transmit_Queue.Send (Buf);
       exception
          when E : others =>

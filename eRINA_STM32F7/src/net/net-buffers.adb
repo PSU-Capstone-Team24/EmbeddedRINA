@@ -130,19 +130,22 @@ package body Net.Buffers is
       Free_List : Packet_Buffer_Access;
    end Manager;
 
-   function Data_Type_To_String (Buffer : Data_Type; Size : Natural) return String is
+   function Data_Type_To_String
+     (Buffer : Data_Type; Size : Natural) return String
+   is
       -- 3 characters per byte [XX ]
-      Hex_String : String(1 .. Size * 3) := (others => ' ');
-      Hex_Index : Natural := 1;
+      Hex_String : String (1 .. Size * 3) := (others => ' ');
+      Hex_Index  : Natural                := 1;
    begin
       for I in 0 .. Size loop
-         if I < Natural(Buffer'Size / 8) then
+         if I < Natural (Buffer'Size / 8) then
             declare
-               Hex : String := Net.Utils.Hex(Buffer(Interfaces.Unsigned_16(I)));
+               Hex : String :=
+                 Net.Utils.Hex (Buffer (Interfaces.Unsigned_16 (I)));
             begin
-               Hex_String(Hex_Index .. Hex_Index + 1) := Hex;
-               Hex_String(Hex_Index + 2) := ' ';
-               Hex_Index := Hex_Index + 3;
+               Hex_String (Hex_Index .. Hex_Index + 1) := Hex;
+               Hex_String (Hex_Index + 2)              := ' ';
+               Hex_Index                               := Hex_Index + 3;
             end;
          end if;
       end loop;
@@ -209,7 +212,9 @@ package body Net.Buffers is
       From.Packet := Packet;
    end Switch;
 
-   function Get_Data_Address (Buf : in Buffer_Type; Offset : in Uint16 := 0) return System.Address is
+   function Get_Data_Address
+     (Buf : in Buffer_Type; Offset : in Uint16 := 0) return System.Address
+   is
    begin
       return Buf.Packet.Data (Buf.Packet.Data'First + Offset)'Address;
    end Get_Data_Address;
@@ -276,14 +281,16 @@ package body Net.Buffers is
    --  Add a 48-bit MAC address in network byte order to the buffer data,
    --  moving the buffer write position.
    --  ------------------------------
-   procedure Put_Ether_Addr (Buf : in out Buffer_Type; Value : in Net.Ether_Addr) is
+   procedure Put_Ether_Addr
+     (Buf : in out Buffer_Type; Value : in Net.Ether_Addr)
+   is
    begin
-      Buf.Put_Uint8 (Value(1));
-      Buf.Put_Uint8 (Value(2));
-      Buf.Put_Uint8 (Value(3));
-      Buf.Put_Uint8 (Value(4));
-      Buf.Put_Uint8 (Value(5));
-      Buf.Put_Uint8 (Value(6));
+      Buf.Put_Uint8 (Value (1));
+      Buf.Put_Uint8 (Value (2));
+      Buf.Put_Uint8 (Value (3));
+      Buf.Put_Uint8 (Value (4));
+      Buf.Put_Uint8 (Value (5));
+      Buf.Put_Uint8 (Value (6));
    end Put_Ether_Addr;
 
    --  ------------------------------
@@ -307,8 +314,7 @@ package body Net.Buffers is
    --  When <tt>With_Null</tt> is set, a NUL byte is added after the string.
    --  ------------------------------
    procedure Put_String
-     (Buf        : in out Buffer_Type; Value : in String;
-      Pad_Length : in     Uint8 := 0)
+     (Buf : in out Buffer_Type; Value : in String; Pad_Length : in Uint8 := 0)
    is
       Pos : Uint16 := Buf.Pos;
    begin

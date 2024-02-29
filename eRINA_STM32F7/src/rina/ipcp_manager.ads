@@ -27,16 +27,15 @@ package IPCP_Manager is
    --  Port Id exists here so that we can have the same application names
    --  The port identifier allows us to address individual instances of the same application
    type Flow is record
-      Source_Application : Bounded_String;
-      Source_Port_Id : Net.Uint8;
+      Source_Application      : Bounded_String;
+      Source_Port_Id          : Net.Uint8;
       Destination_Application : Bounded_String;
-      Destination_Port_Id : Net.Uint8;
+      Destination_Port_Id     : Net.Uint8;
    end record;
 
    --  Stores all DIFs in the system
    package IPCP_Vectors is new Ada.Containers.Vectors
-     (Index_Type => Positive,
-      Element_Type => IPCP);
+     (Index_Type => Positive, Element_Type => IPCP);
 
    subtype IPCP_Vector is IPCP_Vectors.Vector;
 

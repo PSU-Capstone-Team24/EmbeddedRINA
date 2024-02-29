@@ -31,16 +31,24 @@ package body GUI is
       Fill_Rect (Buffer => Screen_Buffer.all, Area => (P, S.Width, S.Height));
    end Draw_Rectangle;
 
-   procedure Draw_Rounded_Rectangle (P : Point; S : Size; C : Bitmap_Color; R : Natural; T : Natural) is
+   procedure Draw_Rounded_Rectangle
+     (P : Point; S : Size; C : Bitmap_Color; R : Natural; T : Natural)
+   is
    begin
       Set_Source (Buffer => Screen_Buffer.all, ARGB => C);
-      Draw_Rounded_Rect (Buffer => Screen_Buffer.all, Area => (P, S.Width, S.Height), Radius => R, Thickness => T);
+      Draw_Rounded_Rect
+        (Buffer => Screen_Buffer.all, Area => (P, S.Width, S.Height),
+         Radius => R, Thickness => T);
    end Draw_Rounded_Rectangle;
 
-   procedure Fill_Rounded_Rectangle (P : Point; S : Size; C : Bitmap_Color; R : Natural) is
+   procedure Fill_Rounded_Rectangle
+     (P : Point; S : Size; C : Bitmap_Color; R : Natural)
+   is
    begin
       Set_Source (Buffer => Screen_Buffer.all, ARGB => C);
-      Fill_Rounded_Rect (Buffer => Screen_Buffer.all, Area => (P, S.Width, S.Height), Radius => R);
+      Fill_Rounded_Rect
+        (Buffer => Screen_Buffer.all, Area => (P, S.Width, S.Height),
+         Radius => R);
    end Fill_Rounded_Rectangle;
 
    procedure Add_Button

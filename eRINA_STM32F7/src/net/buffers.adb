@@ -29,11 +29,12 @@ package body Buffers is
       return Buffer;
    end Byte_Vector_To_Buffer;
 
-   function Byte_Buffer_To_Vector (Buffer : in Byte_Buffer) return Byte_Vector is
+   function Byte_Buffer_To_Vector (Buffer : in Byte_Buffer) return Byte_Vector
+   is
       Vector : Byte_Vector;
    begin
       for E of Buffer loop
-         Vector.Append(E);
+         Vector.Append (E);
       end loop;
 
       return Vector;
@@ -41,16 +42,16 @@ package body Buffers is
 
    function Buffer_To_Byte_String (Buffer : Byte_Buffer) return String is
       -- 3 characters per byte [XX ]
-      Hex_String : String(1 .. Buffer'Length * 3) := (others => ' ');
-      Hex_Index : Natural := 1;
+      Hex_String : String (1 .. Buffer'Length * 3) := (others => ' ');
+      Hex_Index  : Natural                         := 1;
    begin
       for I in Buffer'First .. Buffer'Last loop
          declare
-            Hex : String := Net.Utils.Hex(Unsigned_8(Buffer(I)));
+            Hex : String := Net.Utils.Hex (Unsigned_8 (Buffer (I)));
          begin
-            Hex_String(Hex_Index .. Hex_Index + 1) := Hex;
-            Hex_String(Hex_Index + 2) := ' ';
-            Hex_Index := Hex_Index + 3;
+            Hex_String (Hex_Index .. Hex_Index + 1) := Hex;
+            Hex_String (Hex_Index + 2)              := ' ';
+            Hex_Index                               := Hex_Index + 3;
          end;
       end loop;
 

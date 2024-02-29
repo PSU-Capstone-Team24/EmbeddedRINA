@@ -4,22 +4,24 @@ with Texture_Logo;
 with Network;
 with STM32;
 with STM32.Board;
-with DIF_Manager; use DIF_Manager;
-with IPCP_Manager; use IPCP_Manager;
+with DIF_Manager;   use DIF_Manager;
+with IPCP_Manager;  use IPCP_Manager;
 with Ada.Real_Time; use Ada.Real_Time;
 with Demo_IPCP;
 with HAL.Bitmap;
 with Debug;
+with Board;
 
 procedure Demo is
    Period : constant Time_Span := Milliseconds (1 / GUI.Frame_Rate * 1_000);
    Next_Render : Time               := Clock;
-   This_DIF : DIF_Access;
-   This_IPCP : IPCP;
+   This_DIF    : DIF_Access;
+   This_IPCP   : IPCP;
 begin
    GUI.Initialize;
    Network.Initialize;
    STM32.Board.Configure_User_Button_GPIO;
+   Board.Initialize;
    STM32.Board.Initialize_LEDs;
    STM32.Board.All_LEDs_Off;
 
@@ -44,11 +46,13 @@ begin
 
       GUI.Print ("Version: " & GUI.Build_Verson, (83, 45));
 
-      GUI.Fill_Rounded_Rectangle((75, 60), (128, 25), GUI.Button_Color, 2);
+      GUI.Fill_Rounded_Rectangle ((75, 60), (128, 25), GUI.Button_Color, 2);
       GUI.Print ("Menu", (120, 68));
 
       GUI.Print_Large ("Console", (5, 90));
-      GUI.Draw_Rounded_Rectangle((5, 105), (GUI.Board_Resolution.Width - 8, 160), HAL.Bitmap.Black, 2, 1);
+      GUI.Draw_Rounded_Rectangle
+        ((5, 105), (GUI.Board_Resolution.Width - 8, 160), HAL.Bitmap.Black, 2,
+         1);
 
       GUI.Print ("CPU U:            xx.xx%", (280, 12));
       GUI.Print ("RAM U:            xx.xx%", (280, 24));
