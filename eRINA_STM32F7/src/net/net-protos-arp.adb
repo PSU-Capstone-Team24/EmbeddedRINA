@@ -389,7 +389,7 @@ package body Net.Protos.Arp is
          end if;
       exception
          when E : others =>
-            Debug.Print (Debug.Error, Exception_Message (E));
+            Debug.Print (Debug.Error, Exception_Information (E));
       end;
    end Receive;
 

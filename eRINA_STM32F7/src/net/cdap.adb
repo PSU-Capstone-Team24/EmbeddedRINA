@@ -1,4 +1,3 @@
-with Ada.Text_IO; use Ada.Text_IO;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Protobuf;    use Protobuf;
 with Interfaces;  use Interfaces;
@@ -213,8 +212,6 @@ package body CDAP is
                      end loop;
 
                      ObjValue.Set_Field (Field_Id, Data_Vector);
-                  else
-                     C := Byte_Vectors.Next (C);
                   end if;
                end;
             end if;
@@ -229,7 +226,6 @@ package body CDAP is
    function Tag_To_OBJ_Value_Field (Input : Byte_Vector) return Obj_Value_Field is
       Value : constant Uint64 := VARINT_To_Uint64(Input) / 2 ** 3;
    begin
-      Debug.Print(Debug.Info, "Obj_Value_Field: " & VARINT_To_Uint64(Input)'Image);
       --  MT: TODO: Need to handle weird case when resulting value does not match an enum in Obj_Value
       return Obj_Value_Field'Enum_Val (Value);
    end Tag_To_OBJ_Value_Field;
@@ -237,148 +233,122 @@ package body CDAP is
    function Tag_To_CDAP_Field (Input : Byte_Vector) return CDAP_Field is
       Value : constant Uint64 := VARINT_To_Uint64(Input) / 2 ** 3;
    begin
-      Debug.Print(Debug.Info, Input.First_Element'Image);
-      Debug.Print(Debug.Info, "Tag_To_CDAP_Field: " & VARINT_To_Uint64(Input)'Image);
       --  MT: TODO: Need to handle weird case when resulting value does not match an enum in CDAP_Field
       return CDAP_Field'Enum_Val (Value);
    end Tag_To_CDAP_Field;
 
    procedure Put (Self : CDAPMessage) is begin
-      Put_Line ("Message Contents:");
+      Debug.Print (Debug.Info, "Message Contents:");
       
       --  Abs_Syntax
-      Put (Head ("Abs_Syntax:", 15, ' '));
-      Put_Line (Self.Abs_Syntax'Image);
+      Debug.Print (Debug.Info, Head ("Abs_Syntax:", 15, ' ') & Self.Abs_Syntax'Image);
 
       --  OpCode
-      Put (Head ("OpCode:", 16, ' '));
-      Put_Line (Self.OpCode'Image);
+      Debug.Print (Debug.Info, Head ("OpCode:", 16, ' ') & Self.OpCode'Image);
 
       --  Invoke_Id
-      Put (Head ("Invoke_Id:", 15, ' '));
-      Put_Line (Self.Invoke_Id'Image);
+      Debug.Print (Debug.Info, Head ("Invoke_Id:", 15, ' ') & Self.Invoke_Id'Image);
 
       --  Flags
-      Put (Head ("Flags:", 16, ' '));
-      Put_Line (Self.Flags'Image);
+      Debug.Print (Debug.Info, Head ("Flags:", 16, ' ') & Self.Flags'Image);
 
       --  Obj_Class
-      Put (Head ("Obj_Class:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Obj_Class) & "'");
+      Debug.Print (Debug.Info, Head ("Obj_Class:", 16, ' ') & "'" & To_String(Self.Obj_Class) & "'");
 
       --  Obj_Name
-      Put (Head ("Obj_Name:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Obj_Name) & "'");
+      Debug.Print (Debug.Info, Head ("Obj_Name:", 16, ' ') & "'" & To_String(Self.Obj_Name) & "'");
 
       --  Obj_Inst
-      Put (Head ("Obj_Inst:", 15, ' '));
-      Put_Line (Self.Obj_Inst'Image);
+      Debug.Print (Debug.Info, Head ("Obj_Inst:", 15, ' ') & Self.Obj_Inst'Image);
 
       --  Obj_Value
-      Put_Line ("Obj_Value:");
+      --  Debug.Print (Debug.Info, "Obj_Value:");
 
       --  Obj_Value.IntVal
-      Put (Head("  IntVal:", 15, ' '));
-      Put_Line (Self.ObjValue.Intval'Image);
+      --  Debug.Print (Debug.Info, Head("  IntVal:", 15, ' ') & Self.ObjValue.Intval'Image);
 
       --  Obj_Value.IntVal
-      Put (Head("  Sintval:", 15, ' '));
-      Put_Line (Self.ObjValue.Sintval'Image);
+      --  Debug.Print (Debug.Info, Head("  Sintval:", 15, ' ') & Self.ObjValue.Sintval'Image);
 
       --  Obj_Value.Int_64val
-      Put (Head("  Int_64val:", 15, ' '));
-      Put_Line (Self.ObjValue.Int_64val'Image);
+      --  Debug.Print (Debug.Info, Head("  Int_64val:", 15, ' ') & Self.ObjValue.Int_64val'Image);
 
       --  Obj_Value.Sint_64val
-      Put (Head("  Sint_64val:", 15, ' '));
-      Put_Line (Self.ObjValue.Sint_64val'Image);
+      --  Debug.Print (Debug.Info, Head("  Sint_64val:", 15, ' ') & Self.ObjValue.Sint_64val'Image);
 
       --  Obj_Value.Strval
-      Put (Head("  Strval:", 16, ' '));
-      Put_Line ("'" & To_String(Self.ObjValue.Strval) & "'");
+      --  Debug.Print (Debug.Info, Head("  Strval:", 16, ' ') & "'" & To_String(Self.ObjValue.Strval) & "'");
 
       --  Obj_Value.Byteval
-      Put (Head("  Byteval:", 16, ' '));
+      --  Debug.Print (Debug.Info, Head("  Byteval:", 16, ' '));
 
-      case Self.ObjValue.Byteval.Length is
-         when 0 =>
-            Put_Line("N/A");
-         when others => null;
-            --  Put_Bytes(Byte_Vector_To_Buffer (Self.ObjValue.Byteval));
-      end case;
+      --  case Self.ObjValue.Byteval.Length is
+      --     when 0 =>
+      --        Put_Line("N/A");
+      --     when others =>
+      --        Put_Bytes(Byte_Vector_To_Buffer (Self.ObjValue.Byteval));
+      --  end case;
 
       --  Obj_Value.Floatval
-      Put (Head("  Floatval:", 15, ' '));
-      Put_Line (Self.ObjValue.Floatval'Image);
+      --  Put (Head("  Floatval:", 15, ' '));
+      --  Put_Line (Self.ObjValue.Floatval'Image);
 
       --  Obj_Value.Doubleval
-      Put (Head("  Doubleval:", 15, ' '));
-      Put_Line (Self.ObjValue.Doubleval'Image);
+      --  Put (Head("  Doubleval:", 15, ' '));
+      --  Put_Line (Self.ObjValue.Doubleval'Image);
 
       --  Obj_Value.Boolval
-      Put (Head("  Boolval:", 16, ' '));
-      Put_Line (Self.ObjValue.Boolval'Image);
+      --  Put (Head("  Boolval:", 16, ' '));
+      --  Put_Line (Self.ObjValue.Boolval'Image);
 
       --  Result
-      Put (Head ("Result:", 15, ' '));
-      Put_Line (Self.Result'Image);
+      Debug.Print (Debug.Info, Head ("Result:", 15, ' ') & Self.Result'Image);
 
       --  Scope
-      Put (Head ("Scope:", 15, ' '));
-      Put_Line (Self.Scope'Image);
+      --  Put (Head ("Scope:", 15, ' '));
+      --  Put_Line (Self.Scope'Image);
 
       --  Filter
-      Put (Head ("Filter:", 15, ' '));
-      Put_Line (Self.Filter'Image);
+      --  Put (Head ("Filter:", 15, ' '));
+      --  Put_Line (Self.Filter'Image);
 
       --  Auth_Mech
-      Put (Head ("Auth_Mech:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Auth_Mech) & "'");
+      --  Put (Head ("Auth_Mech:", 16, ' '));
+      --  Put_Line ("'" & To_String(Self.Auth_Mech) & "'");
 
       --  Dest_Ae_Inst
-      Put (Head ("Dest_Ae_Inst:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Dest_Ae_Inst) & "'");
+      Debug.Print (Debug.Info, Head ("Dest_Ae_Inst:", 16, ' ') & "'" & To_String(Self.Dest_Ae_Inst) & "'");
 
       --  Dest_Ae_Name
-      Put (Head ("Dest_Ae_Name:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Dest_Ae_Name & "'"));
+      Debug.Print (Debug.Info, Head ("Dest_Ae_Name:", 16, ' ') & "'" & To_String(Self.Dest_Ae_Name & "'"));
 
       --  Dest_Ap_Inst
-      Put (Head ("Dest_Ap_Inst:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Dest_Ap_Inst & "'"));
+      Debug.Print (Debug.Info, Head ("Dest_Ap_Inst:", 16, ' ') & "'" & To_String(Self.Dest_Ap_Inst & "'"));
 
       --  Dest_Ap_Name
-      Put (Head ("Dest_Ap_Name:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Dest_Ap_Name & "'"));
+      Debug.Print (Debug.Info, Head ("Dest_Ap_Name:", 16, ' ') & "'" & To_String(Self.Dest_Ap_Name & "'"));
 
       --  Src_Ae_Inst
-      Put (Head ("Src_Ae_Inst:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Src_Ae_Inst & "'"));
+      Debug.Print (Debug.Info, Head ("Src_Ae_Inst:", 16, ' ') & "'" & To_String(Self.Src_Ae_Inst & "'"));
 
       --  Src_Ae_Name
-      Put (Head ("Src_Ae_Name:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Src_Ae_Name & "'"));
+      Debug.Print (Debug.Info, Head ("Src_Ae_Name:", 16, ' ') & "'" & To_String(Self.Src_Ae_Name & "'"));
 
       --  Src_Ap_Inst
-      Put (Head ("Src_Ap_Inst:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Src_Ap_Inst & "'"));
+      Debug.Print (Debug.Info, Head ("Src_Ap_Inst:", 16, ' ') & "'" & To_String(Self.Src_Ap_Inst & "'"));
 
       --  Src_Ap_Name
-      Put (Head ("Src_Ap_Name:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Src_Ap_Name & "'"));
+      Debug.Print (Debug.Info, Head ("Src_Ap_Name:", 16, ' ') & "'" & To_String(Self.Src_Ap_Name & "'"));
 
       --  Result_Reason
-      Put (Head ("Result_Reason:", 16, ' '));
-      Put_Line ("'" & To_String(Self.Result_Reason & "'"));
+      Debug.Print (Debug.Info, Head ("Result_Reason:", 16, ' ') & "'" & To_String(Self.Result_Reason & "'"));
 
       --  Result_Reason
-      Put (Head ("Result_Reason:", 15, ' '));
-      Put_Line (Self.Version'Image);
+      Debug.Print (Debug.Info, Head ("Version:", 15, ' ') & Self.Version'Image);
 
    end Put;
 
-   function To_CDAP (V : in Byte_Vector) return CDAPMessage is
-      Result_Msg   : CDAPMessage;
+   procedure To_CDAP (M : in out CDAPMessage; V : in Byte_Vector) is
       Wire_Type    : Wire;
       Field_Id     : CDAP_Field;
       Is_Tag_Field : Boolean := True;
@@ -400,8 +370,6 @@ package body CDAP is
 
                Field_Id  := Tag_To_CDAP_Field (Tag_Vector);
                Wire_Type := Tag_To_Wire_Type (Tag_Vector.First_Element);
-
-               Debug.Print(Debug.Info, "Field_Id " & Field_Id'Image & " Wire_Type " & Wire_Type'Image);
             end;
 
             Is_Tag_Field      := False;
@@ -418,8 +386,7 @@ package body CDAP is
                   end loop;
 
                   --  Decode and update message
-                  Result_Msg.Set_Field (Field_Id, VARINT_To_Uint64 (VARINT_Vector));
-                  Debug.Print(Debug.Info, "VARINT Done!");
+                  M.Set_Field (Field_Id, VARINT_To_Uint64 (VARINT_Vector));
                end;
             end if;
 
@@ -435,13 +402,16 @@ package body CDAP is
                begin
                   while C /= Byte_Vectors.No_Element loop
                      LEN_Vector.Append (V (C));
+                     --  Debug.Print(Debug.Info, "Appending to LEN_Vec " & Img(V.Last_Element) & " Has_MSB: " & Has_MSB (V.Last_Element)'Image);
+                     exit when (not Has_MSB (V(C)));
                      C := Byte_Vectors.Next (C);
-                     exit when (not Has_MSB (V (C)));
                   end loop;
+
+                  C := Byte_Vectors.Next (C);
 
                   --  The VARINT storing the length is an int32
                   LEN_Length := Natural (VARINT_To_Uint64 (LEN_Vector));
-                  
+
                   if LEN_Length > 0 then
                      while C /= Byte_Vectors.No_Element loop
                         Data_Vector.Append (V (C));
@@ -450,10 +420,9 @@ package body CDAP is
                         C := Byte_Vectors.Next (C);
                      end loop;
 
-                     Result_Msg.Set_Field (Field_Id, Data_Vector);
-                     Debug.Print(Debug.Info, "LEN Done!");
+                     M.Set_Field (Field_Id, Data_Vector);
                   else
-                     C := Byte_Vectors.Next (C);
+                     C := Byte_Vectors.Previous (C);
                   end if;
                end;
             end if;
@@ -464,8 +433,6 @@ package body CDAP is
 
          C := Byte_Vectors.Next (C);
       end loop;
-
-      return Result_Msg;
    end To_CDAP;
 
 end CDAP;

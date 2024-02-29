@@ -3,12 +3,19 @@ with GUI;
 
 package body Debug is
 
+   procedure Clear is
+   begin
+      while not Messages.Empty loop
+         Messages.Pop;
+      end loop;
+   end Clear;
+
    procedure Print (Debug_Level : in Debug; Msg : in String) is
       M : Message;
 
       --  These line variables shouldn't be confused with the array of lines that are drawn to the screen
       --  This is specifically for strings that are too long to fit on a single line, so they can be broken up
-      Lines_Count : constant Positive :=
+      Lines_Count : constant Natural :=
         (Msg'Length + (Max_Characters_Per_Line - 1)) / Max_Characters_Per_Line;
       Lines :
         array (1 .. Lines_Count) of String (1 .. Max_Characters_Per_Line);

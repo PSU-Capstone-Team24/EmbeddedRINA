@@ -30,5 +30,6 @@ package Debug is
    Messages : Message_Queue.Queue;
 
    procedure Print (Debug_Level : in Debug; Msg : in String);
+   procedure Clear;
    procedure Render;
 end Debug;

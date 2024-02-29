@@ -144,7 +144,7 @@ package body Net.Interfaces.STM32 is
          Transmit_Queue.Send (Buf);
       exception
          when E : others =>
-            Debug.Print (Debug.Error, Exception_Message (E));
+            Debug.Print (Debug.Error, Exception_Information (E));
       end;
    end Send;
 
@@ -159,12 +159,8 @@ package body Net.Interfaces.STM32 is
          Ifnet.Rx_Stats.Bytes   :=
            Ifnet.Rx_Stats.Bytes + Net.Uint64 (Buf.Get_Length);
       exception
-         when E : Constraint_Error =>
-            Debug.Print (Debug.Error, Exception_Message (E));
-         when P : Program_Error =>
-            Debug.Print (Debug.Error, Exception_Message (P));
-         when others =>
-            Debug.Print (Debug.Error, "Error!");
+         when E : others =>
+            Debug.Print (Debug.Error, Exception_Information (E));
       end;
    end Receive;
 

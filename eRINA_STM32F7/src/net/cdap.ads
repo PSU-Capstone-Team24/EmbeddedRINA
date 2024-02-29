@@ -91,7 +91,7 @@ package CDAP is
   procedure Put (Self : CDAPMessage);
 
    --  Takes in a vector of bytes and returns a CDAP message record
-   function To_CDAP (V : in Byte_Vector) return CDAPMessage;
+   procedure To_CDAP (M : in out CDAPMessage; V : in Byte_Vector);
    function Tag_To_CDAP_Field (Input : Byte_Vector) return CDAP_Field;
    function Tag_To_OBJ_Value_Field (Input : Byte_Vector) return Obj_Value_Field;
    function To_OBJ_Value (V : in Byte_Vector) return Obj_Value;

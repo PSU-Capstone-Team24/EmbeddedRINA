@@ -29,13 +29,13 @@ package body Queues is
       begin
          N := N - 1;
          V := A (Idx - Queue_Index (N) - 1);
-         X := ((X + 1) mod Queue_Index'Last);
+         X := X + 1;
       end Pop;
 
       entry Pop when N > 0 is
       begin
          N := N - 1;
-         X := ((X + 1) mod Queue_Index'Last);
+         X := X + 1;
       end Pop;
 
    end Queue;
