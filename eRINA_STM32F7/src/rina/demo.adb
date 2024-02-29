@@ -10,7 +10,6 @@ with Ada.Real_Time; use Ada.Real_Time;
 with Demo_IPCP;
 with HAL.Bitmap;
 with Debug;
-with Board;
 
 procedure Demo is
    Period : constant Time_Span := Milliseconds (1 / GUI.Frame_Rate * 1_000);
@@ -21,7 +20,6 @@ begin
    GUI.Initialize;
    Network.Initialize;
    STM32.Board.Configure_User_Button_GPIO;
-   Board.Initialize;
    STM32.Board.Initialize_LEDs;
    STM32.Board.All_LEDs_Off;
 
