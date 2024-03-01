@@ -42,10 +42,8 @@ begin
       Texture_PSU.PSU.Print (Texture_PSU.Bitmap, (5, 8));
       Texture_Logo.Logo.Print (Texture_Logo.Bitmap, (75, 0));
 
-      GUI.Print ("Version: " & GUI.Build_Verson, (83, 45));
-
-      GUI.Fill_Rounded_Rectangle ((75, 60), (128, 25), GUI.Button_Color, 2);
-      GUI.Print ("Menu", (120, 68));
+      GUI.Fill_Rounded_Rectangle ((75, 45), (128, 25), GUI.Button_Color, 2);
+      GUI.Print ("Menu", (120, 53));
 
       GUI.Print_Large ("Console", (5, 90));
       GUI.Draw_Rounded_Rectangle
@@ -65,6 +63,8 @@ begin
 
       GUI.Fill_Rounded_Rectangle ((420, 70), (25, 10), GUI.Get_TX_Status_Color, 1);
       GUI.Print ("TX", (390, 71));
+
+      GUI.Print ("Version: " & GUI.Build_Verson, (362, 90));
 
       --  GUI.Print ("Status: ", (80, 45));
       --  GUI.Print ("Waiting for enrollment request", (145, 45));
