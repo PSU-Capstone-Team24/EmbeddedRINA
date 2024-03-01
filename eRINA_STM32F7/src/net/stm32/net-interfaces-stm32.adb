@@ -61,7 +61,7 @@ package body Net.Interfaces.STM32 is
      (System.Address, Rx_Ring_Array_Type_Access);
 
    Tx_Ring_Instance : aliased Tx_Ring_Array_Type;
-
+   
    function Next_Tx (Value : in Tx_Position) return Tx_Position;
    function Next_Rx (Value : in Rx_Position) return Rx_Position;
 
@@ -94,7 +94,7 @@ package body Net.Interfaces.STM32 is
 
       --  Check if the transmit queue is initialized.
       function Is_Ready return Boolean;
-
+      function Get_Cur_TX return Tx_Position;
    private
       --  Transmit queue management.
       Tx_Space : Uint32      := 0;
@@ -118,7 +118,7 @@ package body Net.Interfaces.STM32 is
 
       --  Check if the receive queue is initialized.
       function Is_Ready return Boolean;
-
+      function Get_Cur_RX return Rx_Position;
    private
 
       --  Receive queue management.
@@ -298,6 +298,11 @@ package body Net.Interfaces.STM32 is
          return Tx_Ring /= null;
       end Is_Ready;
 
+      function Get_Cur_TX return Tx_Position is
+      begin
+         return Cur_Tx;
+      end Get_Cur_TX;
+
    end Transmit_Queue;
 
    protected body Receive_Queue is
@@ -318,6 +323,11 @@ package body Net.Interfaces.STM32 is
          Cur_Rx                       := Next_Rx (Cur_Rx);
          Ethernet_MAC_Periph.MACCR.RE := True;
       end Wait_Packet;
+
+      function Get_Cur_RX return Rx_Position is
+      begin
+         return Cur_Rx;
+      end Get_Cur_RX;
 
       procedure Receive_Interrupt is
          Rx : Rx_Ring_Access;
@@ -424,5 +434,32 @@ package body Net.Interfaces.STM32 is
       end Is_Ready;
 
    end Receive_Queue;
+
+   task RX_TX_Monitor;
+
+   task body RX_TX_Monitor is
+      RX_Pos : Rx_Position := Receive_Queue.Get_Cur_RX;
+      TX_Pos : Tx_Position := Transmit_Queue.Get_Cur_TX;
+   begin
+      loop
+         if Receive_Queue.Get_Cur_RX /= RX_Pos then
+            RX_Active := True;
+            RX_Pos := Receive_Queue.Get_Cur_RX;
+            delay 0.1;
+         else
+            RX_Active := False;
+         end if;
+
+         if Transmit_Queue.Get_Cur_TX /= TX_Pos then
+            TX_Active := True;
+            TX_Pos := Transmit_Queue.Get_Cur_TX;
+            delay 0.1;
+         else
+            TX_Active := False;
+         end if;
+
+         delay 0.01;
+      end loop;
+   end RX_TX_Monitor;
 
 end Net.Interfaces.STM32;

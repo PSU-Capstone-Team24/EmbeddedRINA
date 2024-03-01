@@ -9,6 +9,10 @@ package GUI is
    Foreground   : Bitmap_Color       := Black;
    Background   : Bitmap_Color       := White;
    Button_Color : Bitmap_Color       := (255, 242, 243, 245);
+   TX_Active    : Bitmap_Color       := (255, 111, 255, 109);
+   TX_Inactive  : Bitmap_Color       := (255, 56, 128, 55);
+   RX_Active    : Bitmap_Color       := (255, 255, 109, 109);
+   RX_Inactive  : Bitmap_Color       := (255, 128, 55, 55);
    Build_Verson : String             := "0.0.1";
 
    type Size is record
@@ -26,7 +30,7 @@ package GUI is
    end record;
 
    Board_Resolution : Size    := (480, 272);
-   Frame_Rate       : Natural := 60;
+   Frame_Rate       : Natural := 120;
    Max_Buttons      : Natural := 16;
 
    package Button_Vectors is new Ada.Containers.Vectors
@@ -36,6 +40,8 @@ package GUI is
 
    procedure Initialize;
    procedure Update;
+   function Get_TX_Status_Color return Bitmap_Color;
+   function Get_RX_Status_Color return Bitmap_Color;
    procedure Print (Msg : in String; Pos : in Point);
    procedure Print_Large (Msg : in String; Pos : in Point);
    function Screen_Buffer return Any_Bitmap_Buffer;

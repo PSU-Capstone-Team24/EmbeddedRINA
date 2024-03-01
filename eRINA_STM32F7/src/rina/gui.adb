@@ -1,6 +1,7 @@
 with Bitmapped_Drawing;
 with STM32.Board;
-with STM32.RNG.Interrupts;
+with STM32.RNG.Interrupts; use STM32.RNG.Interrupts;
+with Net.Interfaces.STM32;
 
 package body GUI is
 
@@ -24,6 +25,16 @@ package body GUI is
    begin
       STM32.Board.Display.Update_Layer (1);
    end Update;
+
+   function Get_TX_Status_Color return Bitmap_Color is
+   begin
+      return (if Net.Interfaces.STM32.TX_Active then GUI.TX_Active else GUI.TX_Inactive);
+   end Get_TX_Status_Color;
+
+   function Get_RX_Status_Color return Bitmap_Color is
+   begin
+      return (if Net.Interfaces.STM32.RX_Active then GUI.RX_Active else GUI.RX_Inactive);
+   end Get_RX_Status_Color;
 
    procedure Draw_Rectangle (P : Point; S : Size; C : Bitmap_Color) is
    begin

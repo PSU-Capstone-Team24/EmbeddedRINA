@@ -52,10 +52,20 @@ begin
         ((5, 105), (GUI.Board_Resolution.Width - 8, 160), HAL.Bitmap.Black, 2,
          1);
 
+      GUI.Draw_Rounded_Rectangle ((277, 2), (200, 60), HAL.Bitmap.Black, 2, 1);
       GUI.Print ("CPU U:            xx.xx%", (280, 12));
       GUI.Print ("RAM U:            xx.xx%", (280, 24));
       GUI.Print ("  Mac: 00:81:E1:05:05:01", (280, 36));
       GUI.Print ("Board:   STM32F746-DISCO", (280, 48));
+
+      GUI.Draw_Rounded_Rectangle ((277, 65), (200, 20), HAL.Bitmap.Black, 2, 1);
+
+      GUI.Fill_Rounded_Rectangle ((330, 70), (25, 10), GUI.Get_RX_Status_Color, 1);
+      GUI.Print ("RX", (300, 71));
+
+      GUI.Fill_Rounded_Rectangle ((420, 70), (25, 10), GUI.Get_TX_Status_Color, 1);
+      GUI.Print ("TX", (390, 71));
+
       --  GUI.Print ("Status: ", (80, 45));
       --  GUI.Print ("Waiting for enrollment request", (145, 45));
 

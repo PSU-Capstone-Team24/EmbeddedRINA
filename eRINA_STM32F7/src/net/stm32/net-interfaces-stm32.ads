@@ -24,6 +24,10 @@ package Net.Interfaces.STM32 is
    --  Size of the receive ring.
    RX_RING_SIZE : constant Uint32 := 500;
 
+   -- TX/RX activity statuses
+   RX_Active : Boolean := False;
+   TX_Active : Boolean := False;
+
    --  The STM32F Ethernet driver.
    type STM32_Ifnet is limited new Net.Interfaces.Ifnet_Type with null record;
 
