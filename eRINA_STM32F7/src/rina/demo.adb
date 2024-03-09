@@ -56,12 +56,15 @@ begin
       GUI.Print ("  Mac: 00:81:E1:05:05:01", (280, 36));
       GUI.Print ("Board:   STM32F746-DISCO", (280, 48));
 
-      GUI.Draw_Rounded_Rectangle ((277, 65), (200, 20), HAL.Bitmap.Black, 2, 1);
+      GUI.Draw_Rounded_Rectangle
+        ((277, 65), (200, 20), HAL.Bitmap.Black, 2, 1);
 
-      GUI.Fill_Rounded_Rectangle ((330, 70), (25, 10), GUI.Get_RX_Status_Color, 1);
+      GUI.Fill_Rounded_Rectangle
+        ((330, 70), (25, 10), GUI.Get_RX_Status_Color, 1);
       GUI.Print ("RX", (300, 71));
 
-      GUI.Fill_Rounded_Rectangle ((420, 70), (25, 10), GUI.Get_TX_Status_Color, 1);
+      GUI.Fill_Rounded_Rectangle
+        ((420, 70), (25, 10), GUI.Get_TX_Status_Color, 1);
       GUI.Print ("TX", (390, 71));
 
       GUI.Print ("Version: " & GUI.Build_Verson, (362, 90));

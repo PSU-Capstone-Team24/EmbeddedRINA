@@ -1,5 +1,5 @@
 with System;
-with Interfaces; use Interfaces;
+with Interfaces;            use Interfaces;
 with Ada.Containers.Vectors;
 with System.Storage_Elements;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
@@ -33,16 +33,18 @@ package Buffers is
    pragma Pack (Bit_Array);
 
    --  Pushes/appends the contents of a byte buffer into an existing byte vector
-   procedure Append_Byte_Buffer_To_Vector (Buffer : in Byte_Buffer; Vector : in out Byte_Vector);
+   procedure Append_Byte_Buffer_To_Vector
+     (Buffer : in Byte_Buffer; Vector : in out Byte_Vector);
 
    --  Converts a byte buffer to a string consisting of that stream of bytes
    function Buffer_To_Byte_String (Buffer : Byte_Buffer) return String;
-  
+
    --  Converts a byte buffer to a string corresponding to each byte as ASCII characters
    function Buffer_To_String (Buffer : Byte_Buffer) return String;
 
    --  Converts an unbounded string to a Byte_Vector
-   function String_To_Byte_Vector (Input : Unbounded_String) return Byte_Vector;
+   function String_To_Byte_Vector
+     (Input : Unbounded_String) return Byte_Vector;
 
    --  Converts a byte vector into a byte buffer (byte array)
    function Byte_Vector_To_Buffer (Vector : Byte_Vector) return Byte_Buffer;

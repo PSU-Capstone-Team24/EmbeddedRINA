@@ -3,7 +3,7 @@ with Interfaces;        use Interfaces;
 with Debug;
 
 package body CDAP is
-   
+
    function Tag_To_OBJ_Value_Field (Input : Byte_Vector) return Obj_Value_Field
    is
       Value : constant Uint64 := VARINT_To_Uint64 (Input) / 2**3;
@@ -479,9 +479,10 @@ package body CDAP is
    end To_CDAP;
 
    function To_Tag (Field : CDAP_Field; Wire_Type : Wire) return Byte_Vector is
-      Vec : Byte_Vector;
+      Vec     : Byte_Vector;
       Tag_Num : constant Integer := CDAP_Field'Enum_Rep (Field);
-      Tag : constant Byte := Byte (Tag_Num * (2 ** 3)) or Byte (Wire'Enum_Rep (Wire_Type));
+      Tag     : constant Byte    :=
+        Byte (Tag_Num * (2**3)) or Byte (Wire'Enum_Rep (Wire_Type));
    begin
       --  First we need to append the record "tag" field
       Vec.Append (Tag);
@@ -518,27 +519,27 @@ package body CDAP is
    --  The VARINT wire type can encode: int32, int64, uint32, uint64, sint32, sint64, bool, enum
    --  We use Uint64 as the value here since it is large enough to contain all of the possible types
    function To_VARINT (Value : Uint64) return Byte_Vector is
-      Vec : Byte_Vector;
+      Vec  : Byte_Vector;
       Temp : Uint64 := Value;
    begin
       --  Append actual field value
       loop
          declare
             -- Take 7 bits of temp
-            Byte_To_Add : constant Byte := Byte(Temp mod (2 ** 7));
+            Byte_To_Add : constant Byte := Byte (Temp mod (2**7));
          begin
-            if Temp >= (2 ** 7) then
+            if Temp >= (2**7) then
                --  If this is not the last byte, set the msb
-               Vec.Append (Byte_To_Add + (2 ** 7));
+               Vec.Append (Byte_To_Add + (2**7));
             else
                --  If this is the last byte, add it without setting msb
                Vec.Append (Byte_To_Add);
                exit;
             end if;
          end;
-         
+
          --  Shift right by 7 bits
-         Temp := Temp / (2 ** 7);
+         Temp := Temp / (2**7);
       end loop;
 
       return Vec;
@@ -547,13 +548,13 @@ package body CDAP is
    function To_VARINT (Value : Uint32) return Byte_Vector is
    begin
       return To_VARINT (Uint64 (Value));
-   end;
+   end To_VARINT;
 
    function To_LEN (Value : Unbounded_String) return Byte_Vector is
       Vec : Byte_Vector;
-   begin      
+   begin
       --  Append length of string
-      Vec.Append (To_VARINT (Uint64(Length (Value))));
+      Vec.Append (To_VARINT (Uint64 (Length (Value))));
 
       -- Append bytes of string
       Vec.Append (String_To_Byte_Vector (Value));
@@ -567,21 +568,25 @@ package body CDAP is
    --   Src_Ap_Inst, Src_Ap_Name, Result_Reason, Version
 
    --  MT: TODO: Encode to Byte_Buffer based on fields from varidaic input
-   function Encode (Self : CDAPMessage; Fields: Field_Variadic) return Byte_Buffer is
+   function Encode
+     (Self : CDAPMessage; Fields : Field_Variadic) return Byte_Buffer
+   is
       Ret : Byte_Vector;
    begin
       for I in Fields'Range loop
-         Ret.Append (To_Tag (Fields(I), Field_To_Wire_Type (Fields(I))));
+         Ret.Append (To_Tag (Fields (I), Field_To_Wire_Type (Fields (I))));
 
-         case Fields(I) is
+         case Fields (I) is
             when Abs_Syntax =>
                Ret.Append (To_VARINT (Self.Abs_Syntax));
             when OpCode =>
-               Ret.Append (To_VARINT (Uint32 (OP_Code'Enum_Rep (Self.OpCode))));
+               Ret.Append
+                 (To_VARINT (Uint32 (Op_Code'Enum_Rep (Self.OpCode))));
             when Invoke_Id =>
                Ret.Append (To_VARINT (Self.Invoke_Id));
             when Flags =>
-               Ret.Append (To_VARINT (Uint32 (CDAPFlags'Enum_Rep (Self.Flags))));
+               Ret.Append
+                 (To_VARINT (Uint32 (CDAPFlags'Enum_Rep (Self.Flags))));
             when Obj_Class =>
                Ret.Append (To_LEN (Self.Obj_Class));
             when Obj_Name =>

@@ -91,9 +91,10 @@ package CDAP is
 
    --  Print message contents for debugging purposes
    procedure Put (Self : CDAPMessage);
-  
-   type Field_Variadic is array(Positive range <>) of CDAP_Field;
-   function Encode (Self : CDAPMessage; Fields: Field_Variadic) return Byte_Buffer;
+
+   type Field_Variadic is array (Positive range <>) of CDAP_Field;
+   function Encode
+     (Self : CDAPMessage; Fields : Field_Variadic) return Byte_Buffer;
 
    --  Takes in a vector of bytes and returns a CDAP message record
    procedure To_CDAP (M : in out CDAPMessage; V : in Byte_Vector);

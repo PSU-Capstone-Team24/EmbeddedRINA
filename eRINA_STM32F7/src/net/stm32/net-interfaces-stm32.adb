@@ -29,7 +29,7 @@ with HAL;
 with Cortex_M.Cache;
 with Debug;
 with Net.Buffers; use Net.Buffers;
-with Buffers; use Buffers;
+with Buffers;     use Buffers;
 
 package body Net.Interfaces.STM32 is
 
@@ -63,7 +63,7 @@ package body Net.Interfaces.STM32 is
      (System.Address, Rx_Ring_Array_Type_Access);
 
    Tx_Ring_Instance : aliased Tx_Ring_Array_Type;
-   
+
    function Next_Tx (Value : in Tx_Position) return Tx_Position;
    function Next_Rx (Value : in Rx_Position) return Rx_Position;
 
@@ -146,17 +146,18 @@ package body Net.Interfaces.STM32 is
            (Debug.Info,
             "Ethernet frame transmitted with" & Buf.Get_Length'Image &
             " Bytes");
-         
-            declare
-               Buf_Raw :
-                  Byte_Buffer
-                     (1 .. Integer (Buf.Get_Data_Size (Net.Buffers.RAW_PACKET))) with
-                  Address =>
-                     Buf.Get_Data_Address
-                     (Net.Buffers.Offsets (Net.Buffers.RAW_PACKET));
-            begin
-               Debug.Print (Debug.Info, Buffer_To_Byte_String (Buf_Raw));
-            end;
+
+         declare
+            Buf_Raw :
+              Byte_Buffer
+                (1 ..
+                     Integer (Buf.Get_Data_Size (Net.Buffers.RAW_PACKET))) with
+              Address =>
+               Buf.Get_Data_Address
+                 (Net.Buffers.Offsets (Net.Buffers.RAW_PACKET));
+         begin
+            Debug.Print (Debug.Info, Buffer_To_Byte_String (Buf_Raw));
+         end;
 
          Transmit_Queue.Send (Buf);
       exception
@@ -458,7 +459,7 @@ package body Net.Interfaces.STM32 is
       loop
          if Receive_Queue.Get_Cur_RX /= RX_Pos then
             RX_Active := True;
-            RX_Pos := Receive_Queue.Get_Cur_RX;
+            RX_Pos    := Receive_Queue.Get_Cur_RX;
             delay 0.1;
          else
             RX_Active := False;
@@ -466,7 +467,7 @@ package body Net.Interfaces.STM32 is
 
          if Transmit_Queue.Get_Cur_TX /= TX_Pos then
             TX_Active := True;
-            TX_Pos := Transmit_Queue.Get_Cur_TX;
+            TX_Pos    := Transmit_Queue.Get_Cur_TX;
             delay 0.1;
          else
             TX_Active := False;

@@ -28,12 +28,16 @@ package body GUI is
 
    function Get_TX_Status_Color return Bitmap_Color is
    begin
-      return (if Net.Interfaces.STM32.TX_Active then GUI.TX_Active else GUI.TX_Inactive);
+      return
+        (if Net.Interfaces.STM32.TX_Active then GUI.TX_Active
+         else GUI.TX_Inactive);
    end Get_TX_Status_Color;
 
    function Get_RX_Status_Color return Bitmap_Color is
    begin
-      return (if Net.Interfaces.STM32.RX_Active then GUI.RX_Active else GUI.RX_Inactive);
+      return
+        (if Net.Interfaces.STM32.RX_Active then GUI.RX_Active
+         else GUI.RX_Inactive);
    end Get_RX_Status_Color;
 
    procedure Draw_Rectangle (P : Point; S : Size; C : Bitmap_Color) is

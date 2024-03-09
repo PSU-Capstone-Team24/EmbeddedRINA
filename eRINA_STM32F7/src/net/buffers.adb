@@ -20,12 +20,13 @@ package body Buffers is
       return Result;
    end Buffer_To_String;
 
-   function String_To_Byte_Vector (Input : Unbounded_String) return Byte_Vector is
+   function String_To_Byte_Vector (Input : Unbounded_String) return Byte_Vector
+   is
       Str : constant String := To_String (Input);
       Vec : Byte_Vector;
    begin
       for I in Str'Range loop
-         Vec.Append (Character'Pos(Str(I)));
+         Vec.Append (Character'Pos (Str (I)));
       end loop;
 
       return Vec;
@@ -70,11 +71,12 @@ package body Buffers is
       return Hex_String;
    end Buffer_To_Byte_String;
 
-
-   procedure Append_Byte_Buffer_To_Vector (Buffer : in Byte_Buffer; Vector : in out Byte_Vector) is
+   procedure Append_Byte_Buffer_To_Vector
+     (Buffer : in Byte_Buffer; Vector : in out Byte_Vector)
+   is
    begin
       for I in Buffer'Range loop
-         Vector.Append (Buffer(I));
+         Vector.Append (Buffer (I));
       end loop;
    end Append_Byte_Buffer_To_Vector;
 
