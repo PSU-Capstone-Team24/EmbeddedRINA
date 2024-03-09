@@ -1,3 +1,5 @@
+with Buffers; use Buffers;
+
 package Net.Headers is
 
    pragma Preelaborate;
@@ -12,8 +14,8 @@ package Net.Headers is
 
    --  Ethernet header as defined for 802.3 Ethernet packet.
    type Ether_Header is record
-      Ether_Dhost : Ether_Addr;
-      Ether_Shost : Ether_Addr;
+      Ether_Dhost : Ether_Addr   := (16#FF#, 16#FF#, 16#FF#, 16#FF#, 16#FF#, 16#FF#);
+      Ether_Shost : Ether_Addr   := (16#00#, 16#81#, 16#E1#, 16#05#, 16#05#, 16#01#);
       Ether_Type  : Uint16;
    end record;
    type Ether_Header_Access is access all Ether_Header;
@@ -102,7 +104,9 @@ package Net.Headers is
    type EFCP_Packet is record
       Ethernet : Ether_Header;
       Efcp     : EFCP_Header;
+      Cdap     : Byte_Buffer (1 .. 2048);
    end record;
+   pragma Pack (EFCP_Packet);
 
    type EFCP_Packet_Access is access all EFCP_Packet;
 

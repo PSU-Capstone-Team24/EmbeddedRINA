@@ -156,6 +156,7 @@ package Net.Buffers is
 
    --  Set the packet type.
    procedure Set_Type (Buf : in out Buffer_Type; Kind : in Packet_Type);
+   function Get_Type (Buf : in out Buffer_Type) return Packet_Type;
 
    --  Add a byte to the buffer data, moving the buffer write position.
    procedure Put_Uint8 (Buf : in out Buffer_Type; Value : in Net.Uint8) with

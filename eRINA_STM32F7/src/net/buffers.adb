@@ -1,4 +1,5 @@
 with Net.Utils;
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 
 package body Buffers is
 
@@ -18,6 +19,17 @@ package body Buffers is
 
       return Result;
    end Buffer_To_String;
+
+   function String_To_Byte_Vector (Input : Unbounded_String) return Byte_Vector is
+      Str : constant String := To_String (Input);
+      Vec : Byte_Vector;
+   begin
+      for I in Str'Range loop
+         Vec.Append (Character'Pos(Str(I)));
+      end loop;
+
+      return Vec;
+   end String_To_Byte_Vector;
 
    function Byte_Vector_To_Buffer (Vector : Byte_Vector) return Byte_Buffer is
       Buffer : Byte_Buffer (1 .. Natural (Vector.Length)) := (others => 0);
@@ -47,7 +59,7 @@ package body Buffers is
    begin
       for I in Buffer'First .. Buffer'Last loop
          declare
-            Hex : String := Net.Utils.Hex (Unsigned_8 (Buffer (I)));
+            Hex : constant String := Net.Utils.Hex (Unsigned_8 (Buffer (I)));
          begin
             Hex_String (Hex_Index .. Hex_Index + 1) := Hex;
             Hex_String (Hex_Index + 2)              := ' ';
@@ -57,6 +69,14 @@ package body Buffers is
 
       return Hex_String;
    end Buffer_To_Byte_String;
+
+
+   procedure Append_Byte_Buffer_To_Vector (Buffer : in Byte_Buffer; Vector : in out Byte_Vector) is
+   begin
+      for I in Buffer'Range loop
+         Vector.Append (Buffer(I));
+      end loop;
+   end Append_Byte_Buffer_To_Vector;
 
    function Buffer_Reverse (Buffer : in Byte_Buffer) return Byte_Buffer is
       Return_Buffer : Byte_Buffer (Buffer'First .. Buffer'Last) :=

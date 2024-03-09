@@ -1,5 +1,6 @@
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Buffers;               use Buffers;
+with Protobuf;              use Protobuf;
 
 package CDAP is
 
@@ -90,22 +91,15 @@ package CDAP is
 
    --  Print message contents for debugging purposes
    procedure Put (Self : CDAPMessage);
+  
+   type Field_Variadic is array(Positive range <>) of CDAP_Field;
+   function Encode (Self : CDAPMessage; Fields: Field_Variadic) return Byte_Buffer;
 
    --  Takes in a vector of bytes and returns a CDAP message record
    procedure To_CDAP (M : in out CDAPMessage; V : in Byte_Vector);
-   function Tag_To_CDAP_Field (Input : Byte_Vector) return CDAP_Field;
-   function Tag_To_OBJ_Value_Field
-     (Input : Byte_Vector) return Obj_Value_Field;
-   function To_OBJ_Value (V : in Byte_Vector) return Obj_Value;
 
-   procedure Set_Field
-     (Self : in out CDAPMessage; Field : CDAP_Field; Val : Op_Code);
-   procedure Set_Field
-     (Self : in out CDAPMessage; Field : CDAP_Field; Val : CDAPFlags);
-   procedure Set_Field
-     (Self : in out CDAPMessage; Field : CDAP_Field; Val : Auth_Value);
-   procedure Set_Field
-     (Self : in out CDAPMessage; Field : CDAP_Field; Val : Uint64);
-   procedure Set_Field
-     (Self : in out CDAPMessage; Field : CDAP_Field; Val : Byte_Vector);
+   --  Takes a CDAP message field and returns a VARINT encoded byte buffer
+   function To_VARINT (Value : Uint32) return Byte_Vector;
+
+   function Field_To_Wire_Type (Input : CDAP_Field) return Wire;
 end CDAP;

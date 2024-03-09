@@ -256,6 +256,11 @@ package body Net.Buffers is
       Buf.Pos  := Offsets (Kind);
    end Set_Type;
 
+   function Get_Type (Buf : in out Buffer_Type) return Packet_Type is
+   begin
+      return Buf.Kind;
+   end Get_Type;
+
    --  ------------------------------
    --  Add a byte to the buffer data, moving the buffer write position.
    --  ------------------------------
