@@ -28,6 +28,8 @@ with STM32_SVD.Ethernet;
 with HAL;
 with Cortex_M.Cache;
 with Debug;
+with Net.Buffers; use Net.Buffers;
+with Buffers; use Buffers;
 
 package body Net.Interfaces.STM32 is
 
@@ -144,6 +146,18 @@ package body Net.Interfaces.STM32 is
            (Debug.Info,
             "Ethernet frame transmitted with" & Buf.Get_Length'Image &
             " Bytes");
+         
+            declare
+               Buf_Raw :
+                  Byte_Buffer
+                     (1 .. Integer (Buf.Get_Data_Size (Net.Buffers.RAW_PACKET))) with
+                  Address =>
+                     Buf.Get_Data_Address
+                     (Net.Buffers.Offsets (Net.Buffers.RAW_PACKET));
+            begin
+               Debug.Print (Debug.Info, Buffer_To_Byte_String (Buf_Raw));
+            end;
+
          Transmit_Queue.Send (Buf);
       exception
          when E : others =>
