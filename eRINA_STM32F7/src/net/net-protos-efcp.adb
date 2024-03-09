@@ -1,5 +1,6 @@
 with Debug;
 with Net.Headers;
+with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 
 package body Net.Protos.EFCP is
 
@@ -28,10 +29,21 @@ package body Net.Protos.EFCP is
 
       --  Incoming connection request
       if Message.OpCode = M_CONNECT then
+         Message.Abs_Syntax   := 73;
+         Message.OpCode       := M_CONNECT_R;
+         Message.Invoke_Id    := 2;
+         Message.Flags        := F_NO_FLAGS;
+         Message.Src_AP_Name  := To_Unbounded_String ("b.IPCP");
+         Message.Dest_AP_Name := To_Unbounded_String ("a.IPCP");
+         Message.Version      := 1;
          Send
            (Ifnet,
             Message.Encode
-              ((Abs_Syntax, OpCode, Invoke_Id, Flags, Obj_Class, Obj_Name)));
+              ((Abs_Syntax, OpCode, Invoke_Id, Flags,
+                Obj_Class, Obj_Name, Result, Dest_AE_Inst,
+                Dest_AE_Name, Dest_Ap_Inst, Dest_AP_Name,
+                Src_AE_Inst, Src_AE_Name, Src_AP_Inst,
+                SRC_AP_Name, Version)));
          Debug.Print (Debug.Info, "Connect Request");
       end if;
    end Receive;

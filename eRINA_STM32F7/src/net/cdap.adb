@@ -481,11 +481,24 @@ package body CDAP is
    function To_Tag (Field : CDAP_Field; Wire_Type : Wire) return Byte_Vector is
       Vec     : Byte_Vector;
       Tag_Num : constant Integer := CDAP_Field'Enum_Rep (Field);
-      Tag     : constant Byte    :=
-        Byte (Tag_Num * (2**3)) or Byte (Wire'Enum_Rep (Wire_Type));
+      Wire_Num : constant Integer := Wire'Enum_Rep (Wire_Type);
+      Key_Value : Natural := (Tag_Num * (2 ** 3)) + Wire_Num;
    begin
       --  First we need to append the record "tag" field
-      Vec.Append (Tag);
+      loop
+         declare
+            Byte_To_Add : constant Byte := Byte (Key_Value mod (2 ** 7));
+         begin
+            if Key_Value >= 128 then
+               Vec.Append (Byte_To_Add + 128);
+            else
+               Vec.Append (Byte_To_Add);
+               exit;
+            end if;
+         end;
+
+         Key_Value := Key_Value / (2 ** 7);
+      end loop;
 
       return Vec;
    end To_Tag;
@@ -511,6 +524,22 @@ package body CDAP is
             return VARINT;
          when Scope =>
             return VARINT;
+         when Dest_AE_Inst =>
+            return LEN;
+         when Dest_AE_Name =>
+            return LEN;
+         when Dest_AP_Inst =>
+            return LEN;
+         when Dest_AP_Name =>
+            return LEN;
+         when Src_AE_Inst =>
+            return LEN;
+         when Src_AE_Name =>
+            return LEN;
+         when Src_AP_Inst =>
+            return LEN;
+         when Src_AP_Name =>
+            return LEN;
          when others =>
             return VARINT;
       end case;
@@ -593,10 +622,31 @@ package body CDAP is
                Ret.Append (To_LEN (Self.Obj_Name));
             when Obj_Inst =>
                Ret.Append (To_VARINT (Self.Obj_Inst));
+            when Result =>
+               Ret.Append (To_VARINT (Self.Result));
+            when Dest_AE_Inst =>
+               Ret.Append (To_LEN (Self.Dest_Ae_Inst));
+            when Dest_AE_Name =>
+               Ret.Append (To_LEN (Self.Dest_Ae_Name));
+            when Dest_AP_Inst =>
+               Ret.Append (To_LEN (Self.Dest_Ap_Inst));
+            when Dest_AP_Name =>
+               Ret.Append (To_LEN (Self.Dest_Ap_Name));
+            when Src_AE_Inst =>
+               Ret.Append (To_LEN (Self.Src_AE_Inst));
+            when Src_AE_Name =>
+               Ret.Append (To_LEN (Self.Src_AE_Name));
+            when Src_AP_Inst =>
+               Ret.Append (To_LEN (Self.Src_AP_Inst));
+            when Src_AP_Name =>
+               Ret.Append (To_LEN (Self.Src_AP_Name));
             when others =>
                null;
          end case;
       end loop;
+
+      --  Ends with 01
+      Ret.Append ((16#01#));
 
       return Byte_Vector_To_Buffer (Ret);
    end Encode;
