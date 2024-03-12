@@ -24,7 +24,7 @@ begin
    STM32.Board.All_LEDs_Off;
 
    --  Create a new DIF
-   This_DIF := DIF_Manager.Create ("ethAB.DIF", Normal);
+   This_DIF := DIF_Manager.Create ("ethAB.DIF", Ethernet);
    DIF_Manager.DIF_List.Append (This_DIF);
 
    --  Create the IPC process we want to enroll into the DIF

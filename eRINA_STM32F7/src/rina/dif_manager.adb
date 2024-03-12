@@ -15,6 +15,18 @@ package body DIF_Manager is
       raise Element_Not_Found;
    end Get;
 
+   function Exists (Name : String; DIF_Type : DIF_Types) return Boolean is
+      DIF_Found : DIF;
+   begin
+      begin
+         DIF_Found := Get (Name, DIF_Type);
+         return true;
+      exception
+         when Element_Not_Found =>
+            return false;
+      end;
+   end Exists;
+
    function Get_IPCP (Name : String) return IPCP is
    begin
       for DIF of DIF_List loop

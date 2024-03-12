@@ -34,6 +34,9 @@ package DIF_Manager is
    --  Checks the set of all DIFs in the system for a DIF with the matching name and type
    function Get (Name : String; DIF_Type : DIF_Types) return DIF;
 
+   --  Checks if a DIF exists with the same Name and Type parameters
+   function Exists (Name : String; DIF_Type : DIF_Types) return Boolean;
+
    --  MT: TODO: Implement these
    function Create (Name : String; DIF_Type : DIF_Types) return DIF_Access;
    procedure Register
