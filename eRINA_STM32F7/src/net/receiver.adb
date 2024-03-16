@@ -2,7 +2,7 @@ with Ada.Real_Time;
 with Ada.Exceptions; use Ada.Exceptions;
 with Ada.Synchronous_Task_Control;
 with Net.Buffers;
-with Net.Protos.ARP;
+with Net.Protos.Arp;
 with Net.Protos.EFCP;
 with Net.Headers;
 with Network;
@@ -49,7 +49,6 @@ package body Receiver is
 
       loop
          begin
-
             if Packet.Is_Null then
                Net.Buffers.Allocate (Packet);
             end if;
@@ -62,7 +61,7 @@ package body Receiver is
                if Ether.Ether_Type =
                  Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
                then
-                  Net.Protos.ARP.Receive (Network.Ifnet, Packet);
+                  Net.Protos.Arp.Receive (Network.Ifnet, Packet);
                elsif Ether.Ether_Type =
                  Net.Headers.To_Network (Net.Protos.ETHERTYPE_RINA)
                then
@@ -95,7 +94,8 @@ package body Receiver is
             end if;
          exception
             when E : others =>
-               Debug.Print (Debug.Error, Exception_Information (E));
+               Debug.Print
+                 (Debug.Error, "Error! " & Exception_Information (E));
          end;
       end loop;
    end Controller;
