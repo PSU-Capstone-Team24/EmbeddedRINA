@@ -25,6 +25,7 @@ package body Buffers is
       Str : constant String := To_String (Input);
       Vec : Byte_Vector;
    begin
+
       for I in Str'Range loop
          Vec.Append (Character'Pos (Str (I)));
       end loop;
@@ -36,7 +37,7 @@ package body Buffers is
       Buffer : Byte_Buffer (1 .. Natural (Vector.Length)) := (others => 0);
    begin
       for I in Buffer'Range loop
-         Buffer (I) := Vector.Element (I);
+         Buffer (I) := Vector (I);
       end loop;
 
       return Buffer;

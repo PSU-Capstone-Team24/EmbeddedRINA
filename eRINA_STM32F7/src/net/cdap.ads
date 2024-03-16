@@ -2,7 +2,11 @@ with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Buffers;               use Buffers;
 with Protobuf;              use Protobuf;
 with Ada.Containers.Vectors;
+with Ada.Real_Time;         use Ada.Real_Time;
+
 package CDAP is
+
+   Startup_Time : Time := Clock;
 
    type Op_Code is
      (M_CONNECT, M_CONNECT_R, M_RELEASE, M_RELEASE_R, M_CREATE, M_CREATE_R,
@@ -27,7 +31,8 @@ package CDAP is
      (Intval  => 1, Sintval => 2, Int_64val => 3, Sint_64val => 4, Strval => 5,
       Byteval => 6, Floatval => 7, Doubleval => 8, Boolval => 9);
 
-   package OBJ_Value_Fields is new Ada.Containers.Vectors (Natural, Obj_Value_Field);
+   package OBJ_Value_Fields is new Ada.Containers.Vectors
+     (Natural, Obj_Value_Field);
    subtype OBJ_Value_Field_Vector is OBJ_Value_Fields.Vector;
 
    type Obj_Value is tagged record
@@ -43,11 +48,11 @@ package CDAP is
       Boolval    : Boolean          := False;
    end record;
 
+   procedure Clear_Fields (Self : in out Obj_Value);
    procedure Set_Field
      (Self : in out Obj_Value; Field : Obj_Value_Field; Val : Uint64);
    procedure Set_Field
-     (Self : in out Obj_Value; Field : Obj_Value_Field;
-      Val  :        Unbounded_String);
+     (Self : in out Obj_Value; Field : Obj_Value_Field; Val : String);
    procedure Set_Field
      (Self : in out Obj_Value; Field : Obj_Value_Field; Val : Boolean);
    procedure Set_Field
@@ -66,21 +71,24 @@ package CDAP is
       Dest_AE_Name => 20, Dest_AP_Inst => 21, Dest_AP_Name => 22,
       Src_AE_Inst  => 23, Src_AE_Name => 24, Src_AP_Inst => 25,
       Src_AP_Name  => 26, Result_Reason => 27, Version => 28);
-   
+
    package Field_Vectors is new Ada.Containers.Vectors (Natural, CDAP_Field);
    subtype Field_Vector is Field_Vectors.Vector;
 
-   type DTC_Field is (Max_PDU_Size, Address_Width, Port_Id_Width,
-   Cep_Id_Width, Qos_Id_Width, Seq_Num_Width, Length_Width,
-   Seq_Rollover_Thresh, Max_Pdu_Lifetime, Concatenation_Enabled,
-   Fragmentation_Enabled, Integrity_Enabled, Max_Rtx_Time,
-   Max_Ack_Delay, Rate_Width, Frame_Width, Ctrl_Seq_Num_Width);
+   type DTC_Field is
+     (Max_PDU_Size, Address_Width, Port_Id_Width, Cep_Id_Width, Qos_Id_Width,
+      Seq_Num_Width, Length_Width, Seq_Rollover_Thresh, Max_Pdu_Lifetime,
+      Concatenation_Enabled, Fragmentation_Enabled, Integrity_Enabled,
+      Max_Rtx_Time, Max_Ack_Delay, Rate_Width, Frame_Width,
+      Ctrl_Seq_Num_Width);
 
-   for DTC_Field use (Max_PDU_Size => 1, Address_Width => 2, Port_Id_Width => 3,
-   Cep_Id_Width => 4, Qos_Id_Width => 5, Seq_Num_Width => 6, Length_Width => 7,
-   Seq_Rollover_Thresh => 8, Max_Pdu_Lifetime => 9, Concatenation_Enabled => 10,
-   Fragmentation_Enabled => 11, Integrity_Enabled => 12, Max_Rtx_Time => 13,
-   Max_Ack_Delay => 14, Rate_Width => 15, Frame_Width => 16, Ctrl_Seq_Num_Width => 17);
+   for DTC_Field use
+     (Max_PDU_Size          => 1, Address_Width => 2, Port_Id_Width => 3,
+      Cep_Id_Width          => 4, Qos_Id_Width => 5, Seq_Num_Width => 6,
+      Length_Width => 7, Seq_Rollover_Thresh => 8, Max_Pdu_Lifetime => 9,
+      Concatenation_Enabled => 10, Fragmentation_Enabled => 11,
+      Integrity_Enabled     => 12, Max_Rtx_Time => 13, Max_Ack_Delay => 14,
+      Rate_Width => 15, Frame_Width => 16, Ctrl_Seq_Num_Width => 17);
 
    type Data_Transfer_Constants is tagged record
       Max_Pdu_Size          : Uint32;
@@ -103,23 +111,28 @@ package CDAP is
    end record;
 
    type DTC_Field_Variadic is array (Positive range <>) of DTC_Field;
-   function Encode (Self : Data_Transfer_Constants; Fields : DTC_Field_Variadic) return Byte_Buffer;
+   function Encode
+     (Self : Data_Transfer_Constants; Fields : DTC_Field_Variadic)
+      return Byte_Buffer;
 
    --  No specified fields argument means we encode all fields
    function Encode (Self : Data_Transfer_Constants) return Byte_Buffer;
 
    type Enrollment_Info is tagged record
-      Address : Uint64;
-      Lower_Difs : Unbounded_String;
-      Start_Early : Boolean;
+      Address      : Uint64;
+      Lower_Difs   : Unbounded_String;
+      Start_Early  : Boolean;
       Dt_Constants : Data_Transfer_Constants;
    end record;
 
    type EInfo_Field is (Address, Lower_Difs, Start_Early, Dt_Constants);
-   for EInfo_Field use (Address => 1, Lower_Difs => 2, Start_Early => 3, Dt_Constants => 4);
+   for EInfo_Field use
+     (Address => 1, Lower_Difs => 2, Start_Early => 3, Dt_Constants => 4);
    type EInfo_Field_Variadic is array (Positive range <>) of EInfo_Field;
 
-   function Encode (Self : Enrollment_Info; Fields : EInfo_Field_Variadic) return Byte_Buffer;
+   function Encode
+     (Self : Enrollment_Info; Fields : EInfo_Field_Variadic)
+      return Byte_Buffer;
 
    --  No specified fields argument means we encode all fields
    function Encode (Self : Enrollment_Info) return Byte_Buffer;
@@ -157,6 +170,8 @@ package CDAP is
    type Field_Variadic is array (Positive range <>) of CDAP_Field;
    function Encode
      (Self : CDAPMessage; Fields : Field_Variadic) return Byte_Buffer;
+
+   procedure Clear_Fields (Self : in out CDAPMessage);
 
    --  Takes in a vector of bytes and returns a CDAP message record
    procedure To_CDAP (M : in out CDAPMessage; V : in Byte_Vector);

@@ -126,10 +126,15 @@ package body CDAP is
       end case;
    end Set_Field;
 
+   procedure Clear_Fields (Self : in out Obj_Value) is
+   begin
+      Self.Set_Fields.Clear;
+   end Clear_Fields;
+
    procedure Set_Field
      (Self : in out Obj_Value; Field : Obj_Value_Field; Val : Uint64)
    is
-   begin      
+   begin
       Self.Set_Fields.Append (Field);
 
       case Field is
@@ -171,6 +176,11 @@ package body CDAP is
       end if;
 
    end Set_Field;
+
+   procedure Clear_Fields (Self : in out CDAPMessage) is
+   begin
+      Self.Set_Fields.Clear;
+   end Clear_Fields;
 
    procedure Set_Field
      (Self : in out CDAPMessage; Field : CDAP_Field; Val : Byte_Vector)
@@ -243,11 +253,11 @@ package body CDAP is
    end Set_Field;
 
    procedure Set_Field
-     (Self : in out Obj_Value; Field : Obj_Value_Field; Val : Unbounded_String)
+     (Self : in out Obj_Value; Field : Obj_Value_Field; Val : String)
    is
    begin
       Self.Set_Fields.Append (Field);
-      null;
+      Self.Strval := To_Unbounded_String (Val);
    end Set_Field;
 
    procedure Set_Field
@@ -261,22 +271,23 @@ package body CDAP is
    procedure Put (Self : CDAPMessage) is
    begin
       Debug.Print (Debug.Info, "Message Contents:");
-      
+
       --  Abs_Syntax
       if Self.Set_Fields.Contains (Abs_Syntax) then
          Debug.Print
-            (Debug.Info, Head ("Abs_Syntax:", 15, ' ') & Self.Abs_Syntax'Image);
+           (Debug.Info, Head ("Abs_Syntax:", 15, ' ') & Self.Abs_Syntax'Image);
       end if;
 
       --  OpCode
       if Self.Set_Fields.Contains (OpCode) then
-         Debug.Print (Debug.Info, Head ("OpCode:", 16, ' ') & Self.OpCode'Image);
-      end if; 
+         Debug.Print
+           (Debug.Info, Head ("OpCode:", 16, ' ') & Self.OpCode'Image);
+      end if;
 
       --  Invoke_Id
       if Self.Set_Fields.Contains (Invoke_Id) then
          Debug.Print
-         (Debug.Info, Head ("Invoke_Id:", 15, ' ') & Self.Invoke_Id'Image);
+           (Debug.Info, Head ("Invoke_Id:", 15, ' ') & Self.Invoke_Id'Image);
       end if;
 
       --  Flags
@@ -287,7 +298,7 @@ package body CDAP is
       --  Obj_Class
       if Self.Set_Fields.Contains (Obj_Class) then
          Debug.Print
-         (Debug.Info,
+           (Debug.Info,
             Head ("Obj_Class:", 16, ' ') & "'" & To_String (Self.Obj_Class) &
             "'");
       end if;
@@ -295,14 +306,15 @@ package body CDAP is
       --  Obj_Name
       if Self.Set_Fields.Contains (Obj_Name) then
          Debug.Print
-         (Debug.Info,
-            Head ("Obj_Name:", 16, ' ') & "'" & To_String (Self.Obj_Name) & "'");
+           (Debug.Info,
+            Head ("Obj_Name:", 16, ' ') & "'" & To_String (Self.Obj_Name) &
+            "'");
       end if;
 
       --  Obj_Inst
       if Self.Set_Fields.Contains (Obj_Inst) then
          Debug.Print
-         (Debug.Info, Head ("Obj_Inst:", 15, ' ') & Self.Obj_Inst'Image);
+           (Debug.Info, Head ("Obj_Inst:", 15, ' ') & Self.Obj_Inst'Image);
       end if;
 
       --  Obj_Value
@@ -310,43 +322,64 @@ package body CDAP is
          Debug.Print (Debug.Info, "Obj_Value:");
 
          --  Obj_Value.IntVal
-         Debug.Print (Debug.Info, Head("  IntVal:", 15, ' ') & Self.ObjValue.Intval'Image);
+         Debug.Print
+           (Debug.Info,
+            Head ("  IntVal:", 15, ' ') & Self.ObjValue.Intval'Image);
 
          --  Obj_Value.IntVal
-         Debug.Print (Debug.Info, Head("  Sintval:", 15, ' ') & Self.ObjValue.Sintval'Image);
+         Debug.Print
+           (Debug.Info,
+            Head ("  Sintval:", 15, ' ') & Self.ObjValue.Sintval'Image);
 
          --  Obj_Value.Int_64val
-         Debug.Print (Debug.Info, Head("  Int_64val:", 15, ' ') & Self.ObjValue.Int_64val'Image);
+         Debug.Print
+           (Debug.Info,
+            Head ("  Int_64val:", 15, ' ') & Self.ObjValue.Int_64val'Image);
 
          --  Obj_Value.Sint_64val
-         Debug.Print (Debug.Info, Head("  Sint_64val:", 15, ' ') & Self.ObjValue.Sint_64val'Image);
+         Debug.Print
+           (Debug.Info,
+            Head ("  Sint_64val:", 15, ' ') & Self.ObjValue.Sint_64val'Image);
 
          --  Obj_Value.Strval
-         Debug.Print (Debug.Info, Head("  Strval:", 16, ' ') & "'" & To_String(Self.ObjValue.Strval) & "'");
+         Debug.Print
+           (Debug.Info,
+            Head ("  Strval:", 16, ' ') & "'" &
+            To_String (Self.ObjValue.Strval) & "'");
 
          --  Obj_Value.Byteval
-         Debug.Print (Debug.Info, Head("  Byteval:", 16, ' '));
+         Debug.Print (Debug.Info, Head ("  Byteval:", 16, ' '));
 
          case Self.ObjValue.Byteval.Length is
             when 0 =>
                Debug.Print (Debug.Info, "N/A");
             when others =>
-               Debug.Print (Debug.Info, Buffer_To_Byte_String (Byte_Vector_To_Buffer (Self.ObjValue.Byteval)));
+               Debug.Print
+                 (Debug.Info,
+                  Buffer_To_Byte_String
+                    (Byte_Vector_To_Buffer (Self.ObjValue.Byteval)));
          end case;
 
          --  Obj_Value.Floatval
-         Debug.Print (Debug.Info, Head("  Floatval:", 15, ' ') & Self.ObjValue.Floatval'Image);
+         Debug.Print
+           (Debug.Info,
+            Head ("  Floatval:", 15, ' ') & Self.ObjValue.Floatval'Image);
 
          --  Obj_Value.Doubleval
-         Debug.Print (Debug.Info, Head("  Doubleval:", 15, ' ')  & Self.ObjValue.Doubleval'Image);
+         Debug.Print
+           (Debug.Info,
+            Head ("  Doubleval:", 15, ' ') & Self.ObjValue.Doubleval'Image);
 
          --  Obj_Value.Boolval
-         Debug.Print (Debug.Info, Head("  Boolval:", 16, ' ') & Self.ObjValue.Boolval'Image);
+         Debug.Print
+           (Debug.Info,
+            Head ("  Boolval:", 16, ' ') & Self.ObjValue.Boolval'Image);
       end if;
 
       --  Result
       if Self.Set_Fields.Contains (Result) then
-         Debug.Print (Debug.Info, Head ("Result:", 15, ' ') & Self.Result'Image);
+         Debug.Print
+           (Debug.Info, Head ("Result:", 15, ' ') & Self.Result'Image);
       end if;
 
       --  Scope
@@ -356,18 +389,22 @@ package body CDAP is
 
       --  Filter
       if Self.Set_Fields.Contains (Filter) then
-         Debug.Print (Debug.Info, Head ("Filter:", 15, ' ') & Self.Filter'Image);
+         Debug.Print
+           (Debug.Info, Head ("Filter:", 15, ' ') & Self.Filter'Image);
       end if;
 
       --  Auth_Mech
       if Self.Set_Fields.Contains (Auth_Mech) then
-         Debug.Print (Debug.Info, Head ("Auth_Mech:", 16, ' ') & "'" & To_String(Self.Auth_Mech) & "'");
+         Debug.Print
+           (Debug.Info,
+            Head ("Auth_Mech:", 16, ' ') & "'" & To_String (Self.Auth_Mech) &
+            "'");
       end if;
 
       --  Dest_Ae_Inst
       if Self.Set_Fields.Contains (Dest_Ae_Inst) then
          Debug.Print
-         (Debug.Info,
+           (Debug.Info,
             Head ("Dest_Ae_Inst:", 16, ' ') & "'" &
             To_String (Self.Dest_Ae_Inst) & "'");
       end if;
@@ -375,7 +412,7 @@ package body CDAP is
       --  Dest_Ae_Name
       if Self.Set_Fields.Contains (Dest_Ae_Name) then
          Debug.Print
-         (Debug.Info,
+           (Debug.Info,
             Head ("Dest_Ae_Name:", 16, ' ') & "'" &
             To_String (Self.Dest_Ae_Name) & "'");
       end if;
@@ -383,7 +420,7 @@ package body CDAP is
       --  Dest_Ap_Inst
       if Self.Set_Fields.Contains (Dest_Ap_Inst) then
          Debug.Print
-         (Debug.Info,
+           (Debug.Info,
             Head ("Dest_Ap_Inst:", 16, ' ') & "'" &
             To_String (Self.Dest_Ap_Inst) & "'");
       end if;
@@ -391,7 +428,7 @@ package body CDAP is
       --  Dest_Ap_Name
       if Self.Set_Fields.Contains (Dest_Ap_Name) then
          Debug.Print
-         (Debug.Info,
+           (Debug.Info,
             Head ("Dest_Ap_Name:", 16, ' ') & "'" &
             To_String (Self.Dest_Ap_Name) & "'");
       end if;
@@ -399,7 +436,7 @@ package body CDAP is
       --  Src_Ae_Inst
       if Self.Set_Fields.Contains (Src_Ae_Inst) then
          Debug.Print
-         (Debug.Info,
+           (Debug.Info,
             Head ("Src_Ae_Inst:", 16, ' ') & "'" &
             To_String (Self.Src_Ae_Inst) & "'");
       end if;
@@ -407,7 +444,7 @@ package body CDAP is
       --  Src_Ae_Name
       if Self.Set_Fields.Contains (Src_Ae_Name) then
          Debug.Print
-         (Debug.Info,
+           (Debug.Info,
             Head ("Src_Ae_Name:", 16, ' ') & "'" &
             To_String (Self.Src_Ae_Name) & "'");
       end if;
@@ -415,7 +452,7 @@ package body CDAP is
       --  Src_Ap_Inst
       if Self.Set_Fields.Contains (Src_Ap_Inst) then
          Debug.Print
-         (Debug.Info,
+           (Debug.Info,
             Head ("Src_Ap_Inst:", 16, ' ') & "'" &
             To_String (Self.Src_Ap_Inst) & "'");
       end if;
@@ -423,7 +460,7 @@ package body CDAP is
       --  Src_Ap_Name
       if Self.Set_Fields.Contains (Src_Ap_Name) then
          Debug.Print
-         (Debug.Info,
+           (Debug.Info,
             Head ("Src_Ap_Name:", 16, ' ') & "'" &
             To_String (Self.Src_Ap_Name) & "'");
       end if;
@@ -431,7 +468,7 @@ package body CDAP is
       --  Result_Reason
       if Self.Set_Fields.Contains (Result_Reason) then
          Debug.Print
-         (Debug.Info,
+           (Debug.Info,
             Head ("Result_Reason:", 16, ' ') & "'" &
             To_String (Self.Result_Reason) & "'");
       end if;
@@ -439,7 +476,7 @@ package body CDAP is
       --  Version
       if Self.Set_Fields.Contains (Version) then
          Debug.Print
-         (Debug.Info, Head ("Version:", 15, ' ') & Self.Version'Image);
+           (Debug.Info, Head ("Version:", 15, ' ') & Self.Version'Image);
       end if;
 
    end Put;
@@ -485,7 +522,9 @@ package body CDAP is
 
                   --  Decode and update message
                   if Field_Id = OpCode then
-                     M.Set_Field (Field_Id, Op_Code'Val (VARINT_To_Uint64 (VARINT_Vector)));
+                     M.Set_Field
+                       (Field_Id,
+                        Op_Code'Val (VARINT_To_Uint64 (VARINT_Vector)));
                   else
                      M.Set_Field (Field_Id, VARINT_To_Uint64 (VARINT_Vector));
                   end if;
@@ -538,14 +577,14 @@ package body CDAP is
    end To_CDAP;
 
    function To_Tag (Field : Integer; Wire_Type : Wire) return Byte_Vector is
-      Vec     : Byte_Vector;
-      Wire_Num : constant Integer := Wire'Enum_Rep (Wire_Type);
-      Key_Value : Natural := (Field * (2 ** 3)) + Wire_Num;
+      Vec       : Byte_Vector;
+      Wire_Num  : constant Integer := Wire'Enum_Rep (Wire_Type);
+      Key_Value : Natural          := (Field * (2**3)) + Wire_Num;
    begin
       --  First we need to append the record "tag" field
       loop
          declare
-            Byte_To_Add : constant Byte := Byte (Key_Value mod (2 ** 7));
+            Byte_To_Add : constant Byte := Byte (Key_Value mod (2**7));
          begin
             if Key_Value >= 128 then
                Vec.Append (Byte_To_Add + 128);
@@ -555,7 +594,7 @@ package body CDAP is
             end if;
          end;
 
-         Key_Value := Key_Value / (2 ** 7);
+         Key_Value := Key_Value / (2**7);
       end loop;
 
       return Vec;
@@ -592,21 +631,21 @@ package body CDAP is
             return VARINT;
          when Scope =>
             return VARINT;
-         when Dest_AE_Inst =>
+         when Dest_Ae_Inst =>
             return LEN;
-         when Dest_AE_Name =>
+         when Dest_Ae_Name =>
             return LEN;
-         when Dest_AP_Inst =>
+         when Dest_Ap_Inst =>
             return LEN;
-         when Dest_AP_Name =>
+         when Dest_Ap_Name =>
             return LEN;
-         when Src_AE_Inst =>
+         when Src_Ae_Inst =>
             return LEN;
-         when Src_AE_Name =>
+         when Src_Ae_Name =>
             return LEN;
-         when Src_AP_Inst =>
+         when Src_Ap_Inst =>
             return LEN;
-         when Src_AP_Name =>
+         when Src_Ap_Name =>
             return LEN;
          when ObjValue =>
             return LEN;
@@ -657,12 +696,14 @@ package body CDAP is
 
    function To_LEN (Value : Unbounded_String) return Byte_Vector is
       Vec : Byte_Vector;
+      Str : String := To_String (Value);
    begin
       --  Append length of string
-      Vec.Append (To_VARINT (Uint64 (Length (Value))));
+      Vec.Append (To_VARINT (Uint64 (Str'Length)));
 
-      -- Append bytes of string
-      Vec.Append (String_To_Byte_Vector (Value));
+      for I in 1 .. Str'Length loop
+         Vec.Append (Character'Pos (Str (I)));
+      end loop;
 
       return Vec;
    end To_LEN;
@@ -679,38 +720,43 @@ package body CDAP is
    function To_ObjValue (Value : Obj_Value) return Byte_Vector is
       Vec : Byte_Vector;
    begin
-      if Value.Set_Fields.Contains(Intval) then
-         Vec.Append (To_Tag (1, VARINT));
-         Vec.Append (To_VARINT (Value.Intval));
-      end if;
+      begin
+         if Value.Set_Fields.Contains (Intval) then
+            Vec.Append (To_Tag (1, VARINT));
+            Vec.Append (To_VARINT (Value.Intval));
+         end if;
 
-      if Value.Set_Fields.Contains(Sintval) then
-         Vec.Append (To_Tag (2, VARINT));
-         Vec.Append (To_VARINT (Uint32 (Value.Sintval)));
-      end if;
+         if Value.Set_Fields.Contains (Sintval) then
+            Vec.Append (To_Tag (2, VARINT));
+            Vec.Append (To_VARINT (Uint32 (Value.Sintval)));
+         end if;
 
-      if Value.Set_Fields.Contains(Int_64val) then
-         Vec.Append (To_Tag (3, VARINT));
-         Vec.Append (To_VARINT (UInt64 (Value.Int_64val)));
-      end if;
+         if Value.Set_Fields.Contains (Int_64val) then
+            Vec.Append (To_Tag (3, VARINT));
+            Vec.Append (To_VARINT (Uint64 (Value.Int_64val)));
+         end if;
 
-      if Value.Set_Fields.Contains(Sint_64val) then
-         Vec.Append (To_Tag (4, VARINT));
-         Vec.Append (To_VARINT (UInt64 (Value.Sint_64val)));
-      end if;
+         if Value.Set_Fields.Contains (Sint_64val) then
+            Vec.Append (To_Tag (4, VARINT));
+            Vec.Append (To_VARINT (Uint64 (Value.Sint_64val)));
+         end if;
 
-      if Value.Set_Fields.Contains(Strval) then
-         Vec.Append (To_Tag (5, LEN));
-         Vec.Append (To_LEN (Value.Strval));
-      end if;
+         if Value.Set_Fields.Contains (Strval) then
+            Vec.Append (To_Tag (5, LEN));
+            Vec.Append (To_LEN (Value.Strval));
+         end if;
 
-      if Value.Set_Fields.Contains(Byteval) then
-         Vec.Append (To_Tag (6, LEN));
-         Vec.Append (To_LEN (Value.Byteval));
-      end if;
+         if Value.Set_Fields.Contains (Byteval) then
+            Vec.Append (To_Tag (6, LEN));
+            Vec.Append (To_LEN (Value.Byteval));
+         end if;
 
-      Vec.Prepend (Byte (Vec.Length));
-      Vec.Prepend (To_Tag (8, LEN));
+         Vec.Prepend (Byte (Vec.Length));
+         Vec.Prepend (To_Tag (8, LEN));
+      exception
+         when E : others =>
+            Debug.Print (Debug.Error, "Failed during To_ObjValue!");
+      end;
 
       return Vec;
    end To_ObjValue;
@@ -721,6 +767,7 @@ package body CDAP is
       Ret : Byte_Vector;
    begin
       for I in Fields'Range loop
+
          if Fields (I) /= ObjValue then
             Ret.Append (To_Tag (Fields (I), Field_To_Wire_Type (Fields (I))));
          end if;
@@ -746,22 +793,22 @@ package body CDAP is
                Ret.Append (To_ObjValue (Self.ObjValue));
             when Result =>
                Ret.Append (To_VARINT (Self.Result));
-            when Dest_AE_Inst =>
+            when Dest_Ae_Inst =>
                Ret.Append (To_LEN (Self.Dest_Ae_Inst));
-            when Dest_AE_Name =>
+            when Dest_Ae_Name =>
                Ret.Append (To_LEN (Self.Dest_Ae_Name));
-            when Dest_AP_Inst =>
+            when Dest_Ap_Inst =>
                Ret.Append (To_LEN (Self.Dest_Ap_Inst));
-            when Dest_AP_Name =>
+            when Dest_Ap_Name =>
                Ret.Append (To_LEN (Self.Dest_Ap_Name));
-            when Src_AE_Inst =>
-               Ret.Append (To_LEN (Self.Src_AE_Inst));
-            when Src_AE_Name =>
-               Ret.Append (To_LEN (Self.Src_AE_Name));
-            when Src_AP_Inst =>
-               Ret.Append (To_LEN (Self.Src_AP_Inst));
-            when Src_AP_Name =>
-               Ret.Append (To_LEN (Self.Src_AP_Name));
+            when Src_Ae_Inst =>
+               Ret.Append (To_LEN (Self.Src_Ae_Inst));
+            when Src_Ae_Name =>
+               Ret.Append (To_LEN (Self.Src_Ae_Name));
+            when Src_Ap_Inst =>
+               Ret.Append (To_LEN (Self.Src_Ap_Inst));
+            when Src_Ap_Name =>
+               Ret.Append (To_LEN (Self.Src_Ap_Name));
             when others =>
                null;
          end case;
@@ -773,7 +820,10 @@ package body CDAP is
       return Byte_Vector_To_Buffer (Ret);
    end Encode;
 
-   function Encode (Self : Data_Transfer_Constants; Fields : DTC_Field_Variadic) return Byte_Buffer is
+   function Encode
+     (Self : Data_Transfer_Constants; Fields : DTC_Field_Variadic)
+      return Byte_Buffer
+   is
       Ret : Byte_Vector;
    begin
       for I in Fields'Range loop
@@ -799,11 +849,16 @@ package body CDAP is
             when Max_Pdu_Lifetime =>
                Ret.Append (To_VARINT (Self.Max_Pdu_Lifetime));
             when Concatenation_Enabled =>
-               Ret.Append (To_VARINT (UInt32 (Boolean'Pos (Self.Concatenation_Enabled))));
+               Ret.Append
+                 (To_VARINT
+                    (Uint32 (Boolean'Pos (Self.Concatenation_Enabled))));
             when Fragmentation_Enabled =>
-               Ret.Append (To_VARINT (UInt32 (Boolean'Pos (Self.Fragmentation_Enabled))));
+               Ret.Append
+                 (To_VARINT
+                    (Uint32 (Boolean'Pos (Self.Fragmentation_Enabled))));
             when Integrity_Enabled =>
-               Ret.Append (To_VARINT (UInt32 (Boolean'Pos (Self.Integrity_Enabled))));
+               Ret.Append
+                 (To_VARINT (Uint32 (Boolean'Pos (Self.Integrity_Enabled))));
             when Max_Rtx_Time =>
                Ret.Append (To_VARINT (Self.Max_Rtx_Time));
             when Max_Ack_Delay =>
@@ -814,12 +869,12 @@ package body CDAP is
                Ret.Append (To_VARINT (Self.Frame_Width));
             when Ctrl_Seq_Num_Width =>
                Ret.Append (To_VARINT (Self.Ctrl_Seq_Num_Width));
-            --  when others =>
-            --     raise Program_Error with "Unknown DTC field encountered during encoding";
+               --  when others =>
+               --     raise Program_Error with "Unknown DTC field encountered during encoding";
          end case;
       end loop;
 
-      Ret.Prepend (To_VARINT (UInt64 (Ret.Length)));
+      Ret.Prepend (To_VARINT (Uint64 (Ret.Length)));
       Ret.Prepend (To_Tag (4, LEN));
 
       return Byte_Vector_To_Buffer (Ret);
@@ -827,15 +882,19 @@ package body CDAP is
 
    function Encode (Self : Data_Transfer_Constants) return Byte_Buffer is
    begin
-      return Encode (Self, (Max_PDU_Size, Address_Width, Port_Id_Width,
-                           Cep_Id_Width, Qos_Id_Width, Seq_Num_Width, Length_Width,
-                           Seq_Rollover_Thresh, Max_Pdu_Lifetime, Concatenation_Enabled,
-                           Fragmentation_Enabled, Integrity_Enabled, Max_Rtx_Time,
-                           Max_Ack_Delay, Ctrl_Seq_Num_Width));
+      return
+        Encode
+          (Self,
+           (Max_PDU_Size, Address_Width, Port_Id_Width, Cep_Id_Width,
+            Qos_Id_Width, Seq_Num_Width, Length_Width, Seq_Rollover_Thresh,
+            Max_Pdu_Lifetime, Concatenation_Enabled, Fragmentation_Enabled,
+            Integrity_Enabled, Max_Rtx_Time, Max_Ack_Delay,
+            Ctrl_Seq_Num_Width));
    end Encode;
 
-
-   function Encode (Self : Enrollment_Info; Fields : EInfo_Field_Variadic) return Byte_Buffer is
+   function Encode
+     (Self : Enrollment_Info; Fields : EInfo_Field_Variadic) return Byte_Buffer
+   is
       Ret : Byte_Vector;
    begin
       for I in Fields'Range loop
@@ -848,7 +907,8 @@ package body CDAP is
                Ret.Append (To_LEN (Self.Lower_Difs));
             when Start_Early =>
                Ret.Append (To_Tag (3, VARINT));
-               Ret.Append (To_VARINT (UInt32 (Boolean'Pos (Self.Start_Early))));
+               Ret.Append
+                 (To_VARINT (Uint32 (Boolean'Pos (Self.Start_Early))));
             when Dt_Constants =>
                Ret.Append (Byte_Buffer_To_Vector (Self.Dt_Constants.Encode));
          end case;

@@ -400,9 +400,6 @@ package body Net.Protos.Arp is
             Ifnet.Rx_Stats.Ignored := Ifnet.Rx_Stats.Ignored + 1;
             return;
          end if;
-      exception
-         when E : others =>
-            Debug.Print (Debug.Error, Exception_Information (E));
       end;
    end Receive;
 
