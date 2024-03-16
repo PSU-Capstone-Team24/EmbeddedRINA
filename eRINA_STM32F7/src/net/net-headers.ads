@@ -1,20 +1,5 @@
------------------------------------------------------------------------
---  net-headers -- Network headers
---  Copyright (C) 2016 Stephane Carrez
---  Written by Stephane Carrez (Stephane.Carrez@gmail.com)
---
---  Licensed under the Apache License, Version 2.0 (the "License");
---  you may not use this file except in compliance with the License.
---  You may obtain a copy of the License at
---
---      http://www.apache.org/licenses/LICENSE-2.0
---
---  Unless required by applicable law or agreed to in writing, software
---  distributed under the License is distributed on an "AS IS" BASIS,
---  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
---  See the License for the specific language governing permissions and
---  limitations under the License.
------------------------------------------------------------------------
+with Buffers; use Buffers;
+
 package Net.Headers is
 
    pragma Preelaborate;
@@ -29,9 +14,11 @@ package Net.Headers is
 
    --  Ethernet header as defined for 802.3 Ethernet packet.
    type Ether_Header is record
-      Ether_Dhost : Ether_Addr;
-      Ether_Shost : Ether_Addr;
-      Ether_Type  : Uint16;
+      Ether_Dhost : Ether_Addr :=
+        (16#FF#, 16#FF#, 16#FF#, 16#FF#, 16#FF#, 16#FF#);
+      Ether_Shost : Ether_Addr :=
+        (16#00#, 16#81#, 16#E1#, 16#05#, 16#05#, 16#01#);
+      Ether_Type : Uint16;
    end record;
    type Ether_Header_Access is access all Ether_Header;
 
@@ -43,19 +30,22 @@ package Net.Headers is
       Ar_Op  : Uint16;
    end record;
 
-   type Ether_Arp (Appl_Length : Positive) is record
+   type Arp_Header_Access is access Arp_Header;
+   type Length_Delimited_String is access String;
+
+   type Ether_Arp is record
       Ea_Hdr  : Arp_Header;
-      Arp_Sha : Ether_Addr;
-      Arp_Spa : String (1 .. Appl_Length);
-      Arp_Tha : Ether_Addr;
-      Arp_Tpa : String (1 .. Appl_Length);
+      Arp_Sha : Ether_Addr := (0, 16#81#, 16#E1#, 5, 5, 1);
+      Arp_Spa : Length_Delimited_String;
+      Arp_Tha : Ether_Addr := (others => 16#00#);
+      Arp_Tpa : Length_Delimited_String;
    end record;
    type Ether_Arp_Access is access all Ether_Arp;
 
    --  ARP Ethernet packet
-   type Arp_Packet (Appl_Length : Positive) is record
-      Ethernet : Net.Headers.Ether_Header;
-      Arp      : Net.Headers.Ether_Arp (Appl_Length);
+   type Arp_Packet is record
+      Ethernet : Ether_Header;
+      Arp      : Ether_Arp;
    end record;
    type Arp_Packet_Access is access all Arp_Packet;
 
@@ -95,8 +85,6 @@ package Net.Headers is
       QOS_Id      : Uint16;
    end record;
 
-   type EFCP_Header_Access is access all EFCP_Header;
-
    for EFCP_Header use record
       PDU_Version at  0 range 0 ..  7;
       PDU_Type    at  1 range 0 ..  7;
@@ -112,17 +100,15 @@ package Net.Headers is
       QOS_Id      at 26 range 0 .. 15;
    end record;
 
-   type Ether_EFCP is record
-      Ea_Hdr : EFCP_Header;
-   end record;
-
-   type Ether_EFCP_Access is access all Ether_EFCP;
+   type EFCP_Header_Access is access all EFCP_Header;
 
    --  EFCP Ethernet packet
    type EFCP_Packet is record
-      Ethernet : Net.Headers.Ether_Header;
-      Arp      : Net.Headers.Ether_EFCP;
+      Ethernet : Ether_Header;
+      Efcp     : EFCP_Header;
+      Cdap     : Byte_Buffer (1 .. 2_048);
    end record;
+   pragma Pack (EFCP_Packet);
 
    type EFCP_Packet_Access is access all EFCP_Packet;
 

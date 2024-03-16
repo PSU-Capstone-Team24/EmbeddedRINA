@@ -1,20 +1,20 @@
 with HAL; use HAL;
 with HAL.Bitmap;
 
+generic
+   Width : Natural;
+   Height : Natural;
 package Textures is
-
-   Texture_Width  : constant := 64;
-   Texture_Height : constant := 64;
-
-   type Texture_Column is array (0 .. Texture_Width - 1) of UInt16 with
+   subtype Texture_Width_Index is Natural range 0 .. Width - 1;
+   subtype Texture_Height_Index is Natural range 0 .. Height - 1;
+   --  Dynamic size textures
+   type Texture_Column is array (Texture_Height_Index) of UInt16 with
      Component_Size => 16;
 
-   type Texture is
-     array (0 .. Texture_Height - 1) of aliased Texture_Column with
+   type Texture is array (Texture_Width_Index) of aliased Texture_Column with
      Pack;
 
    type Texture_Column_Access is access constant Texture_Column;
-
    type Texture_Access is access constant Texture;
 
    procedure Print (T : in Texture; Pos : in HAL.Bitmap.Point);

@@ -21,9 +21,4 @@ package body Network is
       Receiver.Start;
    end Initialize;
 
-   function Get_ARP_Request_Count return Natural is
-   begin
-      return Receiver.ARP_Request_Count;
-   end Get_ARP_Request_Count;
-
 end Network;

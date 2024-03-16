@@ -16,21 +16,99 @@
 --  limitations under the License.
 -----------------------------------------------------------------------
 with Ada.Unchecked_Conversion;
+with System.Storage_Elements; use System.Storage_Elements;
+with Net.Headers;             use Net.Headers;
+with Buffers;                 use Buffers;
+with Net.Utils;
+
 package body Net.Buffers is
-
-   ETHER_POS : constant Uint16 := 0;
-
-   type Offset_Table is array (Packet_Type) of Uint16;
-
-   Offsets : constant Offset_Table :=
-     (RAW_PACKET  => 0, ETHER_PACKET => 14, ARP_PACKET => 14 + 8,
-      EFCP_PACKET => 14 + 28);
 
    function As_Ethernet is new Ada.Unchecked_Conversion
      (Source => System.Address, Target => Net.Headers.Ether_Header_Access);
 
-   function As_Arp is new Ada.Unchecked_Conversion
-     (Source => System.Address, Target => Net.Headers.Arp_Packet_Access);
+   --  An unchecked conversion no longer works here since we have length-delimited strings
+   --  i.e. we have no idea the length of the source and dest IPCP strings at compile time
+
+   --  function As_Arp is new Ada.Unchecked_Conversion
+   --    (Source => System.Address, Target => Net.Headers.Arp_Packet_Access);
+
+   function As_Arp_Header is new Ada.Unchecked_Conversion
+     (Source => System.Address, Target => Net.Headers.Arp_Header_Access);
+
+   type Ether_Addr_Access is access all Ether_Addr;
+
+   function As_Ether_Addr is new Ada.Unchecked_Conversion
+     (Source => System.Address, Target => Ether_Addr_Access);
+
+   function Address_To_Access_String
+     (Address : System.Address; Length : Positive)
+      return Net.Headers.Length_Delimited_String
+   is
+      subtype Byte is System.Storage_Elements.Storage_Element;
+      type Byte_Array is array (1 .. Length) of Byte;
+
+      Temp : Byte_Array;
+      for Temp'Address use Address;
+
+      Allocated_String : constant Net.Headers.Length_Delimited_String :=
+        new String'(1 .. Length => ' ');
+   begin
+      for I in 1 .. Length loop
+         Allocated_String (I) := Character'Val (Temp (I));
+      end loop;
+
+      return Allocated_String;
+   end Address_To_Access_String;
+
+   function As_Arp
+     (Source : System.Address) return Net.Headers.Arp_Packet_Access
+   is
+      --  Arp packet to be returned
+      Arp : constant Net.Headers.Arp_Packet_Access :=
+        new Net.Headers.Arp_Packet;
+      --  Ethernet header (this can be unchecked converted)
+      Ether : constant Net.Headers.Ether_Header_Access := As_Ethernet (Source);
+      --  Address starting where ARP packet begins (this can also be unchecked converted)
+      Ea_Hdr : constant Net.Headers.Arp_Header_Access :=
+        As_Arp_Header (Source + Storage_Offset (Offsets (ETHER_PACKET)));
+      --  Source MAC addr
+      Arp_Sha : constant Ether_Addr_Access :=
+        As_Ether_Addr (Source + Storage_Offset (Offsets (ARP_PACKET)));
+      --  Dest MAC addr
+      Arp_Tha : constant Ether_Addr_Access :=
+        As_Ether_Addr
+          (Source +
+           Storage_Offset (Offsets (ARP_PACKET) + Uint16 (Ea_Hdr.Ar_Pln)));
+   begin
+      Arp.Ethernet := Ether.all;
+
+      --  I don't know why but the below doesn't work for me
+      --  Arp.Arp.Ea_Hdr := Ea_Hdr.all;
+
+      Arp.Arp.Ea_Hdr.Ar_Hdr := Ea_Hdr.Ar_Hdr;
+      Arp.Arp.Ea_Hdr.Ar_Pro := Ea_Hdr.Ar_Pro;
+      Arp.Arp.Ea_Hdr.Ar_Hln := Ea_Hdr.Ar_Hln;
+      Arp.Arp.Ea_Hdr.Ar_Pln := Ea_Hdr.Ar_Pln;
+      Arp.Arp.Ea_Hdr.Ar_Op  := Ea_Hdr.Ar_Op;
+
+      Arp.Arp.Arp_Sha := Arp_Sha.all;
+      Arp.Arp.Arp_Spa :=
+        Address_To_Access_String
+          (Source +
+           Storage_Offset (Offsets (ARP_PACKET) + Uint16 (Ea_Hdr.Ar_Hln)),
+           Positive (Arp.Arp.Ea_Hdr.Ar_Pln));
+
+      Arp.Arp.Arp_Tha := Arp_Tha.all;
+      Arp.Arp.Arp_Tpa :=
+        Address_To_Access_String
+          (Source +
+           Storage_Offset
+             (Offsets (ARP_PACKET) +
+              Uint16 (Ea_Hdr.Ar_Hln + Ea_Hdr.Ar_Pln + Ea_Hdr.Ar_Hln)),
+           Positive (Arp.Arp.Ea_Hdr.Ar_Pln));
+
+      return Arp;
+   end As_Arp;
 
    function As_EFCP is new Ada.Unchecked_Conversion
      (Source => System.Address, Target => Net.Headers.EFCP_Packet_Access);
@@ -51,6 +129,29 @@ package body Net.Buffers is
    private
       Free_List : Packet_Buffer_Access;
    end Manager;
+
+   function Data_Type_To_String
+     (Buffer : Data_Type; Size : Natural) return String
+   is
+      -- 3 characters per byte [XX ]
+      Hex_String : String (1 .. Size * 3) := (others => ' ');
+      Hex_Index  : Natural                := 1;
+   begin
+      for I in 0 .. Size loop
+         if I < Natural (Buffer'Size / 8) then
+            declare
+               Hex : String :=
+                 Net.Utils.Hex (Buffer (Interfaces.Unsigned_16 (I)));
+            begin
+               Hex_String (Hex_Index .. Hex_Index + 1) := Hex;
+               Hex_String (Hex_Index + 2)              := ' ';
+               Hex_Index                               := Hex_Index + 3;
+            end;
+         end if;
+      end loop;
+
+      return Hex_String;
+   end Data_Type_To_String;
 
    --  ------------------------------
    --  Returns true if the buffer is null (allocation failed).
@@ -77,6 +178,8 @@ package body Net.Buffers is
    begin
       if Buf.Packet /= null then
          Manager.Release (Buf.Packet);
+      else
+         raise Constraint_Error with "Release packet null";
       end if;
    end Release;
 
@@ -109,9 +212,11 @@ package body Net.Buffers is
       From.Packet := Packet;
    end Switch;
 
-   function Get_Data_Address (Buf : in Buffer_Type) return System.Address is
+   function Get_Data_Address
+     (Buf : in Buffer_Type; Offset : in Uint16 := 0) return System.Address
+   is
    begin
-      return Buf.Packet.Data (Buf.Packet.Data'First)'Address;
+      return Buf.Packet.Data (Buf.Packet.Data'First + Offset)'Address;
    end Get_Data_Address;
 
    function Get_Data_Size
@@ -151,6 +256,11 @@ package body Net.Buffers is
       Buf.Pos  := Offsets (Kind);
    end Set_Type;
 
+   function Get_Type (Buf : in out Buffer_Type) return Packet_Type is
+   begin
+      return Buf.Kind;
+   end Get_Type;
+
    --  ------------------------------
    --  Add a byte to the buffer data, moving the buffer write position.
    --  ------------------------------
@@ -173,6 +283,22 @@ package body Net.Buffers is
    end Put_Uint16;
 
    --  ------------------------------
+   --  Add a 48-bit MAC address in network byte order to the buffer data,
+   --  moving the buffer write position.
+   --  ------------------------------
+   procedure Put_Ether_Addr
+     (Buf : in out Buffer_Type; Value : in Net.Ether_Addr)
+   is
+   begin
+      Buf.Put_Uint8 (Value (1));
+      Buf.Put_Uint8 (Value (2));
+      Buf.Put_Uint8 (Value (3));
+      Buf.Put_Uint8 (Value (4));
+      Buf.Put_Uint8 (Value (5));
+      Buf.Put_Uint8 (Value (6));
+   end Put_Ether_Addr;
+
+   --  ------------------------------
    --  Add a 32-bit value in network byte order to the buffer data,
    --  moving the buffer write position.
    --  ------------------------------
@@ -193,8 +319,7 @@ package body Net.Buffers is
    --  When <tt>With_Null</tt> is set, a NUL byte is added after the string.
    --  ------------------------------
    procedure Put_String
-     (Buf       : in out Buffer_Type; Value : in String;
-      With_Null : in     Boolean := False)
+     (Buf : in out Buffer_Type; Value : in String; Pad_Length : in Uint8 := 0)
    is
       Pos : Uint16 := Buf.Pos;
    begin
@@ -202,12 +327,19 @@ package body Net.Buffers is
          Buf.Packet.Data (Pos) := Character'Pos (C);
          Pos                   := Pos + 1;
       end loop;
-      if With_Null then
-         Buf.Packet.Data (Pos) := 0;
-         Pos                   := Pos + 1;
+      if Pad_Length > 0 and Value'Length > Pad_Length then
+         for I in 0 .. (Value'Length - Pad_Length) loop
+            Buf.Packet.Data (Pos) := 0;
+            Pos                   := Pos + 1;
+         end loop;
       end if;
       Buf.Pos := Pos;
    end Put_String;
+
+   function To_String (Buf : in Buffer_Type) return String is
+   begin
+      return Data_Type_To_String (Buf.Packet.Data, Natural (Buf.Get_Length));
+   end To_String;
 
    --  ------------------------------
    --  Add an IP address to the buffer data, moving the buffer write position.

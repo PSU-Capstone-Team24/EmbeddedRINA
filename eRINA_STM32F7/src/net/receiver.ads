@@ -29,14 +29,13 @@ package Receiver is
    Max_Receive_Time : Us_Time := 0 with
      Atomic;
 
-   ARP_Request_Count : Natural := 0;
-
    --  Start the receiver loop.
    procedure Start;
 
    --  The task that waits for packets.
    task Controller with
-     Storage_Size => (16 * 1_024), Priority => System.Default_Priority
+     Storage_Size => (16 * 1_024), Secondary_Stack_Size => (32 * 1_024),
+     Priority     => System.Default_Priority
 ;
 
 end Receiver;

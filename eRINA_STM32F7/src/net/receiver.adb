@@ -1,8 +1,9 @@
 with Ada.Real_Time;
+with Ada.Exceptions; use Ada.Exceptions;
 with Ada.Synchronous_Task_Control;
 with Net.Buffers;
 with Net.Protos.Arp;
-with Net.Protos.Dispatchers;
+with Net.Protos.EFCP;
 with Net.Headers;
 with Network;
 with Debug;
@@ -13,6 +14,7 @@ package body Receiver is
 
    Ready  : Ada.Synchronous_Task_Control.Suspension_Object;
    ONE_US : constant Ada.Real_Time.Time_Span := Ada.Real_Time.Microseconds (1);
+
    --  ------------------------------
    --  Start the receiver loop.
    --  ------------------------------
@@ -33,6 +35,7 @@ package body Receiver is
       Total  : Net.Uint64 := 0;
       Count  : Net.Uint64 := 0;
    begin
+
       Debug.Print (Debug.Info, "Initializing Ethernet Controller...");
 
       --  Wait until the Ethernet driver is ready.
@@ -45,51 +48,55 @@ package body Receiver is
       Max_Receive_Time := Us_Time'First;
 
       loop
-
-         if Packet.Is_Null then
-            Net.Buffers.Allocate (Packet);
-         end if;
-
-         if not Packet.Is_Null then
-            Network.Ifnet.Receive (Packet);
-            Now   := Ada.Real_Time.Clock;
-            Ether := Packet.Ethernet;
-
-            if Ether.Ether_Type =
-              Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
-            then
-               ARP_Request_Count := ARP_Request_Count + 1;
-               Debug.Print (Debug.Info, "ARP Packet Received");
-               Net.Protos.Arp.Receive (Network.Ifnet, Packet);
-            elsif Ether.Ether_Type =
-              Net.Headers.To_Network (Net.Protos.ETHERTYPE_RINA)
-            then
-               Net.Protos.Dispatchers.Receive (Network.Ifnet, Packet);
+         begin
+            if Packet.Is_Null then
+               Net.Buffers.Allocate (Packet);
             end if;
 
-            --  For our case, we ignore IP packets
-            --  if Ether.Ether_Type = Net.Headers.To_Network (Net.Protos.ETHERTYPE_IP) then
-            --     Net.Protos.Dispatchers.Receive (Demos.Ifnet, Packet);
-            --  end if;
+            if not Packet.Is_Null then
+               Network.Ifnet.Receive (Packet);
+               Now   := Ada.Real_Time.Clock;
+               Ether := Packet.Ethernet;
 
-            --  Compute the time taken to process the packet in microseconds.
-            Dt := Us_Time ((Ada.Real_Time.Clock - Now) / ONE_US);
+               if Ether.Ether_Type =
+                 Net.Headers.To_Network (Net.Protos.ETHERTYPE_ARP)
+               then
+                  Net.Protos.Arp.Receive (Network.Ifnet, Packet);
+               elsif Ether.Ether_Type =
+                 Net.Headers.To_Network (Net.Protos.ETHERTYPE_RINA)
+               then
+                  Net.Protos.EFCP.Receive (Network.Ifnet, Packet);
+               end if;
 
-            --  Compute average, min and max values.
-            Count            := Count + 1;
-            Total            := Total + Net.Uint64 (Dt);
-            Avg_Receive_Time := Us_Time (Total / Count);
+               --  For our case, we ignore IP packets
+               --  if Ether.Ether_Type = Net.Headers.To_Network (Net.Protos.ETHERTYPE_IP) then
+               --     Net.Protos.Dispatchers.Receive (Demos.Ifnet, Packet);
+               --  end if;
 
-            if Dt < Min_Receive_Time then
-               Min_Receive_Time := Dt;
+               --  Compute the time taken to process the packet in microseconds.
+               Dt := Us_Time ((Ada.Real_Time.Clock - Now) / ONE_US);
+
+               --  Compute average, min and max values.
+               Count            := Count + 1;
+               Total            := Total + Net.Uint64 (Dt);
+               Avg_Receive_Time := Us_Time (Total / Count);
+
+               if Dt < Min_Receive_Time then
+                  Min_Receive_Time := Dt;
+               end if;
+
+               if Dt > Max_Receive_Time then
+                  Max_Receive_Time := Dt;
+               end if;
+            else
+               delay until Ada.Real_Time.Clock +
+               Ada.Real_Time.Milliseconds (100);
             end if;
-
-            if Dt > Max_Receive_Time then
-               Max_Receive_Time := Dt;
-            end if;
-         else
-            delay until Ada.Real_Time.Clock + Ada.Real_Time.Milliseconds (100);
-         end if;
+         exception
+            when E : others =>
+               Debug.Print
+                 (Debug.Error, "Error! " & Exception_Information (E));
+         end;
       end loop;
    end Controller;
 

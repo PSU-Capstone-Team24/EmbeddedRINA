@@ -19,6 +19,7 @@
 with System;
 with Ada.Interrupts.Names;
 with Ada.Unchecked_Conversion;
+with Ada.Exceptions; use Ada.Exceptions;
 
 with STM32.SDRAM;
 with STM32.Eth; use STM32;
@@ -26,6 +27,10 @@ with STM32_SVD.Ethernet;
 
 with HAL;
 with Cortex_M.Cache;
+with Debug;
+with Net.Buffers; use Net.Buffers;
+with Buffers;     use Buffers;
+
 package body Net.Interfaces.STM32 is
 
    use HAL;
@@ -91,7 +96,7 @@ package body Net.Interfaces.STM32 is
 
       --  Check if the transmit queue is initialized.
       function Is_Ready return Boolean;
-
+      function Get_Cur_TX return Tx_Position;
    private
       --  Transmit queue management.
       Tx_Space : Uint32      := 0;
@@ -115,7 +120,7 @@ package body Net.Interfaces.STM32 is
 
       --  Check if the receive queue is initialized.
       function Is_Ready return Boolean;
-
+      function Get_Cur_RX return Rx_Position;
    private
 
       --  Receive queue management.
@@ -132,10 +137,33 @@ package body Net.Interfaces.STM32 is
    is
       use type Net.Uint64;
    begin
-      Ifnet.Tx_Stats.Packets := Ifnet.Tx_Stats.Packets + 1;
-      Ifnet.Tx_Stats.Bytes   :=
-        Ifnet.Tx_Stats.Bytes + Net.Uint64 (Buf.Get_Length);
-      Transmit_Queue.Send (Buf);
+      begin
+         Ifnet.Tx_Stats.Packets := Ifnet.Tx_Stats.Packets + 1;
+         Ifnet.Tx_Stats.Bytes   :=
+           Ifnet.Tx_Stats.Bytes + Net.Uint64 (Buf.Get_Length);
+
+         Debug.Print
+           (Debug.Info,
+            "Ethernet frame transmitted with" & Buf.Get_Length'Image &
+            " Bytes");
+
+         declare
+            Buf_Raw :
+              Byte_Buffer
+                (1 ..
+                     Integer (Buf.Get_Data_Size (Net.Buffers.RAW_PACKET))) with
+              Address =>
+               Buf.Get_Data_Address
+                 (Net.Buffers.Offsets (Net.Buffers.RAW_PACKET));
+         begin
+            Debug.Print (Debug.Info, Buffer_To_Byte_String (Buf_Raw));
+         end;
+
+         Transmit_Queue.Send (Buf);
+      exception
+         when E : others =>
+            Debug.Print (Debug.Error, Exception_Information (E));
+      end;
    end Send;
 
    overriding procedure Receive
@@ -143,10 +171,15 @@ package body Net.Interfaces.STM32 is
    is
       use type Net.Uint64;
    begin
-      Receive_Queue.Wait_Packet (Buf);
-      Ifnet.Rx_Stats.Packets := Ifnet.Rx_Stats.Packets + 1;
-      Ifnet.Rx_Stats.Bytes   :=
-        Ifnet.Rx_Stats.Bytes + Net.Uint64 (Buf.Get_Length);
+      begin
+         Receive_Queue.Wait_Packet (Buf);
+         Ifnet.Rx_Stats.Packets := Ifnet.Rx_Stats.Packets + 1;
+         Ifnet.Rx_Stats.Bytes   :=
+           Ifnet.Rx_Stats.Bytes + Net.Uint64 (Buf.Get_Length);
+      exception
+         when E : others =>
+            Debug.Print (Debug.Error, Exception_Information (E));
+      end;
    end Receive;
 
    --  ------------------------------
@@ -280,6 +313,11 @@ package body Net.Interfaces.STM32 is
          return Tx_Ring /= null;
       end Is_Ready;
 
+      function Get_Cur_TX return Tx_Position is
+      begin
+         return Cur_Tx;
+      end Get_Cur_TX;
+
    end Transmit_Queue;
 
    protected body Receive_Queue is
@@ -300,6 +338,11 @@ package body Net.Interfaces.STM32 is
          Cur_Rx                       := Next_Rx (Cur_Rx);
          Ethernet_MAC_Periph.MACCR.RE := True;
       end Wait_Packet;
+
+      function Get_Cur_RX return Rx_Position is
+      begin
+         return Cur_Rx;
+      end Get_Cur_RX;
 
       procedure Receive_Interrupt is
          Rx : Rx_Ring_Access;
@@ -406,5 +449,32 @@ package body Net.Interfaces.STM32 is
       end Is_Ready;
 
    end Receive_Queue;
+
+   task RX_TX_Monitor;
+
+   task body RX_TX_Monitor is
+      RX_Pos : Rx_Position := Receive_Queue.Get_Cur_RX;
+      TX_Pos : Tx_Position := Transmit_Queue.Get_Cur_TX;
+   begin
+      loop
+         if Receive_Queue.Get_Cur_RX /= RX_Pos then
+            RX_Active := True;
+            RX_Pos    := Receive_Queue.Get_Cur_RX;
+            delay 0.1;
+         else
+            RX_Active := False;
+         end if;
+
+         if Transmit_Queue.Get_Cur_TX /= TX_Pos then
+            TX_Active := True;
+            TX_Pos    := Transmit_Queue.Get_Cur_TX;
+            delay 0.1;
+         else
+            TX_Active := False;
+         end if;
+
+         delay 0.01;
+      end loop;
+   end RX_TX_Monitor;
 
 end Net.Interfaces.STM32;

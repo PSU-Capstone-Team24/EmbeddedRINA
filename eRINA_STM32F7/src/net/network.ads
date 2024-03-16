@@ -14,5 +14,4 @@ package Network is
    Ifnet : aliased Net.Interfaces.STM32.STM32_Ifnet;
 
    procedure Initialize;
-   function Get_ARP_Request_Count return Natural;
 end Network;

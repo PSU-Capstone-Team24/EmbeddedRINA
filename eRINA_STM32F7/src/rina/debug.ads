@@ -1,26 +1,35 @@
 with HAL.Bitmap;
 with BMP_Fonts;
+with Queues;
 
 package Debug is
    type Debug is (Error, Warning, Info);
 
-   CONSOLE_STARTING_POINT   : HAL.Bitmap.Point := (0, 100);
-   CURRENT_CONSOLE_POSITION : HAL.Bitmap.Point := (0, 100);
-   FONT_HEIGHT              : constant Natural :=
+   Font_Height : constant Natural :=
      BMP_Fonts.Char_Height (Font => BMP_Fonts.Font8x8);
-   MAX_LINES    : constant Natural := 20;
-   LINE_PADDING : constant Natural := 2;
+   Max_Characters_Per_Line : constant Positive         := 52;
+   Line_Padding            : constant Natural          := 4;
+   Starting_Point          : constant HAL.Bitmap.Point := (10, 110);
 
-   protected type Mutex is
-      entry Seize;
-      procedure Release;
-   private
-      Owned : Boolean := False;
-   end Mutex;
+   --  Debug bitmap colors
+   Info_Color    : constant HAL.Bitmap.Bitmap_Color := (255, 109, 177, 255);
+   Warning_Color : constant HAL.Bitmap.Bitmap_Color := (255, 255, 227, 066);
+   Error_Color   : constant HAL.Bitmap.Bitmap_Color := (255, 254, 112, 112);
 
-   Print_Mutex : Mutex;
+   --  Maximum number of lines of messages in the console output
+   Max_Messages : constant := 13;
+
+   type Message is record
+      Msg   : String (1 .. Max_Characters_Per_Line);
+      Level : Debug;
+      Cont  : Boolean := False;
+   end record;
+
+   type Queue_Max is mod Max_Messages;
+   package Message_Queue is new Queues (Queue_Max, Message);
+   Messages : Message_Queue.Queue;
+
    procedure Print (Debug_Level : in Debug; Msg : in String);
-   procedure CopyLine
-     (SrcLineNumber : in Natural; DstLineNumer : in Natural;
-      DeleteSrc     : in Boolean);
+   procedure Clear;
+   procedure Render;
 end Debug;
