@@ -91,23 +91,24 @@ package CDAP is
       Rate_Width => 15, Frame_Width => 16, Ctrl_Seq_Num_Width => 17);
 
    type Data_Transfer_Constants is tagged record
-      Max_Pdu_Size          : Uint32;
-      Address_Width         : Uint32;
-      Port_Id_Width         : Uint32;
-      Cep_Id_Width          : Uint32;
-      Qos_Id_Width          : Uint32;
-      Seq_Num_Width         : Uint32;
-      Length_Width          : Uint32;
-      Seq_Rollover_Thresh   : Uint64;
-      Max_Pdu_Lifetime      : Uint32;
-      Concatenation_Enabled : Boolean;
-      Fragmentation_Enabled : Boolean;
-      Integrity_Enabled     : Boolean;
-      Max_Rtx_Time          : Uint32;
-      Max_Ack_Delay         : Uint32;
-      Rate_Width            : Uint32;
-      Frame_Width           : Uint32;
-      Ctrl_Seq_Num_Width    : Uint32;
+      Max_Pdu_Size        : Uint32 := 65_536;
+      Address_Width       : Uint32 := 4;
+      Port_Id_Width       : Uint32 := 2;
+      Cep_Id_Width        : Uint32 := 2;
+      Qos_Id_Width        : Uint32 := 2;
+      Seq_Num_Width       : Uint32 := 4;
+      Length_Width        : Uint32 := 2;
+      Seq_Rollover_Thresh : Uint64 :=
+        18_446_744_071_562_067_968; --  -(2 ** 31);
+      Max_Pdu_Lifetime      : Uint32  := 4_000; --  ms
+      Concatenation_Enabled : Boolean := False;
+      Fragmentation_Enabled : Boolean := False;
+      Integrity_Enabled     : Boolean := False;
+      Max_Rtx_Time          : Uint32  := 1_000; --  ms
+      Max_Ack_Delay         : Uint32  := 200; --  ms
+      Rate_Width            : Uint32  := 0;
+      Frame_Width           : Uint32  := 0;
+      Ctrl_Seq_Num_Width    : Uint32  := 4;
    end record;
 
    type DTC_Field_Variadic is array (Positive range <>) of DTC_Field;

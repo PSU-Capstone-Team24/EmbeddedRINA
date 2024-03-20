@@ -8,15 +8,28 @@ package body CDAP is
    is
       Value : constant Uint64 := VARINT_To_Uint64 (Input) / 2**3;
    begin
-      --  MT: TODO: Need to handle weird case when resulting value does not match an enum in Obj_Value
       return Obj_Value_Field'Enum_Val (Value);
+   exception
+      when others =>
+         Debug.Print
+           (Debug.Warning,
+            "Received packet with invalid Obj_Value_Field:" & Value'Image &
+            " Ignoring...");
+         return Intval;
+
    end Tag_To_OBJ_Value_Field;
 
    function Tag_To_CDAP_Field (Input : Byte_Vector) return CDAP_Field is
       Value : constant Uint64 := VARINT_To_Uint64 (Input) / 2**3;
    begin
-      --  MT: TODO: Need to handle weird case when resulting value does not match an enum in CDAP_Field
       return CDAP_Field'Enum_Val (Value);
+   exception
+      when others =>
+         Debug.Print
+           (Debug.Warning,
+            "Received packet with invalid CDAP_Field:" & Value'Image &
+            " Ignoring...");
+         return Abs_Syntax;
    end Tag_To_CDAP_Field;
 
    --  MT: TODO: I really don't like the code duplication here, optimize me later
@@ -492,7 +505,7 @@ package body CDAP is
    begin
       M.Set_Fields.Clear;
 
-      while C /= Byte_Vectors.No_Element loop
+      while C /= Byte_Vectors.No_Element and C /= V.Last loop
          if Is_Tag_Field then
             declare
                Tag_Vector : Byte_Vector;
@@ -560,11 +573,11 @@ package body CDAP is
                         exit when (LEN_Iterator = LEN_Length);
                         C := Byte_Vectors.Next (C);
                      end loop;
-
-                     M.Set_Field (Field_Id, Data_Vector);
                   else
                      C := Byte_Vectors.Previous (C);
                   end if;
+
+                  M.Set_Field (Field_Id, Data_Vector);
                end;
             end if;
 
