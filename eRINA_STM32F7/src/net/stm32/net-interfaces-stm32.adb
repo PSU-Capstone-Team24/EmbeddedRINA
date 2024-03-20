@@ -147,22 +147,19 @@ package body Net.Interfaces.STM32 is
             "Ethernet frame transmitted with" & Buf.Get_Length'Image &
             " Bytes");
 
-         declare
-            Buf_Raw :
-              Byte_Buffer
-                (1 ..
-                     Integer (Buf.Get_Data_Size (Net.Buffers.RAW_PACKET))) with
-              Address =>
-               Buf.Get_Data_Address
-                 (Net.Buffers.Offsets (Net.Buffers.RAW_PACKET));
-         begin
-            Debug.Print (Debug.Info, Buffer_To_Byte_String (Buf_Raw));
-         end;
+         --declare
+         --   Buf_Raw :
+         --     Byte_Buffer
+         --       (1 ..
+         --            Integer (Buf.Get_Data_Size (Net.Buffers.RAW_PACKET))) with
+         --     Address =>
+         --      Buf.Get_Data_Address
+         --        (Net.Buffers.Offsets (Net.Buffers.RAW_PACKET));
+         --begin
+         --   Debug.Print (Debug.Info, Buffer_To_Byte_String (Buf_Raw));
+         --end;
 
          Transmit_Queue.Send (Buf);
-      exception
-         when E : others =>
-            Debug.Print (Debug.Error, Exception_Information (E));
       end;
    end Send;
 
@@ -176,9 +173,6 @@ package body Net.Interfaces.STM32 is
          Ifnet.Rx_Stats.Packets := Ifnet.Rx_Stats.Packets + 1;
          Ifnet.Rx_Stats.Bytes   :=
            Ifnet.Rx_Stats.Bytes + Net.Uint64 (Buf.Get_Length);
-      exception
-         when E : others =>
-            Debug.Print (Debug.Error, Exception_Information (E));
       end;
    end Receive;
 

@@ -3,6 +3,7 @@ with Net.Headers;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with DIF_Manager;           use DIF_Manager;
 with Protobuf;              use Protobuf;
+with CDAP;                  use CDAP;
 
 package body Net.Protos.EFCP is
 
@@ -19,15 +20,19 @@ package body Net.Protos.EFCP is
 
       Message : CDAPMessage;
    begin
-
+      --  Notify user on LCD of received EFCP packet
       Debug.Print
         (Debug.Info,
          "Received EFCP packet of" & Packet.Get_Length'Image & " Bytes");
 
-      --Debug.Print (Debug.Info, Buffer_To_Byte_String (Buf));
-      Message.To_CDAP (Byte_Buffer_To_Vector (Buf));
+      --  MT: Disabling, for debug only. Prints contents of byte buffer onto screen
+      --  Debug.Print (Debug.Info, Buffer_To_Byte_String (Buf));
 
+      --  MT: Disabling, for debug only. Prints contents of decoded message
       -- Message.Put;
+
+      --  Convert byte buffer into a deserialized Ada record
+      Message.To_CDAP (Byte_Buffer_To_Vector (Buf));
 
       --  Incoming connection request
       if Message.OpCode = M_CONNECT then
@@ -44,10 +49,9 @@ package body Net.Protos.EFCP is
               ((Abs_Syntax, OpCode, Invoke_Id, Flags, Obj_Class, Obj_Name,
                 Result, Dest_Ae_Inst, Dest_Ae_Name, Dest_Ap_Inst, Dest_Ap_Name,
                 Src_Ae_Inst, Src_Ae_Name, Src_Ap_Inst, Src_Ap_Name, Version)));
-         Debug.Print (Debug.Info, "Connect Request");
       end if;
 
-      -- Incoming start request
+      -- Incoming flow start request
       if Message.OpCode = M_START then
          if To_String (Message.Obj_Class) = "enrollment" then
             if To_String (Message.Obj_Name) = "/mgmt/enrollment" then
@@ -69,29 +73,16 @@ package body Net.Protos.EFCP is
                   DIF_Name : constant String  :=
                     Buffer_To_String (Buf (5 .. 5 + Str_Len - 1));
                begin
+                  Debug.Print
+                    (Debug.Info,
+                     "Checking if DIF '" & DIF_Name & "' exists...");
+
                   if Exists (DIF_Name, Ethernet) then
                      Debug.Print
                        (Debug.Info, "DIF '" & DIF_Name & "' Exists!");
 
                      New_Msg.Address    := 3;
                      New_Msg.Lower_Difs := To_Unbounded_String (DIF_Name);
-
-                     New_Msg.Dt_Constants.Max_Pdu_Size        := 65_536;
-                     New_Msg.Dt_Constants.Address_Width       := 4;
-                     New_Msg.Dt_Constants.Port_Id_Width       := 2;
-                     New_Msg.Dt_Constants.Cep_Id_Width        := 2;
-                     New_Msg.Dt_Constants.Qos_Id_Width        := 2;
-                     New_Msg.Dt_Constants.Seq_Num_Width       := 4;
-                     New_Msg.Dt_Constants.Length_Width        := 2;
-                     New_Msg.Dt_Constants.Seq_Rollover_Thresh :=
-                       18_446_744_071_562_067_968; --  -(2 ** 31);
-                     New_Msg.Dt_Constants.Max_Pdu_Lifetime := 4_000; --  ms
-                     New_Msg.Dt_Constants.Concatenation_Enabled := False;
-                     New_Msg.Dt_Constants.Fragmentation_Enabled := False;
-                     New_Msg.Dt_Constants.Integrity_Enabled     := False;
-                     New_Msg.Dt_Constants.Max_Rtx_Time := 1_000; --  ms
-                     New_Msg.Dt_Constants.Max_Ack_Delay         := 200; --  ms
-                     New_Msg.Dt_Constants.Ctrl_Seq_Num_Width    := 4;
 
                      Message.ObjValue.Set_Field
                        (Byteval,
@@ -185,7 +176,7 @@ package body Net.Protos.EFCP is
                             Obj_Name, ObjValue, Result, Version)));
 
                      Message.Abs_Syntax := 0;
-                     Message.OpCode     := M_START_R;
+                     Message.OpCode     := M_STOP;
                      Message.Invoke_Id  := 6;
                      Message.Flags      := F_NO_FLAGS;
                      Message.Obj_Class  := To_Unbounded_String ("enrollment");
@@ -235,6 +226,48 @@ package body Net.Protos.EFCP is
                    Result, Version)));
          end if;
       end if;
+
+      --  Keep alive request
+      if Message.OpCode = M_READ then
+         if To_String (Message.Obj_Class) = "keepalive" and
+           To_String (Message.Obj_Name) = "/mgmt/keepalive"
+         then
+
+            --  Respond indicating we are still alive
+            Message.Abs_Syntax := 0;
+            Message.OpCode     := M_READ_R;
+            Message.Invoke_Id  := 14;
+            Message.Flags      := F_NO_FLAGS;
+            Message.Obj_Class  := To_Unbounded_String ("keepalive");
+            Message.Obj_Name   := To_Unbounded_String ("/mgmt/keepalive");
+            Message.Result     := 0;
+            Message.Version    := 1;
+
+            Send
+              (Ifnet,
+               Message.Encode
+                 ((Abs_Syntax, OpCode, Invoke_Id, Flags, Obj_Class, Obj_Name,
+                   Result, Version)));
+
+            --  Also request keep alive status of the device we are sending this to
+            --  Note: We don't do anything with the response yet, but could use the
+            --  lack of a response in the future to know when receiving device is dead
+            Message.Abs_Syntax := 0;
+            Message.OpCode     := M_READ;
+            Message.Invoke_Id  := 21;
+            Message.Flags      := F_NO_FLAGS;
+            Message.Obj_Class  := To_Unbounded_String ("keepalive");
+            Message.Obj_Name   := To_Unbounded_String ("/mgmt/keepalive");
+            Message.Result     := 0;
+            Message.Version    := 1;
+
+            Send
+              (Ifnet,
+               Message.Encode
+                 ((Abs_Syntax, OpCode, Invoke_Id, Flags, Obj_Class, Obj_Name,
+                   Result, Version)));
+         end if;
+      end if;
    end Receive;
 
    procedure Send
@@ -255,19 +288,20 @@ package body Net.Protos.EFCP is
       Req.Ethernet.Ether_Dhost :=
         (16#08#, 16#00#, 16#27#, 16#a9#, 16#ca#, 16#00#);
       Req.Ethernet.Ether_Shost := Ifnet.Mac;
-      Req.Ethernet.Ether_Type  := Net.Headers.To_Network (16#D1F0#);
-      Req.Efcp.PDU_Version     := 0;
-      Req.Efcp.PDU_Type        := 64;
-      Req.Efcp.PDU_Flags       := 0;
-      Req.Efcp.PDU_CSum        := 0;
-      Req.Efcp.PDU_TTL         := Net.Headers.To_Network (16#4000#);
-      Req.Efcp.PDU_SeqNum      := 0;
-      Req.Efcp.Dst_Addr        := 0;
-      Req.Efcp.Src_Addr        := Net.Headers.To_Network (Uint32 (1));
-      Req.Efcp.Dst_Cep         := 0;
-      Req.Efcp.Src_Cep         := 0;
-      Req.Efcp.QOS_Id          := 0;
-      Req.Cdap                 := (others => 0);
+      Req.Ethernet.Ether_Type  :=
+        Net.Headers.To_Network (Net.Protos.ETHERTYPE_RINA);
+      Req.Efcp.PDU_Version := 0;
+      Req.Efcp.PDU_Type    := 64;
+      Req.Efcp.PDU_Flags   := 0;
+      Req.Efcp.PDU_CSum    := 0;
+      Req.Efcp.PDU_TTL     := Net.Headers.To_Network (16#4000#);
+      Req.Efcp.PDU_SeqNum  := 0;
+      Req.Efcp.Dst_Addr    := 0;
+      Req.Efcp.Src_Addr    := Net.Headers.To_Network (Uint32 (1));
+      Req.Efcp.Dst_Cep     := 0;
+      Req.Efcp.Src_Cep     := 0;
+      Req.Efcp.QOS_Id      := 0;
+      Req.Cdap             := (others => 0);
 
       for I in CDAP_Buffer'Range loop
          Req.Cdap (I) := CDAP_Buffer (I);

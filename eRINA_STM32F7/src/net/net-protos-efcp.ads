@@ -1,6 +1,5 @@
 with Net.Interfaces;
 with Net.Buffers;
-with CDAP;    use CDAP;
 with Buffers; use Buffers;
 
 package Net.Protos.EFCP is
