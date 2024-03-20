@@ -7,11 +7,12 @@ with AUnit.Run;
 with AUnit.Test_Suites;
 
 --  Test suites
-with Test_RINA_Open;
-with Test_RINA_Register;
-with Test_RINA_Flow_Alloc_Wait;
-with Test_RINA_Flow_Alloc;
-with Test_RINA_Wait_Register_Unregister;
+with Test_RINA_Open; -- TS-001
+with Test_RINA_Register; -- TS-002
+with Test_RINA_Unregister; -- TS-003
+with Test_RINA_Flow_Alloc; -- TS-007
+with Test_RINA_Flow_Alloc_Wait; -- TS-008
+with Test_RINA_Wait_Register_Unregister; -- TS-009
 
 procedure eRINA_Tests is
    
@@ -20,11 +21,13 @@ procedure eRINA_Tests is
    function Suite return AUnit.Test_Suites.Access_Test_Suite is
       Result : constant AUnit.Test_Suites.Access_Test_Suite := AUnit.Test_Suites.New_Suite;
    begin
-      Result.Add_Test (Test_RINA_Open.Suite);
-      Result.Add_Test (Test_RINA_Register.Suite);
-      Result.Add_Test (Test_RINA_Flow_Alloc_Wait.Suite);
-      Result.Add_Test (Test_RINA_Flow_Alloc.Suite);
-      Result.Add_Test (Test_RINA_Wait_Register_Unregister.Suite);
+      Result.Add_Test (Test_RINA_Open.Suite); -- TS-001
+      Result.Add_Test (Test_RINA_Register.Suite); -- TS-002
+      Result.Add_Test (Test_RINA_Unregister.Suite); -- TS-003
+
+      Result.Add_Test (Test_RINA_Flow_Alloc.Suite); -- TS-007
+      Result.Add_Test (Test_RINA_Flow_Alloc_Wait.Suite); -- TS-008
+      Result.Add_Test (Test_RINA_Wait_Register_Unregister.Suite); -- TS-009
       return Result;
    end Suite;
 

@@ -6,11 +6,11 @@ project eRINA_STM32F7 is
    for Target use "arm-eabi";
    for Runtime ("Ada") use "embedded-" & stm32_hal_config.DEVICE & "disco";
 
-   for Source_Dirs use ("src/", "src/rina", "src/dns", "src/echo", "src/ping", "src/time", "src/utils", "src/net", "config/");
+   for Source_Dirs use ("src/", "src/rina", "src/net", "src/net/stm32", "config/");
    for Object_Dir use "obj/" & eRINA_STM32F7_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
-   for Main use ("dns.adb", "echo.adb", "ping.adb", "time.adb", "demo.adb");
+   for Main use ("demo.adb");
 
    package Compiler is
       for Default_Switches ("Ada") use eRINA_STM32F7_Config.Ada_Compiler_Switches & "-mno-unaligned-access";

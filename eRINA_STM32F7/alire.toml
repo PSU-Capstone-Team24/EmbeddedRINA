@@ -16,9 +16,13 @@ maintainers-logins = [
 ]
 name = "erina_stm32f7"
 version = "0.1.0-dev"
+
 [[depends-on]]
-ada_enet = "0.1.0-dev"
-stm32_gui = "0.1.0-dev"
-stm32f746disco = "0.1.0-dev"
+stm32_gui = "0.1.0"
+stm32f746disco = "0.1.0"
+
 [[pins]]
 gnat_arm_elf = { version='12.2.1' }
+
+[build-switches]
+"*".style_checks = "No"

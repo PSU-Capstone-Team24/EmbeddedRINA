@@ -59,7 +59,7 @@ package body Test_RINA_Register is
       
       Register_Success := RINA_Register (RINA_Dev_FD, DIF_Name, Dif_Name, 0);
       exception
-         when Exceptions.Bounded_Length_Expcetion =>
+         when Exceptions.Bounded_Length_Exception =>
             Caused_Error := True;
 
       Assert(Caused_Error and Register_Success = Invalid_FD, "DIF_Name allowed to register with length > 128 characters");
@@ -72,7 +72,7 @@ package body Test_RINA_Register is
    begin
       Register_Success := RINA_Register (RINA_Dev_FD, "", Application_Name, 0);
       exception
-         when Exceptions.Bounded_Length_Expcetion =>
+         when Exceptions.Bounded_Length_Exception =>
             Caused_Error := True;
       
       Assert(Caused_Error and Register_Success = Invalid_FD, "DIF_Name blank");
@@ -99,7 +99,7 @@ package body Test_RINA_Register is
    begin
       Register_Success := RINA_Register (RINA_Dev_FD, DIF_Name, App_Name, 0);
       exception
-         when Exceptions.Bounded_Length_Expcetion =>
+         when Exceptions.Bounded_Length_Exception =>
             Caused_Error := True;
 
       Assert(Caused_Error and Register_Success = Invalid_FD, "Application_Name length > 128 characters");
@@ -112,7 +112,7 @@ package body Test_RINA_Register is
    begin
       Register_Success := RINA_Register (RINA_Dev_FD, DIF_Name, "", 0);
       exception
-         when Exceptions.Bounded_Length_Expcetion =>
+         when Exceptions.Bounded_Length_Exception =>
             Caused_Error := True;
             
       Assert(Caused_Error and Register_Success = Invalid_FD, "Application_Name blank");
@@ -133,7 +133,7 @@ package body Test_RINA_Register is
 
    -- Test Case 009
    procedure Test_Register_AppName_to_DIF (Object : in out Test) is
-   Register_Success : File_Descriptor;
+   Register_Success : File_Descriptor := Invalid_FD;
    Caused_Error : Boolean := False;
    begin
       Register_Success := RINA_Register (RINA_Dev_FD, DIF_Name, Application_Name, 0);
