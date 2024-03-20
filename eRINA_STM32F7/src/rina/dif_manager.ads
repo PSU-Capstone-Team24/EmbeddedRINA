@@ -2,6 +2,7 @@ with Buffers;      use Buffers;
 with Ada.Containers.Vectors;
 with IPCP_Manager; use IPCP_Manager;
 use IPCP_Manager.IPCP_Name;
+with CDAP; use CDAP;
 
 package DIF_Manager is
    --  Max of 16 DIFs can exist in the system
@@ -15,10 +16,11 @@ package DIF_Manager is
    type DIF_Types is (Normal, Ethernet);
 
    type DIF is tagged record
-      Name       : Bounded_String;
-      DIF_Type   : DIF_Types := Normal;
-      IPCPs      : IPCP_Vector;
-      IPCP_Count : Natural   := 0;
+      Name                 : Bounded_String;
+      DIF_Type             : DIF_Types := Normal;
+      IPCPs                : IPCP_Vector;
+      IPCP_Count           : Natural   := 0;
+      Enrollment_Constants : Enrollment_Info;
    end record;
 
    type DIF_Access is access all DIF;

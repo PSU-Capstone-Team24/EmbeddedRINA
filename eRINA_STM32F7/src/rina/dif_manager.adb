@@ -20,10 +20,10 @@ package body DIF_Manager is
    begin
       begin
          DIF_Found := Get (Name, DIF_Type);
-         return true;
+         return True;
       exception
          when Element_Not_Found =>
-            return false;
+            return False;
       end;
    end Exists;
 
