@@ -15,7 +15,6 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
-with Net.Headers;
 package body Net.Protos.Dispatchers is
 
    procedure Default_Receive

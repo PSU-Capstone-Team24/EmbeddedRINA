@@ -1,108 +1,118 @@
 with Bitmapped_Drawing;
-with STM32.Board;
 with GUI;
 
 package body Debug is
 
-   protected body Mutex is
-      entry Seize when not Owned is
-      begin
-         Owned := True;
-      end Seize;
-      procedure Release is
-      begin
-         Owned := False;
-      end Release;
-   end Mutex;
-
-   -- Probably a cleaner way to do this
-   procedure Print (Debug_Level : in Debug; Msg : in String) is
-      currentLine : constant Natural :=
-        (CURRENT_CONSOLE_POSITION.Y - 100) / FONT_HEIGHT; -- zero indexed
-      Foreground : HAL.Bitmap.Bitmap_Color;
-      Background : HAL.Bitmap.Bitmap_Color;
+   procedure Clear is
    begin
-      Print_Mutex.Seize;
+      while not Messages.Empty loop
+         Messages.Pop;
+      end loop;
+   end Clear;
 
-      Foreground :=
-        (case Debug_Level is when Info | Error => HAL.Bitmap.White,
-           when Warning => HAL.Bitmap.Black);
+   procedure Print (Debug_Level : in Debug; Msg : in String) is
+      M : Message;
 
-      Background :=
-        (case Debug_Level is when Info => HAL.Bitmap.Blue,
-           when Warning => HAL.Bitmap.Yellow, when Error => HAL.Bitmap.Red);
+      --  These line variables shouldn't be confused with the array of lines that are drawn to the screen
+      --  This is specifically for strings that are too long to fit on a single line, so they can be broken up
+      Lines_Count : constant Natural :=
+        (Msg'Length + (Max_Characters_Per_Line - 1)) / Max_Characters_Per_Line;
+      Lines :
+        array (1 .. Lines_Count) of String (1 .. Max_Characters_Per_Line);
+      Line_Start : Positive := Lines'First;
+   begin
+      for I in 1 .. Lines_Count loop
+         --  Calculate the start of the next line segment. If it's the last segment, it may be shorter.
+         if Line_Start + Max_Characters_Per_Line - 1 <= Msg'Length then
+            Lines (I) :=
+              Msg (Line_Start .. Line_Start + Max_Characters_Per_Line - 1);
+         else
+            --  Last segment, potentially shorter than Max_Characters_Per_Line
+            declare
+               Last_Segment : constant String := Msg (Line_Start .. Msg'Last);
+               Padded_Last_Segment :
+                 constant String (1 .. Max_Characters_Per_Line) :=
+                 (Last_Segment &
+                  (Last_Segment'Length + 1 .. Max_Characters_Per_Line => ' '));
+            begin
+               Lines (I) := Padded_Last_Segment;
+            end;
 
-      if currentLine > MAX_LINES then
-         --  Shift console lines up
-         for I in 1 .. MAX_LINES loop
-            CopyLine (I, I - 1, I = MAX_LINES);
-         end loop;
+            --  Damn why can't it be this simple
+            --  Lines(I) := Msg(Line_Start .. Msg'Length) & (others => ' '); -- Fill the rest with spaces
+         end if;
+         --  Prepare for the next segment
+         Line_Start := Line_Start + Max_Characters_Per_Line;
+      end loop;
 
-         -- Adjust Y position to overwrite the last line
-         CURRENT_CONSOLE_POSITION.Y :=
-           CURRENT_CONSOLE_POSITION.Y - FONT_HEIGHT - LINE_PADDING;
-      end if;
+      for I in Lines'Range loop
+         M.Msg   := Lines (I);
+         M.Level := Debug_Level;
 
-      --  Draw debug prefix
-      Bitmapped_Drawing.Draw_String
-        (Buffer => GUI.Screen_Buffer.all,
-         Start  =>
-           GUI.Scale
-             ((CURRENT_CONSOLE_POSITION.X, CURRENT_CONSOLE_POSITION.Y)),
-         Msg        => Debug_Level'Image, Font => BMP_Fonts.Font8x8,
-         Foreground => Foreground, Background => Background);
+         --  Any lines after the first don't have the debug heading
+         if I > 1 then
+            M.Cont := True;
+         end if;
 
-      --  Draw actual message text
-      Bitmapped_Drawing.Draw_String
-        (Buffer => GUI.Screen_Buffer.all,
-         Start  =>
-           GUI.Scale
-             ((CURRENT_CONSOLE_POSITION.X +
-               GUI.MeasureText (Debug_Level'Image, BMP_Fonts.Font8x8).Width +
-               LINE_PADDING * 2,
-               CURRENT_CONSOLE_POSITION.Y)),
-         Msg => Msg, Font => BMP_Fonts.Font8x8, Foreground => HAL.Bitmap.White,
-         Background => HAL.Bitmap.Black);
+         if Messages.Full then
+            Messages.Pop;
+         end if;
 
-      -- Move the Y position down for the next message
-      CURRENT_CONSOLE_POSITION.Y :=
-        CURRENT_CONSOLE_POSITION.Y + FONT_HEIGHT + LINE_PADDING;
-
-      STM32.Board.Display.Update_Layer (1, True);
-
-      Print_Mutex.Release;
+         Messages.Push (M);
+      end loop;
    end Print;
 
-   procedure CopyLine
-     (SrcLineNumber : in Natural; DstLineNumer : in Natural;
-      DeleteSrc     : in Boolean)
-   is
-      --  TODO: Cleanup later...
-      srcToPoint : constant HAL.Bitmap.Point :=
-        (0,
-         Natural'Min
-           (CONSOLE_STARTING_POINT.Y +
-            (FONT_HEIGHT + LINE_PADDING) * SrcLineNumber,
-            GUI.Board_Resolution.Height - 2));
-      dstToPoint : constant HAL.Bitmap.Point :=
-        (0,
-         Natural'Min
-           (CONSOLE_STARTING_POINT.Y +
-            (FONT_HEIGHT + LINE_PADDING) * DstLineNumer,
-            GUI.Board_Resolution.Height - 2));
-      srcRect : constant HAL.Bitmap.Rect :=
-        (Position => srcToPoint, Width => GUI.Board_Resolution.Width,
-         Height   => FONT_HEIGHT + LINE_PADDING);
+   procedure Render is
+      Foreground : HAL.Bitmap.Bitmap_Color;
+      Background : HAL.Bitmap.Bitmap_Color;
+      Pos        : HAL.Bitmap.Point := Starting_Point;
+      Msg        : Message;
    begin
-      HAL.Bitmap.Copy_Rect
-        (Src_Buffer => GUI.Screen_Buffer.all, Src_Pt => srcToPoint,
-         Dst_Buffer => GUI.Screen_Buffer.all, Dst_Pt => dstToPoint,
-         Width      => GUI.Board_Resolution.Width,
-         Height     => FONT_HEIGHT + LINE_PADDING, Synchronous => True);
-      if DeleteSrc then
-         HAL.Bitmap.Fill_Rect
-           (Buffer => GUI.Screen_Buffer.all, Area => srcRect);
-      end if;
-      STM32.Board.Display.Update_Layer (1, True);
-   end CopyLine;
+      for I in 0 .. Messages.Size - 1 loop
+         Msg := Messages.Peek (Queue_Max (I));
+         Pos :=
+           (Starting_Point.X,
+            Starting_Point.Y + I * (Font_Height + Line_Padding));
+
+         Foreground :=
+           (case Msg.Level is when Info => HAL.Bitmap.Black,
+              when Warning | Error => HAL.Bitmap.Black);
+
+         Background :=
+           (case Msg.Level is when Info => Info_Color,
+              when Warning => Warning_Color, when Error => Error_Color);
+
+         -- Restart X position to start
+         Pos.X := Starting_Point.X;
+
+         --  MT: TODO
+         --  Draw over anything left over at this location
+         --  I don't know why we need to do this since we're not copying in the old buffer?
+         GUI.Draw_Rectangle
+           ((Pos.X, Pos.Y), (GUI.Board_Resolution.Width - 20, Font_Height),
+            HAL.Bitmap.White);
+
+         if not Msg.Cont then
+            --  Draw debug prefix
+            Bitmapped_Drawing.Draw_String
+              (Buffer     => GUI.Screen_Buffer.all,
+               Start => GUI.Scale ((Pos.X, Pos.Y)), Msg => Msg.Level'Image,
+               Font       => BMP_Fonts.Font8x8, Foreground => Foreground,
+               Background => Background);
+
+            --  Offset X position for debug level header
+            Pos.X :=
+              Pos.X +
+              GUI.MeasureText (Msg.Level'Image, BMP_Fonts.Font8x8).Width +
+              Line_Padding;
+         end if;
+
+         --  Draw actual message text
+         Bitmapped_Drawing.Draw_String
+           (Buffer     => GUI.Screen_Buffer.all,
+            Start      => GUI.Scale ((Pos.X, Pos.Y)), Msg => Msg.Msg,
+            Font       => BMP_Fonts.Font8x8, Foreground => HAL.Bitmap.Black,
+            Background => HAL.Bitmap.White);
+      end loop;
+   end Render;
 end Debug;

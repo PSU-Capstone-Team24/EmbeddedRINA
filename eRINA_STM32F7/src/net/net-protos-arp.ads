@@ -50,10 +50,6 @@ package Net.Protos.Arp is
    type Arp_Status is
      (ARP_FOUND, ARP_PENDING, ARP_NEEDED, ARP_QUEUE_FULL, ARP_UNREACHABLE);
 
-   procedure Request
-     (Ifnet : in out Net.Interfaces.Ifnet_Type'Class; Source_Ip : in Ip_Addr;
-      Target_Ip : in     Ip_Addr; Mac : in Ether_Addr);
-
    --  Proceed to the ARP database timeouts, cleaning entries and re-sending pending
    --  ARP requests.  The procedure should be called once every second.
    procedure Timeout (Ifnet : in out Net.Interfaces.Ifnet_Type'Class);

@@ -1,13 +1,16 @@
-with Net.Headers;
 with Net.Interfaces;
 with Net.Buffers;
+with CDAP;    use CDAP;
+with Buffers; use Buffers;
 
 package Net.Protos.EFCP is
 
-   --  MT: TODO: Implement me!
-   procedure Make_Ident is null;
-   procedure Make_Header is null;
-   procedure Send_Raw is null;
-   procedure Send is null;
+   procedure Receive
+     (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
+      Packet : in out Net.Buffers.Buffer_Type);
+
+   procedure Send
+     (Ifnet       : in out Net.Interfaces.Ifnet_Type'Class;
+      CDAP_Buffer : in     Byte_Buffer);
 
 end Net.Protos.EFCP;
