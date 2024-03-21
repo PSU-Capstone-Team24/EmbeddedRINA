@@ -3,11 +3,9 @@ name: STM32 Build
 on:
   push:
     paths:
-      - '**.adb'
-      - '**.ads'
-      - '**.gpr'
-      - '**.yml'
-  pull_request:
+      - 'eRINA_STM32F7/**.adb'
+      - 'eRINA_STM32F7/**.ads'
+      - 'eRINA_STM32F7/**.gpr'
 
 jobs:
   build:
