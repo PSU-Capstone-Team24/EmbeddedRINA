@@ -91,7 +91,7 @@ package Bindings.Rlite.Msg is
    procedure Deserialize
      (Self : in out Rl_Msg_Base; fd : OS.File_Descriptor) is null;
 
-   function Read_Next_Msg (fd : OS.File_Descriptor) return Byte_Buffer;
+   function Read_Next_Msg (Rfd : OS.File_Descriptor) return Byte_Buffer;
 
    --  Match values for PDUFT entries.
    type Rl_PCI_Match is record

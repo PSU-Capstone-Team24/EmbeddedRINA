@@ -29,7 +29,7 @@ package body Test_RINA_Flow_Alloc_Wait is
     procedure Test_Positive_Flow_Alloc_Response (Object : in out Test) is
         wfd : File_Descriptor := 1;
         port_id : Unsigned_16 := 2020;
-        result : File_Descriptor;
+        result : File_Descriptor := OS.Invalid_FD;
     begin
         result := RINA_Flow_Alloc_Wait(wfd, port_id);
         Assert(result /= Invalid_FD, "Invalid file descriptor returned");

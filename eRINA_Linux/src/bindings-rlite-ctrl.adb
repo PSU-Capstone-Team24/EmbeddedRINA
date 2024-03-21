@@ -68,7 +68,6 @@ package body Bindings.Rlite.Ctrl is
 
    end Rl_Write_Msg;
 
-   -- TODO: Needs to be implemented. Maybe first 16 bits are header where rest is body.
    function Rl_Read_Msg
      (Rfd : OS.File_Descriptor; Quiet : Integer) return Byte_Buffer
    is
@@ -76,6 +75,7 @@ package body Bindings.Rlite.Ctrl is
       Buffer     : Byte_Buffer (1 .. 4_096);
    begin
       --  Arbitrary 4096 bytes to follow along with rlite serbuf[4096]
+      --  TODO: We need some timeout here so that this call doesn't block for enternity...
       Bytes_Read := OS.Read (Rfd, Buffer'Address, 4_096);
       return Buffer;
    end Rl_Read_Msg;

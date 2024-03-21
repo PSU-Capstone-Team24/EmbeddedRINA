@@ -56,6 +56,10 @@ package Bindings.Rlite.Ctrl is
    function Search_Map_By_Value
      (Map_Var : in out Map; Value : Rl_Ipcp_Id_T) return Cursor;
 
+   function RINA_Register_Wait
+     (Fd : OS.File_Descriptor; Wfd : OS.File_Descriptor)
+      return OS.File_Descriptor;
+
    function RINA_Register_Common
      (Fd         : OS.File_Descriptor; Dif_Name : Bounded_String;
       Local_Appl : Bounded_String; Flags : Integer; Reg : Unsigned_8)

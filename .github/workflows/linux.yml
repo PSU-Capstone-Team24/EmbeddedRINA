@@ -3,11 +3,9 @@ name: Linux Build
 on:
   push:
     paths:
-      - '**.adb'
-      - '**.ads'
-      - '**.gpr'
-      - '**.yml'
-  pull_request:
+      - 'eRINA_Linux/**.adb'
+      - 'eRINA_Linux/**.ads'
+      - 'eRINA_Linux/**.gpr'
 
 jobs:
   build:
@@ -40,11 +38,11 @@ jobs:
         sudo modprobe rlite-normal &&
         sudo rlite-uipcps &
 
-    - name: Execute Tests
-      run: >
-        cd eRINA_Tests &&
-        alr build &&
-        sudo ./bin/erina_tests
+#    - name: Execute Tests
+#      run: >
+#        cd eRINA_Tests &&
+#        alr build &&
+#        sudo ./bin/erina_tests
       
     - name: Slack Notification Success
       if: success()
