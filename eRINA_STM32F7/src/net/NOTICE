@@ -1,0 +1,8 @@
+This product includes software developed by Stephane Carrez and AdaCore (https://www.adacore.com/)
+
+The Initial Developer of some parts of the framework, which are copied from, derived from, or
+inspired by the Ada Embedded Network Stack created by Stephane Carrez
+Copyright (C) 2016, 2017 Stephane Carrez (Stephane.Carrez@gmail.com)
+
+The Initial Developer of the stm32 driver library is AdaCore (https://www.adacore.com/).
+Copyright (C) 2015, AdaCore.
