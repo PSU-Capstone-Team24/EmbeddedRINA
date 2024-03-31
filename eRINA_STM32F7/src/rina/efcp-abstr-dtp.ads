@@ -1,5 +1,11 @@
-use Buffers;
-with Buffers;
+with Network_Address; use Network_Address;
+with Qos_ID;          use QoS_ID;
+with EFCP_Version;    use EFCP_Version;
+with EFCP_CEPID;      use EFCP_CEPID;
+with PDU_Flags;       use PDU_Flags;
+with PDU_Type;        use PDU_Type;
+with Seq_Num;         use Seq_Num;
+with User_Data;       use User_Data;
 
 package EFCP.Abstr.DTP is
    -- derive from these, placing size constraints as your DIF requires
@@ -9,6 +15,7 @@ package EFCP.Abstr.DTP is
    type PDU_Length is new Natural;
    type Seq_Num_Size is new Natural;
    type User_Data_Size is new Natural;
+   type Byte is new Natural range 0 .. 255;
 
    -- PDU abstract syntax definition per:
    -- ETSI GR NGP 009 V1.1.1 (2019-02)
@@ -40,52 +47,25 @@ package EFCP.Abstr.DTP is
    -- decoder functions follow each generic.
    -- they take binary raw from PDU and return a decoded value
    -- you need to implement these yourself for your designed PDU implementation
-   generic
-      type IPCP_Network_Address is
-        private; -- "is private" means you can map any type to it
-      with function Decode
-        (Self : in out PDU) return IPCP_Network_Address; -- use inside Getters
    -- the Address of an IPC Process (IPCP)
    function Get_Dest_Addr (Self : in out PDU) return IPCP_Network_Address;
    function Get_Send_Addr (Self : in out PDU) return IPCP_Network_Address;
-
-   generic
-      type QoS_ID is private;
    -- QoS Cubes have corresponding IDs
    -- QoS Cubes are classes which support specific QoS metrics/standards and are
    -- offerred by a DIF
    function Get_QoS_ID (Self : in out PDU) return QoS_ID;
-
-   generic
-      type EFCP_Version is private;
    function Get_Version (Self : in out PDU) return EFCP_Version;
-
-   generic
-      type EFCP_CEPID is private;
    -- CEPID is the identifier of an EFCP instance
    -- EFCP is internal to an IPCP, with 1 instance per SDU flow
    function Get_Dest_CEPID (Self : in out PDU) return EFCP_CEPID;
    function Get_Src_CEPID (Self : in out PDU) return EFCP_CEPID;
-
-   generic
-      type PDU_Type is private;
    -- this can be DTP or DTCP
    function Get_PDU_Type (Self : in out PDU) return PDU_Type;
-
-   generic
-      type PDU_Flags is private;
    -- This changes how PDU is processed
    function Get_Flags (Self : in out PDU) return PDU_Flags;
-
-   generic
-      type Seq_Num is private;
    function Get_Seq_Num (Self : in out PDU) return Seq_Num;
-
-   generic
-      type User_Data is private;
    -- returns raw user data
    function Get_User_Data (Self : in out PDU) return User_Data;
-
    -- returns length in bytes
    function Get_PDU_Length (Self : in out PDU) return PDU_Length;
 end EFCP.Abstr.DTP;
