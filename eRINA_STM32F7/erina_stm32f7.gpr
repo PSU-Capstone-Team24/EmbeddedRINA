@@ -5,7 +5,7 @@ project ERINA_STM32F7 is
 
    for Target use "arm-eabi";
    for Runtime ("ada") use "embedded-" & Stm32_Hal_Config.Device & "disco";
-   for Source_Dirs use ("src", "src/rina", "src/net", "src/net/stm32", "config");
+   for Source_Dirs use ("src", "src/rina", "src/rina/pdu", "src/net", "src/net/stm32", "config");
    for Object_Dir use "obj/" & Erina_Stm32F7_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Exec_Dir use "bin";
