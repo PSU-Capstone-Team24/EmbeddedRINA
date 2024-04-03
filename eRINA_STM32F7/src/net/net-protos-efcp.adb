@@ -32,13 +32,16 @@ package body Net.Protos.EFCP is
       --  MT: Disabling, for debug only. Prints contents of decoded message
       -- Message.Put;
 
-      --  If this is not a control message, don't parse it as one!
-      if Req.Efcp.PDU_Type /= 64 then
-        return;
-      else
-        Debug.Print(Debug.Info, "Data message received");
+      --  MT: TODO: Debug Only
+      if Req.Efcp.PDU_Type = PDU_T_DT then
+         Debug.Print(Debug.Info, "Data message received");
       end if;
-      
+
+      --  If this is not a management PDU, don't parse it as one!
+      if Req.Efcp.PDU_Type /= PDU_T_MGMT then
+         return;
+      end if;
+
       --  Convert byte buffer into a deserialized Ada record
       Message.To_CDAP (Byte_Buffer_To_Vector (Buf));
 
