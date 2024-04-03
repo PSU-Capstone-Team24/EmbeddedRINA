@@ -55,6 +55,33 @@ package body DIF_Manager is
          return False;
    end IPCP_Exists;
 
+   function Get_Application (Self : in out DIF; Name : String) return Application is
+   begin
+      for C in Self.Applications.Iterate loop
+         if To_String (Self.Applications (C).Name) = Name then
+            return Self.Applications (C);
+         end if;
+      end loop;
+
+      raise Element_Not_Found;
+   end Get_Application;
+
+   function Application_Exists (Name : String) return Boolean is
+      App : Application;
+   begin
+      for DIF of DIF_List loop
+         begin
+         App := Get_Application (DIF.all, Name);
+         return True;
+         exception
+            when Element_Not_Found =>
+               null;
+         end;
+      end loop;
+   
+      return False;
+   end Application_Exists;
+
    function Create (Name : String; DIF_Type : DIF_Types) return DIF_Access is
       New_DIF : constant DIF_Access := new DIF;
    begin
@@ -65,6 +92,14 @@ package body DIF_Manager is
       DIF_List.Append (New_DIF);
       return New_DIF;
    end Create;
+   
+   procedure Register (Self : in out DIF; Appl_Name : String; Proc : Procedure_Access) is
+      New_App : Application;
+   begin
+      New_App.Name := To_Unbounded_String (Appl_Name);
+      New_App.Proc := Proc;
+      Self.Applications.Append (New_App);
+   end Register;
 
    procedure Enroll (Self : in out DIF; IPC_Process : IPCP)
    is -- Flow_Req : Flow) is

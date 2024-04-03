@@ -18,6 +18,7 @@
 with Ada.Real_Time;
 with Ada.Exceptions; use Ada.Exceptions;
 with DIF_Manager;
+with IPCP_Manager;
 with Debug;
 
 with Net.Headers;
@@ -313,7 +314,7 @@ package body Net.Protos.Arp is
       Pac              : Net.Buffers.Buffer_Type;
       Str_Fixed_Length : Uint8                                  := 0;
    begin
-      begin
+      begin         
          --  Do nothing if parse failed
          if Req = null then
             Debug.Print (Debug.Error, "Parse failed!");
@@ -334,9 +335,9 @@ package body Net.Protos.Arp is
 
                   Debug.Print
                     (Debug.Info, "Searching for: " & Req.Arp.Arp_Tpa.all);
-
+                  
                   --  Check if the requested IPCP exists in any of our local DIFs
-                  if DIF_Manager.IPCP_Exists (Req.Arp.Arp_Tpa.all) then
+                  if DIF_Manager.IPCP_Exists (Req.Arp.Arp_Tpa.all) or DIF_Manager.Application_Exists (Req.Arp.Arp_Tpa.all) then
                      Net.Buffers.Allocate (Pac);
 
                      if Pac.Is_Null then

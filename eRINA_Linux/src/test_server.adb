@@ -134,7 +134,7 @@ begin
          --  Check if flow has a valid IPC path through a file descriptor
          if Flow_Incoming /= Invalid_FD then
             Debug.Print
-              ("Test_Server",
+              (Application_Name,
                "Received incoming flow request from: " &
                To_String (Incoming_APN),
                Debug.Info);
@@ -143,12 +143,12 @@ begin
          --  Accept incoming flow
          Flow_Respond := RINA_Flow_Respond (RINA_Dev_FD, Flow_Incoming, 0);
          Debug.Print
-           ("Test_Server",
+           (Application_Name,
             "Accepting flow request from: " & To_String (Incoming_APN),
             Debug.Info);
 
          if Flow_Respond = Invalid_FD then
-            Debug.Print ("Test_Server", "Invalid flow response?", Debug.Error);
+            Debug.Print (Application_Name, "Invalid flow response?", Debug.Error);
          end if;
 
          loop
@@ -164,7 +164,7 @@ begin
             begin
                Written := Write (Flow_Respond, Buf'Address, Buf'Size / 8);
                Debug.Print
-                 ("Test_Server",
+                 (Application_Name,
                   "Sent message: " & To_String (Appl_Data_Msg) & " Bytes: " &
                   Integer'Image (Written),
                   Debug.Info);

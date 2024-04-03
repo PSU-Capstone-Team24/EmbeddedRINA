@@ -18,6 +18,7 @@ package body Net.Protos.EFCP is
          Packet.Get_Data_Address
            (Net.Buffers.Offsets (Net.Buffers.EFCP_PACKET));
 
+      Req     : Net.Headers.EFCP_Packet_Access := Packet.EFCP;
       Message : CDAPMessage;
    begin
       --  Notify user on LCD of received EFCP packet
@@ -31,6 +32,13 @@ package body Net.Protos.EFCP is
       --  MT: Disabling, for debug only. Prints contents of decoded message
       -- Message.Put;
 
+      --  If this is not a control message, don't parse it as one!
+      if Req.Efcp.PDU_Type /= 64 then
+        return;
+      else
+        Debug.Print(Debug.Info, "Data message received");
+      end if;
+      
       --  Convert byte buffer into a deserialized Ada record
       Message.To_CDAP (Byte_Buffer_To_Vector (Buf));
 

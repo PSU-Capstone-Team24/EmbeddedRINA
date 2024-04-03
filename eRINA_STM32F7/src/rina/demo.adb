@@ -19,19 +19,24 @@ procedure Demo is
 begin
    GUI.Initialize;
    Network.Initialize;
+   STM32.Board.Touch_Panel.Initialize;
    STM32.Board.Configure_User_Button_GPIO;
    STM32.Board.Initialize_LEDs;
    STM32.Board.All_LEDs_Off;
 
    --  Create a new DIF
    This_DIF := DIF_Manager.Create ("ethAB.DIF", Ethernet);
+
    DIF_Manager.DIF_List.Append (This_DIF);
 
    --  Create the IPC process we want to enroll into the DIF
-   This_IPCP := IPCP_Manager.Create ("b.IPCP", Demo_IPCP'Access);
+   This_IPCP := IPCP_Manager.Create ("b.IPCP");
 
    --  Enroll this IPCP into the DIF
    This_DIF.Enroll (This_IPCP);
+   
+   --  Register test server application to this DIF
+   This_DIF.Register ("TestServer", Demo_IPCP'Access);
 
    --  Render loop keeps the board from immediately terminating
    loop
@@ -50,24 +55,24 @@ begin
         ((5, 105), (GUI.Board_Resolution.Width - 8, 160), HAL.Bitmap.Black, 2,
          1);
 
-      GUI.Draw_Rounded_Rectangle ((277, 2), (200, 60), HAL.Bitmap.Black, 2, 1);
-      GUI.Print ("CPU U:            xx.xx%", (280, 12));
-      GUI.Print ("RAM U:            xx.xx%", (280, 24));
-      GUI.Print ("  Mac: 00:81:E1:05:05:01", (280, 36));
-      GUI.Print ("Board:   STM32F746-DISCO", (280, 48));
+      GUI.Draw_Rounded_Rectangle ((277, 10), (200, 35), HAL.Bitmap.Black, 2, 1);
+      --  GUI.Print ("CPU U:            xx.xx%", (280, 17));
+      --  GUI.Print ("RAM U:            xx.xx%", (280, 29));
+      GUI.Print ("  Mac: 00:81:E1:05:05:01", (280, 17));
+      GUI.Print ("Board:   STM32F746-DISCO", (280, 29));
 
       GUI.Draw_Rounded_Rectangle
-        ((277, 65), (200, 20), HAL.Bitmap.Black, 2, 1);
+        ((277, 50), (200, 18), HAL.Bitmap.Black, 2, 1);
 
       GUI.Fill_Rounded_Rectangle
-        ((330, 70), (25, 10), GUI.Get_RX_Status_Color, 1);
-      GUI.Print ("RX", (300, 71));
+        ((330, 53), (25, 10), GUI.Get_RX_Status_Color, 1);
+      GUI.Print ("RX", (300, 54));
 
       GUI.Fill_Rounded_Rectangle
-        ((420, 70), (25, 10), GUI.Get_TX_Status_Color, 1);
-      GUI.Print ("TX", (390, 71));
+        ((420, 53), (25, 10), GUI.Get_TX_Status_Color, 1);
+      GUI.Print ("TX", (390, 54));
 
-      GUI.Print ("Version: " & GUI.Build_Verson, (362, 90));
+      GUI.Print ("Version: " & GUI.Build_Verson, (362, 75));
 
       --  GUI.Print ("Status: ", (80, 45));
       --  GUI.Print ("Waiting for enrollment request", (145, 45));

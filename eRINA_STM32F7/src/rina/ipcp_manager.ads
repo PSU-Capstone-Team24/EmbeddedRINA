@@ -21,8 +21,8 @@ package IPCP_Manager is
       IO_Buffer  : Data_Buffer := (others => 0);
    end record;
 
-   function Create (Name : String; Executable : Task_Procedure) return IPCP;
-
+   function Create (Name : String) return IPCP;
+   
    --  TBD ::
    --  Port Id exists here so that we can have the same application names
    --  The port identifier allows us to address individual instances of the same application
