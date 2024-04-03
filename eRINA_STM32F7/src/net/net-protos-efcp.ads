@@ -5,13 +5,13 @@ with Buffers; use Buffers;
 package Net.Protos.EFCP is
 
    --  Management PDU
-   PDU_T_MGMT : constant Byte := 16#40#;
+   PDU_T_MGMT : constant Uint8 := 16#40#;
 
    --  Data transfer PDU
-   PDU_T_DT : constant Byte := 16#80#;
+   PDU_T_DT : constant Uint8 := 16#80#;
 
    --  Control PDU
-   PDU_T_CTRL : constant Byte := 16#C0#;
+   PDU_T_CTRL : constant Uint8 := 16#C0#;
 
    procedure Receive
      (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
