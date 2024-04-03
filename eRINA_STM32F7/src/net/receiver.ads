@@ -34,7 +34,7 @@ package Receiver is
 
    --  The task that waits for packets.
    task Controller with
-     Storage_Size => (16 * 1_024), Secondary_Stack_Size => (32 * 1_024),
+     Storage_Size => (64 * 1_024), Secondary_Stack_Size => (64 * 1_024),
      Priority     => System.Default_Priority
 ;
 

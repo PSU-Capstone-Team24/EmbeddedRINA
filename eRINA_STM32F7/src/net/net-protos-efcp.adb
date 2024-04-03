@@ -32,14 +32,9 @@ package body Net.Protos.EFCP is
       --  MT: Disabling, for debug only. Prints contents of decoded message
       -- Message.Put;
 
-      --  MT: TODO: Debug Only
-      if Req.Efcp.PDU_Type = PDU_T_DT then
-         Debug.Print(Debug.Info, "Data message received");
-      end if;
-
       --  If this is not a management PDU, don't parse it as one!
       if Req.Efcp.PDU_Type /= PDU_T_MGMT then
-         return;
+         Debug.Print (Debug.Info, "Data: ");
       end if;
 
       --  Convert byte buffer into a deserialized Ada record
@@ -247,7 +242,7 @@ package body Net.Protos.EFCP is
             --  Respond indicating we are still alive
             Message.Abs_Syntax := 0;
             Message.OpCode     := M_READ_R;
-            Message.Invoke_Id  := 14;
+            Message.Invoke_Id  := Message.Invoke_Id;
             Message.Flags      := F_NO_FLAGS;
             Message.Obj_Class  := To_Unbounded_String ("keepalive");
             Message.Obj_Name   := To_Unbounded_String ("/mgmt/keepalive");
