@@ -134,8 +134,12 @@ package body Test_RINA_Unregister is
       Unregister_Success : File_Descriptor;
       Caused_Error : Boolean := False;
    begin
-      Unregister_Success := RINA_Register(Invalid_FileD, DIF_Name, "NewTestAppName", 0);
-      Assert (Caused_Error = False and Unregister_Success = Invalid_FD, "Invalid file descriptor passed for control device");
+      Unregister_Success := RINA_Register (Invalid_FileD, DIF_Name, "NewTestAppName", 0);
+      exception
+         when Exceptions.DIF_Registration_Failure =>
+            Caused_Error := True;
+
+      Assert (Caused_Error, "No exception thrown and a valid FD was returned instead of an invalid one");
    end Test_Unregister_Invalid_File_Descriptor;
 
 end Test_RINA_Unregister;
