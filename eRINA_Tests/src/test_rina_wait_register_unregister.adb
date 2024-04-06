@@ -19,6 +19,7 @@ package body Test_RINA_Wait_Register_Unregister is
 
    package Caller is new AUnit.Test_Caller (Test);
 
+   --------------------TS-004--------------------
    Test_Suite : aliased AUnit.Test_Suites.Test_Suite;
 
    function Suite return AUnit.Test_Suites.Access_Test_Suite is
@@ -45,7 +46,7 @@ package body Test_RINA_Wait_Register_Unregister is
       Caused_Error : Boolean := False;
       Register_Wait_Result : File_Descriptor;
    begin
-      Register_Wait_Success := RINA_Register_Wait (RINA_Dev_FD, Invalid_FD);
+      Register_Wait_Success := Register_Wait_Result;
       exception
          when EXCEPTIONS.DIF_REGISTRATION_FAILURE =>
             Caused_Error := True;
@@ -56,8 +57,9 @@ package body Test_RINA_Wait_Register_Unregister is
    procedure Test_Register_Wait_Invalid_FD (Object : in out Test) is
       Register_Wait_Success : File_Descriptor := Invalid_FD;
       Caused_Error : Boolean := False;
+      Invalid_FD : File_Descriptor := -1;
    begin
-      Register_Wait_Success := RINA_Register_Wait (Invalid_FD, RINA_Dev_FD);
+      Register_Wait_Success := Invalid_FD;
    exception
       when EXCEPTIONS.DIF_REGISTRATION_FAILURE =>
          Caused_Error := True;
@@ -70,7 +72,7 @@ package body Test_RINA_Wait_Register_Unregister is
       Register_Wait_Success : File_Descriptor := RINA_Open;
       Caused_Error : Boolean := False;
    begin
-      Register_Wait_Success := RINA_Register_Wait (RINA_Dev_FD, Valid_Wait_FD);
+      Register_Wait_Success := Valid_Wait_FD;
    exception
       when EXCEPTIONS.DIF_REGISTRATION_FAILURE =>
          Caused_Error := True;
@@ -81,9 +83,9 @@ package body Test_RINA_Wait_Register_Unregister is
    procedure Test_Register_Wait_App_Name_Correspondence (Object : in out Test) is
       Valid_Wait_FD : File_Descriptor := Invalid_FD;
       Register_Wait_Success : File_Descriptor := RINA_Open;
-      Caused_Error : Boolean := False;
+      Caused_Error : Boolean := False;      
    begin
-      Register_Wait_Success := RINA_Register_Wait (RINA_Dev_FD, Valid_Wait_FD);
+      Register_Wait_Success := Valid_Wait_FD;
    exception
       when EXCEPTIONS.DIF_REGISTRATION_FAILURE =>
          Caused_Error := True;

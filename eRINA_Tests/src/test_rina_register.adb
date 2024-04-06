@@ -18,6 +18,7 @@ package body Test_RINA_Register is
 
    package Caller is new AUnit.Test_Caller (Test);
    
+   -------------------------TS-002--------------------------------
    Test_Suite : aliased AUnit.Test_Suites.Test_Suite;
 
    function Suite return AUnit.Test_Suites.Access_Test_Suite is
@@ -29,6 +30,7 @@ package body Test_RINA_Register is
       Name_008 : constant String := "TC-008";
       Name_009 : constant String := "TC-009";
       Name_010 : constant String := "TC-010";
+      Name_011 : constant String := "TC-011";
    begin
       Test_Suite.Add_Test (Caller.Create
          (Name_003 & " Fails when DIF name too long", Test_Register_DIF_Length'Access));
@@ -46,6 +48,8 @@ package body Test_RINA_Register is
          (Name_009 & " Verify rina_register successfully reg. an App name to DIF", Test_Register_AppName_to_DIF'Access));
       Test_Suite.Add_Test (Caller.Create
          (Name_010 & " Verify rina_register returns -1 when inval. file descriptor is passed", Test_Register_Invalid_File_Descriptor'Access));
+      Test_Suite.Add_Test (Caller.Create
+         (Name_011 & " Verify that rina_register writes a registration request to the file descriptor", Test_Register_Writes_Reg_Req'Access));   
 
       return Test_Suite'Access;
    end Suite;
@@ -155,5 +159,17 @@ package body Test_RINA_Register is
 
       Assert (Caused_Error and Register_Result = Invalid_FD, "rina_register did not return -1 for invalid file descriptor");
    end Test_Register_Invalid_File_Descriptor;
+
+   -- Test Case 011
+   procedure Test_Register_Writes_Reg_Req (Object : in out Test) is
+      Register_Result : File_Descriptor := Invalid_FD;
+      Caused_Error : Boolean := False;      
+   begin 
+      Register_Result := RINA_Register (Invalid_FD, DIF_Name, Application_Name, 0);
+      exception
+         when EXCEPTIONS.DIF_REGISTRATION_FAILURE =>
+            Caused_Error := True;
+      Assert (Caused_Error and Register_Result = Invalid_FD, "rina_register did not write a registration request to the file descriptor");
+   end Test_Register_Writes_Reg_Req;
 
 end Test_RINA_Register;
