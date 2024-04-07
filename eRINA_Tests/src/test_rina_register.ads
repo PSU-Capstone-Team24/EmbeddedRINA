@@ -18,5 +18,6 @@ private
    procedure Test_Register_App_Already_Reg (Object : in out Test);
    procedure Test_Register_AppName_to_DIF (Object : in out Test);
    procedure Test_Register_Invalid_File_Descriptor (Object : in out Test);
+   procedure Test_Register_Writes_Reg_Req (Object : in out Test);
 
 end Test_RINA_Register;

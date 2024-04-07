@@ -18,6 +18,7 @@ package body Test_RINA_Unregister is
 
    package Caller is new AUnit.Test_Caller (Test);
    
+   -------------------------TS-003-------------------------
    Test_Suite : aliased AUnit.Test_Suites.Test_Suite;
 
    function Suite return AUnit.Test_Suites.Access_Test_Suite is
@@ -28,6 +29,7 @@ package body Test_RINA_Unregister is
       Name_016 : constant String := "TC-016";
       Name_017 : constant String := "TC-017";
       Name_018 : constant String := "TC-018";
+      Name_020 : constant String := "TC-020";
    begin
     Test_Suite.Add_Test (Caller.Create 
             (Name_012 & " Verify that rina_unregister successfully unregisters an application name from a DIF", Test_Unregister_AppName_to_DIF'Access));
@@ -43,6 +45,8 @@ package body Test_RINA_Unregister is
             (Name_017 & " Verify rina_unregister throws exception when application name is empty", Test_Unregister_App_Name_Empty'Access));
    Test_Suite.Add_Test (Caller.Create
             (Name_018 & " Verify rina_unregister returns Invalid_FD when passed an invalid file descriptor for the control device", Test_Unregister_Invalid_File_Descriptor'Access));
+   Test_Suite.Add_Test (Caller.Create
+            (Name_020 & " Verify that rina_unregister writes a de-registration request to the file descriptor", Test_Unregister_Writes_DeReg'Access));
          
 
     return Test_Suite'Access;
@@ -56,7 +60,10 @@ package body Test_RINA_Unregister is
    begin
       Register_Success := RINA_Register(RINA_Dev_FD, DIF_Name, "TestAppName123", 0);
       Unregister_Success := RINA_Unregister (Register_Success, DIF_Name, "TestAppName123", 0);
-      Assert(Unregister_Success /= Invalid_FD, "Successfully unregistered application from DIF");
+      exception
+         when Exceptions.DIF_Registration_Failure =>
+            Caused_Error := True;
+      Assert(Unregister_Success = Invalid_FD, "Successfully unregistered application from DIF");
    end Test_Unregister_AppName_to_DIF;
 
    --Test Case 013
@@ -141,5 +148,19 @@ package body Test_RINA_Unregister is
 
       Assert (Caused_Error, "No exception thrown and a valid FD was returned instead of an invalid one");
    end Test_Unregister_Invalid_File_Descriptor;
+
+   -- TC 020
+   procedure Test_Unregister_Writes_DeReg (Object : in out Test) is
+      Register_Success : File_Descriptor;
+      Unregister_Success : File_Descriptor := Invalid_FD;
+      Caused_Error : Boolean := False;
+   begin
+      Register_Success := RINA_Register(RINA_Dev_FD, DIF_Name, "TestAppName123", 0);
+      Unregister_Success := RINA_Unregister (Register_Success, DIF_Name, "TestAppName123", 0);
+      exception
+         when Exceptions.DIF_Registration_Failure =>
+            Caused_Error := True;
+      Assert(Unregister_Success = Invalid_FD, "Successfully unregistered application from DIF");
+   end Test_Unregister_Writes_DeReg;
 
 end Test_RINA_Unregister;
