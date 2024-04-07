@@ -53,7 +53,12 @@ begin
       Texture_PSU.PSU.Print (Texture_PSU.Bitmap, (5, 8));
       Texture_Logo.Logo.Print (Texture_Logo.Bitmap, (75, 0));
 
-      GUI.Fill_Rounded_Rectangle ((75, 45), (48, 25), GUI.Button_Color, 2);
+      -- if the show menu flag is set, draw the menu button as a different color
+      if Show_Menu then
+        GUI.Fill_Rounded_Rectangle ((75, 45), (48, 25), GUI.Button_Selected_Color, 2);
+      else
+        GUI.Fill_Rounded_Rectangle ((75, 45), (48, 25), GUI.Button_Color, 2);
+      end if;
       GUI.Print ("Menu", (82, 53));
 
       -- when the user presses the menu button, show the submenu

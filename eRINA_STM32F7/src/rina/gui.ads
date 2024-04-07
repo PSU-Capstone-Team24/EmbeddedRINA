@@ -9,6 +9,7 @@ package GUI is
    Foreground   : Bitmap_Color       := Black;
    Background   : Bitmap_Color       := White;
    Button_Color : Bitmap_Color       := (255, 242, 243, 245);
+   Button_Selected_Color : Bitmap_Color := (255, 255, 255, 255);
    TX_Active    : Bitmap_Color       := (255, 111, 255, 109);
    TX_Inactive  : Bitmap_Color       := (255, 56, 128, 55);
    RX_Active    : Bitmap_Color       := (255, 255, 109, 109);
