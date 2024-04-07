@@ -18,6 +18,8 @@ procedure Demo is
    This_DIF    : DIF_Access;
    This_IPCP   : IPCP;
    Show_Menu : Boolean := False;
+   Show_Network_Stats : Boolean := False;
+   Show_Device_Info : Boolean := False;
 begin
    GUI.Initialize;
    STM32.Board.Touch_Panel.Initialize;
@@ -41,10 +43,6 @@ begin
       declare
         State : HAL.Touch_Panel.TP_State := STM32.Board.Touch_Panel.Get_All_Touch_Points;
       begin
-      -- if the menu button on screen is pressed, set the Show_Menu flag
-      if GUI.Has_Touch(State => State) then
-        Show_Menu := GUI.Has_Touch_Within_Area(State => State, P => (75, 45), S => (48, 25));
-      end if;
 
       GUI.Draw_Rectangle ((0, 0), GUI.Board_Resolution, HAL.Bitmap.White);
 
@@ -53,40 +51,40 @@ begin
       Texture_PSU.PSU.Print (Texture_PSU.Bitmap, (5, 8));
       Texture_Logo.Logo.Print (Texture_Logo.Bitmap, (75, 0));
 
-      -- if the show menu flag is set, draw the menu button as a different color
+      -- if the menu button on screen is pressed, set the Show_Menu flag, if the menu button is pressed again, unset the flag
+      if GUI.Has_Touch(State => State) then
+        if GUI.Has_Touch_Within_Area(State => State, P => (75, 45), S => (48, 25)) then
+          Show_Menu := not Show_Menu;
+        end if;
+      end if;
+
+
+      -- when the user presses the menu button, show the submenu
       if Show_Menu then
-        GUI.Fill_Rounded_Rectangle ((75, 45), (48, 25), GUI.Button_Selected_Color, 2);
+         GUI.Fill_Rounded_Rectangle ((75, 45), (48, 25), GUI.Button_Selected_Color, 2);
+         GUI.Draw_Rounded_Rectangle ((125, 45), (150,65), HAL.Bitmap.Black, 2, 1);
+
+          GUI.Fill_Rounded_Rectangle ((130, 50), (140, 25), GUI.Button_Color, 2);
+          GUI.Print ("Network Stats", (150, 60));
+
+          GUI.Fill_Rounded_Rectangle ((130, 78), (140, 25), GUI.Button_Color, 2);
+          GUI.Print ("Device Info", (155, 87));
+          
+          -- if there is a touch event while the menu is open
+          if (GUI.Has_Touch(State => State)) then
+            -- check if the touch event is within the area of the network stats button
+            if GUI.Has_Touch_Within_Area(State => State, P => (130, 50), S => (140, 25)) then
+              Show_Network_Stats := not Show_Network_Stats;
+            end if;
+            -- check if the touch event is within the area of the device info button
+            if GUI.Has_Touch_Within_Area(State => State, P => (130, 78), S => (140, 25)) then
+              Show_Device_Info := not Show_Device_Info;
+            end if;
+          end if;
       else
         GUI.Fill_Rounded_Rectangle ((75, 45), (48, 25), GUI.Button_Color, 2);
       end if;
       GUI.Print ("Menu", (82, 53));
-
-      -- when the user presses the menu button, show the submenu
-      if Show_Menu then
-         GUI.Draw_Rounded_Rectangle ((125, 45), (150,65), HAL.Bitmap.Black, 2, 1);
-
-          GUI.Fill_Rounded_Rectangle ((130, 50), (140, 15), GUI.Button_Color, 2);
-          GUI.Print ("Network Stats", (150, 53));
-
-          GUI.Fill_Rounded_Rectangle ((130, 70), (140, 15), GUI.Button_Color, 2);
-          GUI.Print ("Network Settings", (135, 73));
-
-          GUI.Fill_Rounded_Rectangle ((130, 90), (140, 15), GUI.Button_Color, 2);
-          GUI.Print ("Device Info", (155, 93));
-          
-          -- if there is a touch event while the menu is open
-          --  if (GUI.Has_Touch(State => State)) then
-          --    if GUI.Has_Touch_Within_Area(State => State, P => (130, 50), S => (140, 15)) then
-          --      -- Show Network statistics, maybe add a piece of state to show network statistics similar to Show_Menu
-          --    end if;
-          --    if GUI.Has_Touch_Within_Area(State => State, P => (130, 70), S => (140, 15)) then
-          --      -- Show Network settings, maybe add a piece of state to show network settings similar to Show_Menu
-          --    end if;
-          --    if GUI.Has_Touch_Within_Area(State => State, P => (130, 90), S => (140, 15)) then
-          --      -- Show Device Info, maybe add a piece of state to show device info similar to Show_Menu
-          --    end if;
-          --  end if;
-      end if;
 
 
       GUI.Print_Large ("Console", (5, 105));
@@ -94,20 +92,25 @@ begin
         ((5, 120), (GUI.Board_Resolution.Width - 8, 145), HAL.Bitmap.Black, 2,
          1);
 
-      GUI.Draw_Rounded_Rectangle ((277, 2), (200, 36), HAL.Bitmap.Black, 2, 1);
-      GUI.Print ("  Mac: 00:81:E1:05:05:01", (280, 12));
-      GUI.Print ("Board:   STM32F746-DISCO", (280, 24));
+      if Show_Device_Info then
+        GUI.Draw_Rounded_Rectangle ((277, 2), (200, 36), HAL.Bitmap.Black, 2, 1);
+        GUI.Print ("  Mac: 00:81:E1:05:05:01", (280, 12));
+        GUI.Print ("Board:   STM32F746-DISCO", (280, 24));
+      end if;
 
-      GUI.Draw_Rounded_Rectangle
-        ((277, 40), (200, 20), HAL.Bitmap.Black, 2, 1);
+      if Show_Network_Stats then
+        GUI.Draw_Rounded_Rectangle
+          ((277, 40), (200, 20), HAL.Bitmap.Black, 2, 1);
 
-      GUI.Fill_Rounded_Rectangle
-        ((330, 46), (25, 10), GUI.Get_RX_Status_Color, 1);
-      GUI.Print ("RX", (300, 48));
+        GUI.Fill_Rounded_Rectangle
+          ((330, 46), (25, 10), GUI.Get_RX_Status_Color, 1);
+        GUI.Print ("RX", (300, 48));
 
-      GUI.Fill_Rounded_Rectangle
-        ((420, 46), (25, 10), GUI.Get_TX_Status_Color, 1);
-      GUI.Print ("TX", (390, 48));
+        GUI.Fill_Rounded_Rectangle
+          ((420, 46), (25, 10), GUI.Get_TX_Status_Color, 1);
+        GUI.Print ("TX", (390, 48));
+      end if;
+
 
       GUI.Print ("Version: " & GUI.Build_Verson, (362, 105));
 
