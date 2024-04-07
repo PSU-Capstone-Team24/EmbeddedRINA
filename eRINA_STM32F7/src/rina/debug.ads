@@ -9,7 +9,7 @@ package Debug is
      BMP_Fonts.Char_Height (Font => BMP_Fonts.Font8x8);
    Max_Characters_Per_Line : constant Positive         := 52;
    Line_Padding            : constant Natural          := 4;
-   Starting_Point          : constant HAL.Bitmap.Point := (10, 110);
+   Starting_Point          : constant HAL.Bitmap.Point := (10, 125);
 
    --  Debug bitmap colors
    Info_Color    : constant HAL.Bitmap.Bitmap_Color := (255, 109, 177, 255);

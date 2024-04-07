@@ -105,4 +105,26 @@ package body GUI is
         (Text'Length * BMP_Fonts.Char_Width (Font),
          BMP_Fonts.Char_Height (Font));
    end MeasureText;
+
+   function Has_Touch_Within_Area(State : HAL.Touch_Panel.TP_State; P : Point; S : Size) return Boolean is
+   begin
+      if State'Length > 0 then
+            if State (1).X >= P.X and State (1).X <= P.X + S.Width and
+               State (1).Y >= P.Y and State (1).Y <= P.Y + S.Height then
+               return True;
+            else 
+               return False;
+            end if;
+      end if;
+   end Has_Touch_Within_Area;
+
+   function Has_Touch(State : HAL.Touch_Panel.TP_State) return Boolean is
+   begin
+      if State'Length > 0 then
+         return True;
+      else
+         return False;
+      end if;
+   end Has_Touch;
+
 end GUI;

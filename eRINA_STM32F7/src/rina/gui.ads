@@ -1,7 +1,7 @@
 with BMP_Fonts;
 with HAL.Bitmap; use HAL.Bitmap;
 with Ada.Containers.Vectors;
-
+with HAL.Touch_Panel; use HAL.Touch_Panel;
 package GUI is
    pragma Warnings (Off);
 
@@ -9,6 +9,7 @@ package GUI is
    Foreground   : Bitmap_Color       := Black;
    Background   : Bitmap_Color       := White;
    Button_Color : Bitmap_Color       := (255, 242, 243, 245);
+   Button_Selected_Color : Bitmap_Color := (255, 255, 255, 255);
    TX_Active    : Bitmap_Color       := (255, 111, 255, 109);
    TX_Inactive  : Bitmap_Color       := (255, 56, 128, 55);
    RX_Active    : Bitmap_Color       := (255, 255, 109, 109);
@@ -55,4 +56,6 @@ package GUI is
    function MeasureText
      (Text : in String; Font : in BMP_Fonts.BMP_Font) return Size;
    function Scale (Position : in Point) return Point;
+   function Has_Touch_Within_Area (State : HAL.Touch_Panel.TP_State; P : Point; S : Size) return Boolean;
+   function Has_Touch (State : HAL.Touch_Panel.TP_State) return Boolean;
 end GUI;
