@@ -31,7 +31,7 @@ package GUI is
    end record;
 
    Board_Resolution : Size    := (480, 272);
-   Frame_Rate       : Natural := 120;
+   Frame_Rate       : Natural := 60;
    Max_Buttons      : Natural := 16;
 
    package Button_Vectors is new Ada.Containers.Vectors

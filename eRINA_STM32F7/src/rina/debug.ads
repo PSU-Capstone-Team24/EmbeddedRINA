@@ -17,7 +17,7 @@ package Debug is
    Error_Color   : constant HAL.Bitmap.Bitmap_Color := (255, 254, 112, 112);
 
    --  Maximum number of lines of messages in the console output
-   Max_Messages : constant := 13;
+   Max_Messages : constant := 11;
 
    type Message is record
       Msg   : String (1 .. Max_Characters_Per_Line);

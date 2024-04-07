@@ -112,10 +112,10 @@ package body GUI is
             if State (1).X >= P.X and State (1).X <= P.X + S.Width and
                State (1).Y >= P.Y and State (1).Y <= P.Y + S.Height then
                return True;
-            else 
-               return False;
             end if;
       end if;
+
+      return False;
    end Has_Touch_Within_Area;
 
    function Has_Touch(State : HAL.Touch_Panel.TP_State) return Boolean is

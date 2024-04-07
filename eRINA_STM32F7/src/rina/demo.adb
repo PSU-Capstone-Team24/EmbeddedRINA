@@ -24,7 +24,6 @@ begin
    GUI.Initialize;
    STM32.Board.Touch_Panel.Initialize;
    Network.Initialize;
-   STM32.Board.Touch_Panel.Initialize;
    STM32.Board.Configure_User_Button_GPIO;
    STM32.Board.Initialize_LEDs;
    STM32.Board.All_LEDs_Off;
@@ -39,7 +38,7 @@ begin
 
    --  Enroll this IPCP into the DIF
    This_DIF.Enroll (This_IPCP);
-   
+
    --  Register test server application to this DIF
    This_DIF.Register ("TestServer", Demo_IPCP'Access);
 
