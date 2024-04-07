@@ -70,17 +70,17 @@ begin
           GUI.Print ("Device Info", (155, 93));
           
           -- if there is a touch event while the menu is open
-          if (GUI.Has_Touch(State => State)) then
-            if GUI.Has_Touch_Within_Area(State => State, P => (130, 50), S => (140, 15)) then
-              -- Show Network statistics, maybe add a piece of state to show network statistics similar to Show_Menu
-            end if;
-            if GUI.Has_Touch_Within_Area(State => State, P => (130, 70), S => (140, 15)) then
-              -- Show Network settings, maybe add a piece of state to show network settings similar to Show_Menu
-            end if;
-            if GUI.Has_Touch_Within_Area(State => State, P => (130, 90), S => (140, 15)) then
-              -- Show Device Info, maybe add a piece of state to show device info similar to Show_Menu
-            end if;
-          end if;
+          --  if (GUI.Has_Touch(State => State)) then
+          --    if GUI.Has_Touch_Within_Area(State => State, P => (130, 50), S => (140, 15)) then
+          --      -- Show Network statistics, maybe add a piece of state to show network statistics similar to Show_Menu
+          --    end if;
+          --    if GUI.Has_Touch_Within_Area(State => State, P => (130, 70), S => (140, 15)) then
+          --      -- Show Network settings, maybe add a piece of state to show network settings similar to Show_Menu
+          --    end if;
+          --    if GUI.Has_Touch_Within_Area(State => State, P => (130, 90), S => (140, 15)) then
+          --      -- Show Device Info, maybe add a piece of state to show device info similar to Show_Menu
+          --    end if;
+          --  end if;
       end if;
 
 
