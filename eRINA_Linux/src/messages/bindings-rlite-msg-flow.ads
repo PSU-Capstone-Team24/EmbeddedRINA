@@ -16,8 +16,7 @@ package Bindings.Rlite.Msg.Flow is
       --  Max delay in microseconds
       Max_Delay : Unsigned_32 := 0;
       --  Max in SDUs (Service Data Units)
-      --  MT: TODO: This is originally a uint64_t, will this be an issue?
-      Max_SDU_Gap : Unsigned_64 := 0;
+      Max_SDU_Gap : Unsigned_64 := Unsigned_64'Last;
       --  Average bandwith in bits per second
       Avg_Bandwith : Unsigned_64 := 0;
       --  Maximum packet loss from 0 (0%) to 10000 (100%)
@@ -25,7 +24,7 @@ package Bindings.Rlite.Msg.Flow is
       --  In order delivery
       In_Order_Delivery : Unsigned_8 := 0;
       --  Message boundaries
-      Msg_Boundaries : Unsigned_8 := 1;
+      Msg_Boundaries : Unsigned_8 := 0;
       --  Max jitter in microseconds
       Max_Jitter : Unsigned_32 := 0;
    end record;

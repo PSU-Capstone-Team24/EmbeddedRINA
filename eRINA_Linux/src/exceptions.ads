@@ -7,4 +7,5 @@ package Exceptions is
    Not_Implemented_Exception : exception;
    IPCP_Creation_Exception   : exception;
    Bounded_Length_Exception  : exception;
+   Deserialize_Failure       : exception;
 end Exceptions;

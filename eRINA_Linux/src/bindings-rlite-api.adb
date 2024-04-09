@@ -28,6 +28,17 @@ package body Bindings.Rlite.API is
       OS.Close (fd);
    end RINA_Close;
 
+   procedure RINA_Write (Fd : OS.File_Descriptor; Addr : System.Address; Bytes : Natural) is
+      Bytes_Written : Integer;
+   begin
+      Bytes_Written := OS.Write (Fd, Addr, Bytes);
+
+      if Bytes_Written < 0 then
+         Debug.Print("RINA_Write", "Error writing bytes", Debug.Error);
+      end if;
+
+   end RINA_Write;
+
    function RINA_Create_IPCP
      (Fd       : OS.File_Descriptor; Name : String; DIF_Type : DIF_Types;
       DIF_Name : String) return Rl_Ipcp_Id_T
@@ -157,7 +168,7 @@ package body Bindings.Rlite.API is
      (Wfd : OS.File_Descriptor) return OS.File_Descriptor
    is
    begin
-      return Ctrl.RINA_Flow_Alloc_Wait (Wfd, 0);
+      return Ctrl.RINA_Flow_Alloc_Wait (Wfd);
    end RINA_Flow_Alloc_Wait;
 
    function RINA_Flow_Respond

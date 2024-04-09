@@ -383,6 +383,7 @@ package body Bindings.Rlite.Ctrl is
         Import, Convention => C, External_Name => "getpid";
       Bits_Other_Than_NoWait : constant Unsigned_32 :=
         flags and not Unsigned_32 (Bindings.Rlite.API.RINA_F_NOWAIT);
+      NoWait_Flags : constant Unsigned_32 := flags and Unsigned_32 (API.RINA_F_NOWAIT);
    begin
       if Bits_Other_Than_NoWait /= 0 then
          --  Flag has bits other than RINA_Flow_Alloc set, return invalid file descriptor
@@ -422,19 +423,27 @@ package body Bindings.Rlite.Ctrl is
          return OS.Invalid_FD;
       end if;
 
-      Rl_Write_Msg (wfd, req.Serialize, 0);
+      Rl_Write_Msg (wfd, req.Serialize, 1);
 
-      --need to fix
-      return wfd;
+      --  Return the control file descriptor if RINA_F_NOWAIT flag enabled
+      if NoWait_Flags /= 0 then
+         return wfd;
+      end if;
 
+      return RINA_Flow_Alloc_Wait (wfd);
    end RINA_Flow_Alloc;
 
    function RINA_Flow_Alloc_Wait
-     (wfd : OS.File_Descriptor; port_id : Unsigned_16)
+     (wfd : OS.File_Descriptor)
       return OS.File_Descriptor
    is
+      Resp : Flow.Response_Arrived;
+      Port : OS.File_Descriptor;
    begin
-      return wfd;
+      Flow.Deserialize (Resp, Wfd);
+      Port := Rl_Open_Appl_Port (Resp.Port_Id);
+      API.RINA_Close (wfd);
+      return Port;
    end RINA_Flow_Alloc_Wait;
 
    function RINA_Flow_Respond

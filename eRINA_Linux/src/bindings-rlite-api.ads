@@ -2,6 +2,7 @@
 pragma Style_Checks (Off);
 
 --  GNAT
+with System;
 with GNAT.OS_Lib;
 
 --  Interfaces
@@ -32,6 +33,8 @@ package Bindings.Rlite.API is
    --  This exists just for sematic purposes, is redundant with OS.Close
    --  int rina_close (void)
    procedure RINA_Close (fd : OS.File_Descriptor);
+
+    procedure RINA_Write (Fd : OS.File_Descriptor; Addr : System.Address; Bytes : Natural);
 
    --  Creates a new IPCP and creates a DIF of type DIF_Type with name DIF_Name
    function RINA_Create_IPCP

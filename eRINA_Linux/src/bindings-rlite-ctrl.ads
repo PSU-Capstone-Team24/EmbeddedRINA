@@ -107,7 +107,7 @@ package Bindings.Rlite.Ctrl is
       return OS.File_Descriptor;
 
    function RINA_Flow_Alloc_Wait
-     (wfd : OS.File_Descriptor; port_id : Unsigned_16)
+     (wfd : OS.File_Descriptor)
       return OS.File_Descriptor;
 
    function RINA_Flow_Respond
