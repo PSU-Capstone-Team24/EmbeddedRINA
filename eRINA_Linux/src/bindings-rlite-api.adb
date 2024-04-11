@@ -28,13 +28,15 @@ package body Bindings.Rlite.API is
       OS.Close (fd);
    end RINA_Close;
 
-   procedure RINA_Write (Fd : OS.File_Descriptor; Addr : System.Address; Bytes : Natural) is
+   procedure RINA_Write
+     (Fd : OS.File_Descriptor; Addr : System.Address; Bytes : Natural)
+   is
       Bytes_Written : Integer;
    begin
       Bytes_Written := OS.Write (Fd, Addr, Bytes);
 
       if Bytes_Written < 0 then
-         Debug.Print("RINA_Write", "Error writing bytes", Debug.Error);
+         Debug.Print ("RINA_Write", "Error writing bytes", Debug.Error);
       end if;
 
    end RINA_Write;

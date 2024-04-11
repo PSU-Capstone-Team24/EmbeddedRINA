@@ -34,7 +34,8 @@ package Bindings.Rlite.API is
    --  int rina_close (void)
    procedure RINA_Close (fd : OS.File_Descriptor);
 
-    procedure RINA_Write (Fd : OS.File_Descriptor; Addr : System.Address; Bytes : Natural);
+   procedure RINA_Write
+     (Fd : OS.File_Descriptor; Addr : System.Address; Bytes : Natural);
 
    --  Creates a new IPCP and creates a DIF of type DIF_Type with name DIF_Name
    function RINA_Create_IPCP

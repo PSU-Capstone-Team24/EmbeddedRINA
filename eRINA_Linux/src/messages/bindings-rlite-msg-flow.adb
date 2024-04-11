@@ -90,16 +90,16 @@ package body Bindings.Rlite.Msg.Flow is
       end if;
 
       if Self.Hdr.Event_Id /= RINA_FA_EVENT_ID then
-        raise Exceptions.Deserialize_Failure;
+         raise Exceptions.Deserialize_Failure;
       end if;
 
       --  [===== HDR =====][==== Port_Id ====][== Response ==][=== Pad_1 ===]
       Self.Port_Id :=
         Rl_Port_T (Buffer_To_Unsigned_16 (Msg_Data (Offset .. Offset + 1)));
-      Offset       := Offset + Unsigned_16'Size / 8;
+      Offset := Offset + Unsigned_16'Size / 8;
 
       Self.Response := Unsigned_8 (Msg_Data (Offset));
-      Offset       := Offset + Unsigned_8'Size / 8;
+      Offset        := Offset + Unsigned_8'Size / 8;
 
    end Deserialize;
 
