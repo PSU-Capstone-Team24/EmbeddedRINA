@@ -69,17 +69,17 @@ package body GUI is
    procedure Add_Button
      (P : Point; S : Size; C : Bitmap_Color; T : Access_String)
    is
-      Btn : Button := (P, S, C, T);
+      Btn : constant Button := (P, S, C, T);
    begin
       Buttons.Append (Btn);
    end Add_Button;
 
-   procedure Print (Msg : in String; Pos : in Point) is
+   procedure Print (Msg : in String; Pos : in Point; BG_Color : in HAL.Bitmap.Bitmap_Color := Background) is
    begin
       Bitmapped_Drawing.Draw_String
         (Buffer     => Screen_Buffer.all, Start => Scale ((Pos.X, Pos.Y)),
          Msg => Msg, Font => BMP_Fonts.Font8x8, Foreground => Foreground,
-         Background => Background);
+         Background => BG_Color);
    end Print;
 
    procedure Print_Large (Msg : in String; Pos : in Point) is
@@ -106,19 +106,22 @@ package body GUI is
          BMP_Fonts.Char_Height (Font));
    end MeasureText;
 
-   function Has_Touch_Within_Area(State : HAL.Touch_Panel.TP_State; P : Point; S : Size) return Boolean is
+   function Has_Touch_Within_Area
+     (State : HAL.Touch_Panel.TP_State; P : Point; S : Size) return Boolean
+   is
    begin
       if State'Length > 0 then
-            if State (1).X >= P.X and State (1).X <= P.X + S.Width and
-               State (1).Y >= P.Y and State (1).Y <= P.Y + S.Height then
-               return True;
-            end if;
+         if State (1).X >= P.X and State (1).X <= P.X + S.Width and
+           State (1).Y >= P.Y and State (1).Y <= P.Y + S.Height
+         then
+            return True;
+         end if;
       end if;
 
       return False;
    end Has_Touch_Within_Area;
 
-   function Has_Touch(State : HAL.Touch_Panel.TP_State) return Boolean is
+   function Has_Touch (State : HAL.Touch_Panel.TP_State) return Boolean is
    begin
       if State'Length > 0 then
          return True;
