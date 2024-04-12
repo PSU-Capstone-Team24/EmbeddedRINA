@@ -1,0 +1,19 @@
+name = "rina_ui"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+authors = ["Mason Ticehurst"]
+maintainers = ["Mason Ticehurst <masonticehurst@me.com>"]
+maintainers-logins = ["masonticehurst"]
+
+executables = ["rina_ui"]
+
+[[depends-on]]
+gtkada = "=22.0.0"
+erina_linux = "~0.1.0-dev"
+
+[[pins]]
+erina_linux = { path = "../eRINA_Linux" }
+
+[build-switches]
+"*".style_checks = "No"
