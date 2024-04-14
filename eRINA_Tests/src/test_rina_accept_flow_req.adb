@@ -31,6 +31,7 @@ package body Test_RINA_ACCEPT_FLOW_REQ is
       Name_039 : constant String := "TC-039";
       Name_040 : constant String := "TC-040";
       Name_041 : constant String := "TC-041";
+      Name_042 : constant String := "TC-042";
    begin
       Test_Suite.Add_Test (Caller.Create
          (Name_036 & " Test RINA ACCEPT FLOW REQ", Test_RINA_ACCEPT_FLOW_REQ'Access));
@@ -44,6 +45,8 @@ package body Test_RINA_ACCEPT_FLOW_REQ is
          (Name_040 & " Test RINA ACCEPT FLOW REQ Flag 2048", Test_RINA_ACCEPT_FLOW_REQ_Flag_2048'Access));
       Test_Suite.Add_Test (Caller.Create
          (Name_041 & " Test RINA ACCEPT FLOW REQ Valid FD", Test_RINA_ACCEPT_FLOW_REQ_Valid_FD'Access));
+      Test_Suite.Add_Test (Caller.Create
+         (Name_042 & " Test RINA ACCEPT FLOW REQ Valid Pointer", Test_RINA_ACCEPT_FLOW_REQ_Valid_Pointer'Access));
 
       return Test_Suite'Access;
    end Suite;
@@ -125,5 +128,18 @@ package body Test_RINA_ACCEPT_FLOW_REQ is
 
       Assert(Caused_Error and Rlite_Fd = Invalid_FD, "Invalid file descriptor returned");
     end Test_RINA_ACCEPT_FLOW_REQ_Valid_FD;
+
+   -- TC 042
+   procedure Test_RINA_ACCEPT_FLOW_REQ_Valid_Pointer (Object : in out Test) is
+      Rlite_Fd  : File_Descriptor := Invalid_FD;
+      Caused_Error : Boolean := False;
+   begin
+      Rlite_Fd  := RINA_Register (RINA_Dev_FD, "", Application_Name, 0);
+      exception
+         when Exceptions.Bounded_Length_Exception =>
+            Caused_Error := True;
+
+      Assert(Caused_Error and Rlite_Fd = Invalid_FD, "Invalid file descriptor returned");
+   end Test_RINA_ACCEPT_FLOW_REQ_Valid_Pointer;
 
 end Test_RINA_ACCEPT_FLOW_REQ;
