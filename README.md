@@ -22,6 +22,34 @@ eRINA aims to take the fundamental principles of RINA and implement them as a so
 4. Enter `eRINA_Tests` directory with `cd eRINA_Tests`
 5. Run tests: `alr build` and `alr run`
 
+## eRINA_STM32F7 Setup
+1. If you’re using a virtual machine with Windows as your host operating system, you will need to get the necessary drivers on your Windows machine first. This is required to get USB passthrough to the VM working. If you’re running natively on Ubuntu, you may ignore this step.
+
+    Head to: 
+    [32F746GDISCOVERY - Discovery kit with STM32F746NG MCU, STM32F746G-DISCO, STMicroelectronics](https://www.st.com/en/evaluation-tools/32f746gdiscovery.html#tools-software)
+
+    Download “STSW-LINK009” under “Software Development Tools” (you may need to register for an account).
+
+    Run the executable and install the drivers as prompted.
+
+    Boot up your virtual machine and make sure the “STMicroelectronics STM32 STLink” USB device is enabled.
+
+2. Alire does not natively index the GNAT academic program software. This index includes the dependencies we need. To add it, run the following command in the terminal:
+
+    `alr index --add git+https://github.com/GNAT-Academic-Program/alire-index --name gap`
+
+    Without this, you will not be able to download/update the stm32 package dependencies.
+
+3. OpenOCD (Open On-Chip-Debugger) is a tool that provides a debugging interface which allows developers to interact with and debug embedded systems. OpenOCD is the tool that we will be using to program the flash memory of the microcontroller. Install this package using the command below:
+
+    `sudo apt install openocd`
+4. Ensure the working directory is `eRINA_STM32F`. If it is not, from the repository's root, run `cd eRINA_STM32F`.
+5. Run `alr build`
+6. Connect a STM32F7 to your host machine via USB-A port and connect board to network via RJ45 port. Typically, this means connecting the board via ethernet to a router or access point.
+7. Flash the board using the following command:
+    
+    `openocd -f board/stm32f7discovery.cfg -c 'program bin/demo verify reset exit'`
+
 ## Tests Implemented Progress
 
 | Test Suite | Done |
