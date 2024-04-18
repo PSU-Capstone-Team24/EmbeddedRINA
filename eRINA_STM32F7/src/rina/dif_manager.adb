@@ -112,7 +112,7 @@ package body DIF_Manager is
    begin
       -- Verify that IPCP has minimum information required to be fully
       -- operational member of DIF
-      IPCP_Fields_Filled := Verify_IPCP (IPCP_Process);
+      IPCP_Fields_Filled := Verify_IPCP (IPC_Process);
       if not IPCP_Fields_Filled then
          raise IPCP_Malformed;
       end if;
@@ -128,12 +128,12 @@ package body DIF_Manager is
          To_String (Self.Name));
    end Enroll;
 
-   function Verify_IPCP (IPC_Process : IPCP) return Boolean is
+   function Verify_IPCP (IPC_Process : in IPCP) return Boolean is
       Complete : Boolean := False;
    begin
       -- short circuit evaluation to ensure all field's initialized
       Complete :=
-        IPC_Process.Name > 0 and then IPC_Process.Executable /= null
+        Length (IPC_Process.Name) > 0 and then IPC_Process.Executable /= null
         and then IPC_Process.IO_Buffer'Length > 0;
       return Complete;
    end Verify_IPCP;
