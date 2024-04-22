@@ -4,6 +4,7 @@ with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with DIF_Manager;           use DIF_Manager;
 with Protobuf;              use Protobuf;
 with CDAP;                  use CDAP;
+with Files;                 use Files;
 
 package body Net.Protos.EFCP is
 
@@ -11,7 +12,14 @@ package body Net.Protos.EFCP is
      (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;
       Packet : in out Net.Buffers.Buffer_Type)
    is
-      Buf :
+      Buf_Ether :
+        Byte_Buffer
+          (1 .. Integer (Packet.Get_Data_Size (Net.Buffers.ETHER_PACKET))) with
+        Address =>
+         Packet.Get_Data_Address
+           (Net.Buffers.Offsets (Net.Buffers.ETHER_PACKET));
+
+      Buf_EFCP :
         Byte_Buffer
           (1 .. Integer (Packet.Get_Data_Size (Net.Buffers.EFCP_PACKET))) with
         Address =>
@@ -32,13 +40,30 @@ package body Net.Protos.EFCP is
       --  MT: Disabling, for debug only. Prints contents of decoded message
       -- Message.Put;
 
+      if Is_File (Buf_Ether (Buf_Ether'First .. Buf_Ether'First + 3)) then
+
+         if Get_File_Type (Buf_Ether) = FILETYPE_IMAGE then
+            declare
+               Msg : Picture_Message;
+            begin
+               Msg.Decode (Buf_Ether);
+               Debug.Print
+                 (Debug.Info,
+                  "Received image frame:" & Msg.Frame_Number'Image & " of" &
+                  Msg.Frame_Total'Image);
+            end;
+         end if;
+
+         return;
+      end if;
+
       --  If this is not a management PDU, don't parse it as one!
       if Req.Efcp.PDU_Type /= PDU_T_MGMT then
-         Debug.Print (Debug.Info, "Data: ");
+         null; --Debug.Print (Debug.Info, "Data: ");
       end if;
 
       --  Convert byte buffer into a deserialized Ada record
-      Message.To_CDAP (Byte_Buffer_To_Vector (Buf));
+      Message.To_CDAP (Byte_Buffer_To_Vector (Buf_EFCP));
 
       --  Incoming connection request
       if Message.OpCode = M_CONNECT then
@@ -170,7 +195,7 @@ package body Net.Protos.EFCP is
                        To_Unbounded_String ("/mgmt/addralloc/params");
 
                      Message.ObjValue.Clear_Fields;
-                     Message.ObjValue.Set_Field (Strval, "4000ms");
+                     Message.ObjValue.Set_Field (Strval, "40000ms");
 
                      Message.Result  := 0;
                      Message.Version := 1;

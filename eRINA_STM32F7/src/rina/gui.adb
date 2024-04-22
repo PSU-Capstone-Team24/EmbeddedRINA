@@ -74,7 +74,10 @@ package body GUI is
       Buttons.Append (Btn);
    end Add_Button;
 
-   procedure Print (Msg : in String; Pos : in Point; BG_Color : in HAL.Bitmap.Bitmap_Color := Background) is
+   procedure Print
+     (Msg      : in String; Pos : in Point;
+      BG_Color : in HAL.Bitmap.Bitmap_Color := Background)
+   is
    begin
       Bitmapped_Drawing.Draw_String
         (Buffer     => Screen_Buffer.all, Start => Scale ((Pos.X, Pos.Y)),

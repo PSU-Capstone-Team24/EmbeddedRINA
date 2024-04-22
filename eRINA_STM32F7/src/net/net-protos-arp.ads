@@ -15,8 +15,11 @@
 --  See the License for the specific language governing permissions and
 --  limitations under the License.
 -----------------------------------------------------------------------
+with Net;
 with Net.Interfaces;
 with Net.Buffers;
+with Ada.Containers.Indefinite_Hashed_Maps;
+with Ada.Strings.Hash;
 
 --  == ARP Protocol ==
 --  The <b>Net.Protos.Arp</b> package implements the support for the ARP protocol used for the
@@ -49,6 +52,17 @@ package Net.Protos.Arp is
 
    type Arp_Status is
      (ARP_FOUND, ARP_PENDING, ARP_NEEDED, ARP_QUEUE_FULL, ARP_UNREACHABLE);
+
+   package ARP_Hash_Maps is new Ada.Containers.Indefinite_Hashed_Maps
+     (Key_Type => String, Element_Type => Net.Ether_Addr,
+      Hash     => Ada.Strings.Hash, Equivalent_Keys => "=");
+
+   protected Database is
+      procedure Update (Name : String; Addr : Ether_Addr);
+      function Get (Name : String) return Ether_Addr;
+   private
+      Table : ARP_Hash_Maps.Map;
+   end Database;
 
    procedure Receive
      (Ifnet  : in out Net.Interfaces.Ifnet_Type'Class;

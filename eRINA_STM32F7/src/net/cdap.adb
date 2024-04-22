@@ -709,7 +709,7 @@ package body CDAP is
 
    function To_LEN (Value : Unbounded_String) return Byte_Vector is
       Vec : Byte_Vector;
-      Str : String := To_String (Value);
+      Str : constant String := To_String (Value);
    begin
       --  Append length of string
       Vec.Append (To_VARINT (Uint64 (Str'Length)));
@@ -767,7 +767,7 @@ package body CDAP is
          Vec.Prepend (Byte (Vec.Length));
          Vec.Prepend (To_Tag (8, LEN));
       exception
-         when E : others =>
+         when others =>
             Debug.Print (Debug.Error, "Failed during To_ObjValue!");
       end;
 

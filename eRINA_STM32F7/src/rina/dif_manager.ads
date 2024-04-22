@@ -1,7 +1,7 @@
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
-with Buffers;      use Buffers;
+with Buffers;               use Buffers;
 with Ada.Containers.Vectors;
-with IPCP_Manager; use IPCP_Manager;
+with IPCP_Manager;          use IPCP_Manager;
 use IPCP_Manager.IPCP_Name;
 with CDAP; use CDAP;
 
@@ -45,14 +45,16 @@ package DIF_Manager is
      (Self : in out DIF; IPC_Process : IPCP); -- Flow_Req : Flow);
 
    --  Register an application to a DIF
-   procedure Register (Self : in out DIF; Appl_Name : String; Proc : Procedure_Access);
+   procedure Register
+     (Self : in out DIF; Appl_Name : String; Proc : Procedure_Access);
 
-   function Get_Application (Self : in out DIF; Name : String) return Application;
+   function Get_Application
+     (Self : in out DIF; Name : String) return Application;
    function Application_Exists (Name : String) return Boolean;
 
    function Get_IPCP (Name : String) return IPCP;
    function IPCP_Exists (Name : String) return Boolean;
-   
+
    --  Checks the set of all DIFs in the system for a DIF with the matching name and type
    function Get (Name : String; DIF_Type : DIF_Types) return DIF;
 
@@ -60,7 +62,7 @@ package DIF_Manager is
    function Exists (Name : String; DIF_Type : DIF_Types) return Boolean;
 
    function Create (Name : String; DIF_Type : DIF_Types) return DIF_Access;
-   
+
    --  Stores all DIFs in the system
    package DIF_Vectors is new Ada.Containers.Vectors
      (Index_Type => Positive, Element_Type => DIF_Access);

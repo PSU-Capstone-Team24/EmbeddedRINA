@@ -19,7 +19,6 @@
 with System;
 with Ada.Interrupts.Names;
 with Ada.Unchecked_Conversion;
-with Ada.Exceptions; use Ada.Exceptions;
 
 with STM32.SDRAM;
 with STM32.Eth; use STM32;
@@ -29,7 +28,6 @@ with HAL;
 with Cortex_M.Cache;
 with Debug;
 with Net.Buffers; use Net.Buffers;
-with Buffers;     use Buffers;
 
 package body Net.Interfaces.STM32 is
 
