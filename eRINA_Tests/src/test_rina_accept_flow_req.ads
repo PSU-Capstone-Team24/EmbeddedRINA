@@ -15,5 +15,6 @@ private
     procedure Test_RINA_ACCEPT_FLOW_REQ_No_Memory (Object : in out Test);    
     procedure Test_RINA_ACCEPT_FLOW_REQ_Flag_2048 (Object : in out Test);    
     procedure Test_RINA_ACCEPT_FLOW_REQ_Valid_FD (Object : in out Test);
+    Procedure Test_RINA_ACCEPT_FLOW_REQ_Valid_Pointer (Object : in out Test);
 
 end Test_RINA_ACCEPT_FLOW_REQ;

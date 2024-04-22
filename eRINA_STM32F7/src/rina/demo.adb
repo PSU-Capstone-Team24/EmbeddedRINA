@@ -2,7 +2,6 @@ with GUI;
 with Texture_PSU;
 with Texture_Logo;
 with Texture_Close;
-with Texture_Ada;
 with Network;
 with Net.Utils;
 with STM32;

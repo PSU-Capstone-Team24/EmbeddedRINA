@@ -3,6 +3,7 @@ with Debug;
 package body DIF_Manager is
 
    Element_Not_Found : exception;
+   IPCP_Malformed    : exception;
 
    function Get (Name : String; DIF_Type : DIF_Types) return DIF is
    begin
@@ -105,9 +106,17 @@ package body DIF_Manager is
       Self.Applications.Append (New_App);
    end Register;
 
-   procedure Enroll (Self : in out DIF; IPC_Process : IPCP)
+   procedure Enroll (Self : in out DIF; IPC_Process : in IPCP)
    is -- Flow_Req : Flow) is
+      IPCP_Fields_Filled : Boolean := False;
    begin
+      -- Verify that IPCP has minimum information required to be fully
+      -- operational member of DIF
+      IPCP_Fields_Filled := Verify_IPCP (IPC_Process);
+      if not IPCP_Fields_Filled then
+         raise IPCP_Malformed;
+      end if;
+      -- Continue as long as properly initialized
       Debug.Print
         (Debug.Info,
          "Enrolling IPCP: " & To_String (IPC_Process.Name) & " into " &
@@ -118,5 +127,15 @@ package body DIF_Manager is
          "Enrolled IPCP: " & To_String (IPC_Process.Name) & " into " &
          To_String (Self.Name));
    end Enroll;
+
+   function Verify_IPCP (IPC_Process : in IPCP) return Boolean is
+      Complete : Boolean := False;
+   begin
+      -- short circuit evaluation to ensure all field's initialized
+      Complete :=
+        Length (IPC_Process.Name) > 0 and then IPC_Process.Executable /= null
+        and then IPC_Process.IO_Buffer'Length > 0;
+      return Complete;
+   end Verify_IPCP;
 
 end DIF_Manager;

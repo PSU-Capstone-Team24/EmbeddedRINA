@@ -29,6 +29,7 @@ package body Test_RINA_Unregister is
       Name_016 : constant String := "TC-016";
       Name_017 : constant String := "TC-017";
       Name_018 : constant String := "TC-018";
+      Name_019 : constant String := "TC-019";
       Name_020 : constant String := "TC-020";
    begin
     Test_Suite.Add_Test (Caller.Create 
@@ -45,6 +46,8 @@ package body Test_RINA_Unregister is
             (Name_017 & " Verify rina_unregister throws exception when application name is empty", Test_Unregister_App_Name_Empty'Access));
    Test_Suite.Add_Test (Caller.Create
             (Name_018 & " Verify rina_unregister returns Invalid_FD when passed an invalid file descriptor for the control device", Test_Unregister_Invalid_File_Descriptor'Access));
+   Test_Suite.Add_Test (Caller.Create
+            (Name_019 & " Verify rina_unregister returns Invalid_App when passed an invalid App descriptor", Test_Unregister_Invalid_App_Descriptor'Access));
    Test_Suite.Add_Test (Caller.Create
             (Name_020 & " Verify that rina_unregister writes a de-registration request to the file descriptor", Test_Unregister_Writes_DeReg'Access));
          
@@ -149,6 +152,20 @@ package body Test_RINA_Unregister is
       Assert (Caused_Error, "No exception thrown and a valid FD was returned instead of an invalid one");
    end Test_Unregister_Invalid_File_Descriptor;
 
+   -- TC 019
+   procedure Test_Unregister_Invalid_App_Descriptor (Object : in out Test) is
+      Invalid_AppD : File_Descriptor := Invalid_FD;
+      Unregister_Success : File_Descriptor;
+      Caused_Error : Boolean := False;
+   begin
+      Unregister_Success := RINA_Unregister (Invalid_AppD, DIF_Name, "NewTestAppName", 0);
+      exception
+         when Exceptions.DIF_Registration_Failure =>
+            Caused_Error := True;
+
+      Assert (Caused_Error, "No exception thrown and a valid FD was returned instead of an invalid one");
+   end Test_Unregister_Invalid_App_Descriptor;
+   
    -- TC 020
    procedure Test_Unregister_Writes_DeReg (Object : in out Test) is
       Register_Success : File_Descriptor;
