@@ -17,7 +17,7 @@ eRINA aims to take the fundamental principles of RINA and implement them as a so
 
 ## Prerequisites
 
-It is recommended to use Ubuntu 22.04.4 LTS (Jammy Jellyfish).
+It is recommended to use Ubuntu 20.04 LTS (Jammy Jellyfish).
 
 ## eRINA_Tests Setup
 1. Install [rlite](https://github.com/rlite/rlite) package on system
