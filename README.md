@@ -15,12 +15,23 @@ eRINA aims to take the fundamental principles of RINA and implement them as a so
 
 [Error and Flow Control Protocol (EFCP) Design and Implementation](https://ieeexplore.ieee.org/document/8685905) - A Data Transfer Protocol for the Recursive InterNetwork Architecture
 
-## Testing Setup
-1. Install rlite package on system
+## Prerequisites
+
+It is recommended to use Ubuntu 22.04.4 LTS (Jammy Jellyfish).
+
+## eRINA_Tests Setup
+1. Install [rlite](https://github.com/rlite/rlite) package on system
 2. Ensure `modprobe rlite` and `modprobe rlite-normal` are run to load those kernel modules
 3. Run `sudo rlite-uipcps` before running tests
 4. Enter `eRINA_Tests` directory with `cd eRINA_Tests`
 5. Run tests: `alr build` and `alr run`
+
+## eRINA_Linux Setup
+1. Instal [rlite](https://github.com/rlite/rlite) package on system
+2. Ensure `modprobe rlite` and `modprobe rlite-normal` are run to load those kernel modules
+3. Run `sudo rlite-uipcps`
+4. Enter `eRINA_Linux` directory with `cd eRINA_Linux`
+5. Run: `alr build` and `alr run`
 
 ## eRINA_STM32F7 Setup
 1. If you’re using a virtual machine with Windows as your host operating system, you will need to get the necessary drivers on your Windows machine first. This is required to get USB passthrough to the VM working. If you’re running natively on Ubuntu, you may ignore this step.
@@ -50,15 +61,3 @@ eRINA aims to take the fundamental principles of RINA and implement them as a so
     
     `openocd -f board/stm32f7discovery.cfg -c 'program bin/demo verify reset exit'`
 
-## Tests Implemented Progress
-
-| Test Suite | Done |
-| ---------- | ---- |
-| TS-001 | :white_check_mark: |
-| TS-002 | :x: |
-| TS-003 | :construction: |
-| TS-004 | :construction: |
-| TS-005 | :x: |
-| TS-006 | :white_check_mark: |
-| TS-007 | :white_check_mark: |
-| TS-008 | :x: |
